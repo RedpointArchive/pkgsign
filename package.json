@@ -11,7 +11,6 @@
     "pkgsign": "dist/index.js"
   },
   "dependencies": {
-    "@types/tmp": "^0.0.33",
     "clime": "^0.5.9",
     "node-cmd": "^3.0.0",
     "node-fetch": "^1.7.3",
@@ -20,9 +19,7 @@
     "prompt": "^1.0.0",
     "recursive-readdir": "^2.2.1",
     "targz": "^1.0.1",
-    "tmp": "^0.0.33",
-    "ts-node": "^3.3.0",
-    "typescript": "^2.6.1"
+    "tmp": "^0.0.33"
   },
   "scripts": {
     "build": "rimraf dist && tsc",
@@ -33,9 +30,12 @@
     "signedpublish": "rimraf dist && tsc && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz"
   },
   "devDependencies": {
+    "@types/tmp": "^0.0.33",
     "@types/node": "^8.5.7",
     "@types/node-fetch": "^1.6.7",
     "@types/recursive-readdir": "^2.2.0",
-    "rimraf": "^2.6.2"
+    "rimraf": "^2.6.2",
+    "ts-node": "^3.3.0",
+    "typescript": "^2.6.1"
   }
 }
