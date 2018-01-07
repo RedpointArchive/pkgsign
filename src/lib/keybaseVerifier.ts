@@ -34,7 +34,7 @@ export class KeybaseVerifier implements Verifier {
 
         let rawPublicKeys = await this.trustStore.getOrFetchCachedPublicKeys('keybase.io.' + identity.keybaseUser, fetchPub);
         let firstTry = await attemptVerify(rawPublicKeys);
-        if (didFetch) {
+        if (didFetch || firstTry) {
             return firstTry;
         } else {
             // user might have updated their PGP public keys with a new signature, refetch.

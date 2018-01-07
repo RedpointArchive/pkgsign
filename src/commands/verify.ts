@@ -7,10 +7,12 @@ import {
 } from 'clime';
 import { lstatSync } from 'fs';
 import { ModuleHierarchyVerifier } from '../lib/moduleHierarchyVerifier';
-import { ModuleVerificationStatus } from '../lib/moduleVerifier';
+import { ModuleVerificationStatus, ModuleVerifier } from '../lib/moduleVerifier';
 import * as prompt from 'prompt';
+import * as path from 'path';
 import { basename } from 'path';
 import { TrustStore } from '../lib/trustStore';
+import { createWorkingDirectory, decompress, recursivePromise, readFilePromise } from '../lib/fsPromise';
 
 export class VerifyOptions extends Options {
     @option({
@@ -19,6 +21,17 @@ export class VerifyOptions extends Options {
         description: 'show verification status of individual packages',
     })
     full: boolean;
+    @option({
+        name: 'non-interactive',
+        toggle: true,
+        description: 'do not prompt to trust packages that are untrusted',
+    })
+    nonInteractive: boolean;
+    @option({
+        name: 'package-name',
+        description: 'if verifying a tarball, this is the expected package name',
+    })
+    packageName: string;
 }
 
 @command({
@@ -35,17 +48,84 @@ export default class extends Command {
         options: VerifyOptions,
     ): Promise<void> {
         if (path.endsWith(".tgz") && lstatSync(path).isFile()) {
-            await this.verifyTarball(path);
+            await this.verifyTarball(path, options);
         } else {
-            await this.verifyDirectory(path, options.full);
+            await this.verifyDirectory(path, options);
         }
     }
 
-    private async verifyTarball(tarballPath: string): Promise<void> {
-        throw new Error('not supported yet!');
+    private async verifyTarball(tarballPath: string, options: VerifyOptions): Promise<void> {
+        const wd = await createWorkingDirectory();
+        console.log('extracting unsigned tarball...');
+        await decompress(tarballPath, wd);
+
+        console.log('building file list...');
+        const base = path.join(wd, "package");
+        const files = (await recursivePromise(base)).map((fullPath) => fullPath.substr(base.length + 1).replace(/\\/g, '/'));
+
+        console.log('verifying package...');
+        const moduleVerifier = new ModuleVerifier(new TrustStore());
+        let result = await moduleVerifier.verify(base, files, options.packageName || '');
+
+        // Prompt user to trust package if untrusted.
+        if (result.status == ModuleVerificationStatus.Untrusted && !options.nonInteractive) {
+            prompt.start();
+            let identityString = '';
+            if (result.untrustedIdentity.keybaseUser !== undefined) {
+                identityString = result.untrustedIdentity.keybaseUser + ' on keybase.io';
+            } else {
+                identityString = 'public key at ' + result.untrustedIdentity.pgpPublicKeyUrl;
+            }
+            const trustResults = await new Promise<any>((resolve, reject) => {
+                prompt.get({
+                    name: 'pkg',
+                    type: 'boolean',
+                    description: 'Package \'' + result.packageName + '\' is not trusted, but is signed by ' + identityString + '. ' + 
+                        'Do you want to trust this identity to sign \'' + result.packageName + '\' now and forever',
+                    required: true,
+                    default: false
+                }, (err, results) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(results);
+                    }
+                });
+            });
+            let trustStore = new TrustStore();
+            let didModify = false;
+            if (trustResults['pkg']) {
+                await trustStore.addTrusted(
+                    result.untrustedIdentity,
+                    result.packageName
+                );
+                didModify = true;
+            }
+
+            result = await moduleVerifier.verify(base, files, options.packageName || '');
+        }
+
+        switch (result.status) {
+            case ModuleVerificationStatus.Compromised:
+                process.exitCode = 1;
+                console.log('package is compromised: ' + result.reason);
+                break;
+            case ModuleVerificationStatus.Unsigned:
+                process.exitCode = 1;
+                console.log('package is unsigned: ' + result.reason);
+                break;
+            case ModuleVerificationStatus.Untrusted:
+                process.exitCode = 1;
+                console.log('package is untrusted');
+                break;
+            case ModuleVerificationStatus.Trusted:
+                process.exitCode = 0;
+                console.log('package is trusted');
+                break;
+        }
     }
 
-    private async verifyDirectory(path: string, full: boolean): Promise<void> {
+    private async verifyDirectory(path: string, options: VerifyOptions): Promise<void> {
         let moduleHierarchyVerifier = new ModuleHierarchyVerifier(path);
         let results = await moduleHierarchyVerifier.verify();
 
@@ -75,7 +155,7 @@ export default class extends Command {
             }
         }
 
-        if (prompts.length > 0) {
+        if (prompts.length > 0 && !options.nonInteractive) {
             prompt.start();
             let didModify = false;
             const trustResults = await new Promise<any>((resolve, reject) => {
@@ -134,7 +214,7 @@ export default class extends Command {
         console.log(untrustedCount + ' untrusted');
         console.log(trustedCount + ' trusted');
 
-        if (full) {
+        if (options.full) {
             const padRight = (input: string) => {
                 while (input.length < 25) {
                     input = input + ' ';

@@ -20,6 +20,8 @@ export class TrustStore {
             if (cachedData.expiryUtc > Math.floor(Date.now() / 1000)) {
                 // cache still valid.
                 return cachedData.data;
+            } else {
+                throw new Error('cache expired');
             }
         } catch (e) {
             const result = await fetch();
