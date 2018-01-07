@@ -12,6 +12,12 @@ Any automated builds that occurred in that time period which automatically insta
 
 pkgsign solves this issue with package signing. Once an identity is trusted to sign a package, only that identity can verify existing or new packages under the same name.
 
+## Disclaimer
+
+pkgsign currently depends on unsigned packages (because it is new!). When you install pkgsign from either GitHub or npm, those dependencies can't yet be verified.
+
+We're planning on introducing a 'sign on behalf of' feature, so that packages can sign the content of their dependencies. This will enable packages to be fully signed and verified, even while the original authors of those dependencies have not signed the content. However, this means that dependencies have to be exactly fixed to a version and can't automatically take minor or patch updates, as any change to the dependency's files will invalidate the signature.
+
 ## Installation
 
 ### From Source
