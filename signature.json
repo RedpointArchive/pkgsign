@@ -11,7 +11,7 @@
     },
     {
       "path": "README.md",
-      "sha512": "f20b82f74cf3f7b2a202afe9170a53b45df690d6ae3f67d6b5640c900e7a9607d1a2c1c4d87fa42106bbcd45f0c5cbd33f27efe1543f1024a5bd24274912b90d"
+      "sha512": "83c93d27be3081df1bd4b347c33b03086df572cd5051bd0767393881e79f6e2baf01c7566126270f94345cf5b9db009f0d8893259f6a80bc0703f5c7d4c43026"
     },
     {
       "path": "tsconfig.json",
@@ -246,7 +246,7 @@
       "sha512": "bc07bd1fec252e3cde384ded8caf2319956ad4489d264198515d1e653e7318b7011c6d596897ef5faa62adbbfb0b959fce6d4fc8b4926f8141f61fb4d1ec4e77"
     }
   ],
-  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJaUkiBCRB89yvKKRr01wAAuRMQAF6LpPwfUreGzMQDpkDcpre9\n9vd+q8W0D3cT+BER7ibeVdZ/CNtQpQPoT5lr81bVmPOPB1pm4Ek5tY9xiLzlzym8\nB+OWq0CZvNhk2xq+Zgxr5coj1G2Vg2USK++icQZkajEQvgzhqZD77NtvEnb/q+nl\npI0HBHwwjNa64udSr+obck61+bt5qMoKgjN9VhLeMCk/N+wCmyVKpgKEVMJYk/yk\nIQ1eteXAEi1TdeBxQ7mVqFEWy4UzlcUMStP8MDTzvurzX/QuG3q3KOUpn9Dh8AIa\nq8W0bjPWIJPstC1NMGCBFzIQy9obn7D/R8Mryn8TLPO7E2xzKxTIskRrJxut8whp\nI95VDzzkj58cOVjz2wd8Hcoy31xPJZYDpa/RpZlgV8em36WIEM03fbyMWF8SpY27\nCHelpT4onayget/Z9KhwzCkwkCjt/gqwlUL6gyihMZG9gDCbp6tvYvm1I5YLp2mG\nWSgJM9TAYLplLQcYYj8gfwCujYlx8S79eMGzL5vbjKB28/pbySz5+hoUL+ZJN9cl\npLYnxqpCqF27kCu16QVfsD3Fa8PSwye8JbkNXGOFe03k58/W67c4GmgUFomW4P1I\nfduYO7kBsIuBV/OzMcQnhm/F43xE7xBpS7qFSl6Iy4DoBvmYiYJ/KovCXw19Rkek\njZSZjEOkDYWWPerBkaEI\n=8z14\n-----END PGP SIGNATURE-----\n",
+  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJaUkpVCRB89yvKKRr01wAAe0UQAKCnN66ZUACRuxL9UJqcHAV9\n5fDzumOG5R2wn83rggDtDqf5k+pTm/5TMXYV8o77J7VR09tCTcqNIhAXsQaQutC4\nCDRcSC+wa3Z00wvu2drK2ejknsFYjHeZLBclP92nSxyb97y4xBTyn3zMbn4p893r\nfiAkMLxMu8R5V2GfHcDRh5h2t1/pZu7I/Lv1JFGtL05o1XQxAFT0zLvd7YB8d3x0\n82401hKpeYeEC8q+vMWRmaalAcBg4nWhXfA7O12chbYxz3BZcXqlbA3khvBwRtcZ\nqgaxs43OJA3YeJjEM1aP+oeunb0pArmoOeDB9wHANxgdNwbk63ohZmSalNDbMva8\ninkEJ8srPwm4xv57oCl/XLjd0mbTlCIyIz1qhqtqF4md6Ey72TW3iINX8Zo2jEvE\nQGfVmlS0UhqNH014+XnJcA63CIE2XkgK2gL3vQ0UFLfU39vOFjrU9AXzicqK/5jc\nnrV1Htv+t/sjJ0tg1HMFRELX9e+2kKj8lRaBedZJetjqlQC0Tw4lX05UBMmg3BmU\nJx2uBzPjWP6whFf/GEztlSeSDRAeeJ6MQ82+HTk9nrUtGO5jicS+XFYDJKtMykmX\notegqIts6KsgpTomXKHAbuwtLNbiOmz9Pof014JdSr+2W7pUYsC8OTL2yBiVm0ot\nzI+a2PqQQMqWhlEgzBP5\n=XWkz\n-----END PGP SIGNATURE-----\n",
   "identity": {
     "keybaseUser": "hachque"
   }
