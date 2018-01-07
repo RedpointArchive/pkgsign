@@ -24,13 +24,19 @@ export class ModuleHierarchyVerifier {
             path: this.dir,
         });
 
-        let promises: Promise<void>[];
+        let promises: Promise<void>[] = [];
         let trustStore = new TrustStore();
         let moduleVerifier = new ModuleVerifier(trustStore);
-        let results: { [path: string]: ModuleVerificationResult }
+        let results: { [path: string]: ModuleVerificationResult } = {};
         for (let moduleInfo of modules) {
             promises.push((async (moduleInfo) => {
                 let expectedPackageName = path.basename(moduleInfo.path);
+                if (expectedPackageName == '.') {
+                    // This is the top-level module we want to verify. Because this module might be
+                    // cloned by the user with Git into a directory name that doesn't match, we
+                    // trust package.json for the expected package name instead.
+                    expectedPackageName = moduleInfo.untrustedPackageInfo.name;
+                }
                 let result = await moduleVerifier.verify(
                     moduleInfo.path,
                     await packlist({path: moduleInfo.path}),

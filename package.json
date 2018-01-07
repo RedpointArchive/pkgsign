@@ -7,6 +7,9 @@
   "author": "Redpoint Games",
   "license": "MIT",
   "private": false,
+  "bin": {
+    "pkgsign": "dist/index.js"
+  },
   "dependencies": {
     "@types/tmp": "^0.0.33",
     "clime": "^0.5.9",
@@ -24,6 +27,8 @@
   "scripts": {
     "build": "rimraf dist && tsc",
     "pkgsign": "rimraf dist && tsc && node dist/index.js",
+    "sign": "rimraf dist && tsc && node dist/index.js sign .",
+    "verify": "rimraf dist && tsc && node dist/index.js verify . --full",
     "signedpack": "rimraf dist && tsc && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz",
     "signedpublish": "rimraf dist && tsc && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz"
   },

@@ -2,6 +2,8 @@ import {
     Command,
     command,
     param,
+    Options,
+    option,
 } from 'clime';
 import * as cmd from 'node-cmd';
 import * as path from 'path';
@@ -13,6 +15,30 @@ import { KeybaseSigner } from '../lib/keybaseSIgner';
 import { PgpSigner } from '../lib/pgpSigner';
 import * as packlist from 'npm-packlist';
   
+export class SignOptions extends Options {
+    @option({
+        name: 'signer',
+        description: 'the signer to use, one of: \'keybase\' (default) or \'pgp\'',
+        default: 'keybase',
+    })
+    withSigner: string;
+    @option({
+        name: 'pgp-private-key-path',
+        description: 'when signing with \'pgp\', this is the path to the private key file',
+    })
+    privateKeyPath: string;
+    @option({
+        name: 'pgp-private-key-passphrase',
+        description: 'when signing with \'pgp\', this is the passphrase for the private key file',
+    })
+    privateKeyPassphrase: string;
+    @option({
+        name: 'pgp-public-key-https-url',
+        description: 'when signing with \'pgp\', this is the HTTPS URL to the public key that pkgsign can download to verify the package',
+    })
+    publicKeyUrl: string;
+}
+
 @command({
     description: 'sign an npm/yarn package directory or tarball',
 })
@@ -24,38 +50,18 @@ export default class extends Command {
             required: true,
         })
         path: string,
-        @param({
-            name: '--signer',
-            description: 'the signer to use, one of: \'keybase\' (default) or \'pgp\'',
-            default: 'keybase',
-        })
-        withSigner: string,
-        @param({
-            name: '--pgp-private-key-path',
-            description: 'when signing with \'pgp\', this is the path to the private key file',
-        })
-        privateKeyPath: string,
-        @param({
-            name: '--pgp-private-key-passphrase',
-            description: 'when signing with \'pgp\', this is the passphrase for the private key file',
-        })
-        privateKeyPassphrase: string,
-        @param({
-            name: '--pgp-public-key-https-url',
-            description: 'when signing with \'pgp\', this is the HTTPS URL to the public key that pkgsign can download to verify the package',
-        })
-        publicKeyUrl: string
+        options: SignOptions
     ) {
         let signer: Signer;
-        if (withSigner == 'pgp') {
+        if (options.withSigner == 'pgp') {
             signer = new PgpSigner(
-                privateKeyPath,
-                privateKeyPassphrase,
-                publicKeyUrl);
-        } else if (withSigner == 'keybase') {
+                options.privateKeyPath,
+                options.privateKeyPassphrase,
+                options.publicKeyUrl);
+        } else if (options.withSigner == 'keybase') {
             signer = new KeybaseSigner();
         } else {
-            throw new Error('Not supported signer type: ' + withSigner);
+            throw new Error('Not supported signer type: ' + options.withSigner);
         }
 
         if (path.endsWith(".tgz") && lstatSync(path).isFile()) {

@@ -2,6 +2,8 @@ import {
     Command,
     command,
     param,
+    option,
+    Options,
 } from 'clime';
 import { lstatSync } from 'fs';
 import { ModuleHierarchyVerifier } from '../lib/moduleHierarchyVerifier';
@@ -9,7 +11,16 @@ import { ModuleVerificationStatus } from '../lib/moduleVerifier';
 import * as prompt from 'prompt';
 import { basename } from 'path';
 import { TrustStore } from '../lib/trustStore';
-  
+
+export class VerifyOptions extends Options {
+    @option({
+        name: 'full',
+        toggle: true,
+        description: 'show verification status of individual packages',
+    })
+    full: boolean;
+}
+
 @command({
     description: 'verify an npm/yarn package directory',
 })
@@ -21,26 +32,20 @@ export default class extends Command {
             required: true,
         })
         path: string,
-    ): Promise<number> {
-        let outcome: boolean;
+        options: VerifyOptions,
+    ): Promise<void> {
         if (path.endsWith(".tgz") && lstatSync(path).isFile()) {
-            outcome = await this.verifyTarball(path);
+            await this.verifyTarball(path);
         } else {
-            outcome = await this.verifyDirectory(path);
+            await this.verifyDirectory(path, options.full);
         }
-
-        if (outcome) {
-            return 0;
-        }
-
-        return 1;
     }
 
-    private async verifyTarball(tarballPath: string): Promise<boolean> {
+    private async verifyTarball(tarballPath: string): Promise<void> {
         throw new Error('not supported yet!');
     }
 
-    private async verifyDirectory(path: string): Promise<boolean> {
+    private async verifyDirectory(path: string, full: boolean): Promise<void> {
         let moduleHierarchyVerifier = new ModuleHierarchyVerifier(path);
         let results = await moduleHierarchyVerifier.verify();
 
@@ -57,12 +62,12 @@ export default class extends Command {
                 } else {
                     identityString = 'public key at ' + result.untrustedIdentity.pgpPublicKeyUrl;
                 }
-                if (prompts.filter((value) => basename(value.name) == basename(path)).length == 0) {
+                if (prompts.filter((value) => basename(value.name) == result.packageName).length == 0) {
                     prompts.push({
                         name: path,
                         type: 'boolean',
-                        description: 'Package \'' + basename(path) + '\' is not trusted, but is signed by ' + identityString + '. ' + 
-                            'Do you want to trust this identity to sign \'' + basename(path) + '\' now and forever',
+                        description: 'Package \'' + result.packageName + '\' is not trusted, but is signed by ' + identityString + '. ' + 
+                            'Do you want to trust this identity to sign \'' + result.packageName + '\' now and forever',
                         required: true,
                         default: false
                     });
@@ -87,7 +92,7 @@ export default class extends Command {
                 if (trustResults[path]) {
                     await trustStore.addTrusted(
                         results[path].untrustedIdentity,
-                        basename(path)
+                        results[path].packageName
                     );
                     didModify = true;
                 }
@@ -128,12 +133,43 @@ export default class extends Command {
         console.log(unsignedCount + ' unsigned');
         console.log(untrustedCount + ' untrusted');
         console.log(trustedCount + ' trusted');
+
+        if (full) {
+            const padRight = (input: string) => {
+                while (input.length < 25) {
+                    input = input + ' ';
+                }
+                return input;
+            }
+            console.log();
+            for (let path in results) {
+                let result = results[path];
+                let status = 'unknown';
+                switch (result.status) {
+                    case ModuleVerificationStatus.Compromised:
+                        status = 'compromised!';
+                        break;
+                    case ModuleVerificationStatus.Unsigned:
+                        status = 'unsigned';
+                        break;
+                    case ModuleVerificationStatus.Untrusted:
+                        status = 'untrusted';
+                        break;
+                    case ModuleVerificationStatus.Trusted:
+                        status = 'trusted';
+                        break;
+                }
+                console.log(
+                    padRight(results[path].packageName) + ' ' + 
+                    padRight(status) + ' ' +
+                    (result.reason || ''));
+            }
+        }
         
         if (compromisedCount > 0 || unsignedCount > 0 || untrustedCount > 0) {
-            return false;
+            process.exitCode = 1;
+        } else {
+            process.exitCode = 0;
         }
-
-        // All packages trusted.
-        return true;
     }
 }

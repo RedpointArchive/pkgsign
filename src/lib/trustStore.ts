@@ -3,8 +3,45 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { readFilePromise, writeFilePromise } from "./fsPromise";
 
+interface CachedData {
+    data: string;
+    expiryUtc: number;
+}
+
 export class TrustStore {
     constructor() { }
+
+    public async getOrFetchCachedPublicKeys(cacheName: string, fetch: () => Promise<string>): Promise<string> {
+        const trustStoreFolder = this.createTrustStoreIfNecessary();
+        const cacheFilename = path.join(trustStoreFolder, cacheName + '.cache');
+
+        try {
+            const cachedData = JSON.parse(await readFilePromise(cacheFilename)) as CachedData;
+            if (cachedData.expiryUtc > Math.floor(Date.now() / 1000)) {
+                // cache still valid.
+                return cachedData.data;
+            }
+        } catch (e) {
+            const result = await fetch();
+            await writeFilePromise(cacheFilename, JSON.stringify({
+                data: result,
+                expiryUtc: Math.floor(Date.now() / 1000) + (60 * 60 * 24), // 24 hours
+            }));
+            return result;
+        }
+    }
+
+    public async fetchCachedPublicKeys(cacheName: string, fetch: () => Promise<string>): Promise<string> {
+        const trustStoreFolder = this.createTrustStoreIfNecessary();
+        const cacheFilename = path.join(trustStoreFolder, cacheName + '.cache');
+
+        const result = await fetch();
+        await writeFilePromise(cacheFilename, JSON.stringify({
+            data: result,
+            expiryUtc: Math.floor(Date.now() / 1000) + (60 * 60 * 24), // 24 hours
+        }));
+        return result;
+    }
 
     public async isTrusted(identity: SignatureIdentity, packageName: string): Promise<boolean> {
         const trustStoreFolder = this.createTrustStoreIfNecessary();

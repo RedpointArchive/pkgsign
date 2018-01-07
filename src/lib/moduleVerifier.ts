@@ -26,6 +26,7 @@ export enum ModuleVerificationStatus {
 
 export interface ModuleVerificationResult {
     status: ModuleVerificationStatus;
+    packageName: string;
     reason?: string;
     untrustedIdentity?: SignatureIdentity;
 }
@@ -41,7 +42,8 @@ export class ModuleVerifier {
         } catch (e) {
             return {
                 status: ModuleVerificationStatus.Unsigned,
-                reason: 'Missing or unparsable signature.json'
+                reason: 'Missing or unparsable signature.json',
+                packageName: expectedPackageName,
             };
         }
 
@@ -49,7 +51,8 @@ export class ModuleVerifier {
         if (signature.version != 'v1alpha') {
             return {
                 status: ModuleVerificationStatus.Unsigned,
-                reason: 'Unrecognised signature version ' + signature.version
+                reason: 'Unrecognised signature version ' + signature.version,
+                packageName: expectedPackageName,
             };
         }
 
@@ -73,7 +76,8 @@ export class ModuleVerifier {
             if (!found) {
                 return {
                     status: ModuleVerificationStatus.Compromised,
-                    reason: normalisedPath + ' exists in the package, but was not in the signature'
+                    reason: normalisedPath + ' exists in the package, but was not in the signature',
+                    packageName: expectedPackageName,
                 };
             }
             
@@ -81,7 +85,8 @@ export class ModuleVerifier {
             if (hash != expectedHash) {
                 return {
                     status: ModuleVerificationStatus.Compromised,
-                    reason: normalisedPath + ' does not have content that was signed for (mismatched hash)'
+                    reason: normalisedPath + ' does not have content that was signed for (mismatched hash)',
+                    packageName: expectedPackageName,
                 };
             }
         }
@@ -105,7 +110,8 @@ export class ModuleVerifier {
             if (!found) {
                 return {
                     status: ModuleVerificationStatus.Compromised,
-                    reason: fileEntry.path + ' is expected by the signature, but is missing in the package'
+                    reason: fileEntry.path + ' is expected by the signature, but is missing in the package',
+                    packageName: expectedPackageName,
                 };
             }
         }
@@ -118,7 +124,7 @@ export class ModuleVerifier {
         // we can verify it.
         let verifier: Verifier;
         if (signature.identity.keybaseUser !== undefined) {
-            verifier = new KeybaseVerifier();
+            verifier = new KeybaseVerifier(this.trustStore);
         } else if (signature.identity.pgpPublicKeyUrl !== undefined) {
             verifier = new PgpVerifier();
         }
@@ -127,7 +133,8 @@ export class ModuleVerifier {
         if (!await verifier.verify(signature.identity, signature.signature, deterministicSignature)) {
             return {
                 status: ModuleVerificationStatus.Compromised,
-                reason: 'The signature does not match'
+                reason: 'The signature does not match',
+                packageName: expectedPackageName,
             };
         }
 
@@ -139,14 +146,16 @@ export class ModuleVerifier {
         } catch (e) {
             return {
                 status: ModuleVerificationStatus.Compromised,
-                reason: 'Missing or unparsable package.json'
+                reason: 'Missing or unparsable package.json',
+                packageName: expectedPackageName,
             };
         }
 
         if (packageInfo == null || packageInfo.name != expectedPackageName) {
             return {
                 status: ModuleVerificationStatus.Compromised,
-                reason: 'Provided package name in package.json did not match expected package name'
+                reason: 'Provided package name in package.json did not match expected package name',
+                packageName: expectedPackageName,
             };
         }
 
@@ -155,11 +164,13 @@ export class ModuleVerifier {
         if (await this.trustStore.isTrusted(signature.identity, expectedPackageName)) {
             return {
                 status: ModuleVerificationStatus.Trusted,
+                packageName: expectedPackageName,
             };
         } else {
             return {
                 status: ModuleVerificationStatus.Untrusted,
                 untrustedIdentity: signature.identity,
+                packageName: expectedPackageName,
             }
         }
     }

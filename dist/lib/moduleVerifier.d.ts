@@ -8,6 +8,7 @@ export declare enum ModuleVerificationStatus {
 }
 export interface ModuleVerificationResult {
     status: ModuleVerificationStatus;
+    packageName: string;
     reason?: string;
     untrustedIdentity?: SignatureIdentity;
 }
