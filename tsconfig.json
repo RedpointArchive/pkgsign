@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "sourceMap": true,
+    "lib": [
+      "es2015"
+    ],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "rootDir": "src",
+    "outDir": "dist",
+  },
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
+}

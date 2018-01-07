@@ -1,0 +1,13 @@
+{
+    "version": "v1",
+    "files": [
+        {
+            "path": "package.json",
+            "sha512": "dsfjlskdjflskdjflksdjfsdf"
+        }
+    ],
+    "signature": "asdfasdfkalkjsdfasdf",
+    "identity": {
+        "keybaseUser": "hachque"
+    }
+}

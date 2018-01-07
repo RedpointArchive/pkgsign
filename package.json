@@ -1,0 +1,29 @@
+{
+  "name": "pkgsign",
+  "version": "0.1.0",
+  "description": "A library for signing and verifying npm and yarn packages.",
+  "main": "index.js",
+  "repository": "https://github.com/RedpointGames/pkgsign",
+  "author": "Redpoint Games",
+  "license": "MIT",
+  "private": false,
+  "engines": {
+    "node": ">=7.6"
+  },
+  "dependencies": {
+    "clime": "^0.5.9",
+    "node-fetch": "^1.7.3",
+    "openpgp": "^2.6.1",
+    "ts-node": "^3.3.0",
+    "typescript": "^2.4.2"
+  },
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "pkgsign": "node ./node_modules/ts-node/dist/bin.js src/index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^8.5.7",
+    "@types/node-fetch": "^1.6.7",
+    "rimraf": "^2.6.2"
+  }
+}
