@@ -1,29 +1,36 @@
 {
   "name": "pkgsign",
   "version": "0.1.0",
-  "description": "A library for signing and verifying npm and yarn packages.",
+  "description": "A CLI tool for signing and verifying npm and yarn packages.",
   "main": "index.js",
   "repository": "https://github.com/RedpointGames/pkgsign",
   "author": "Redpoint Games",
   "license": "MIT",
   "private": false,
-  "engines": {
-    "node": ">=7.6"
-  },
   "dependencies": {
+    "@types/tmp": "^0.0.33",
     "clime": "^0.5.9",
+    "node-cmd": "^3.0.0",
     "node-fetch": "^1.7.3",
+    "npm-packlist": "^1.1.10",
     "openpgp": "^2.6.1",
+    "prompt": "^1.0.0",
+    "recursive-readdir": "^2.2.1",
+    "targz": "^1.0.1",
+    "tmp": "^0.0.33",
     "ts-node": "^3.3.0",
-    "typescript": "^2.4.2"
+    "typescript": "^2.6.1"
   },
   "scripts": {
     "build": "rimraf dist && tsc",
-    "pkgsign": "node ./node_modules/ts-node/dist/bin.js src/index.ts"
+    "pkgsign": "rimraf dist && tsc && node dist/index.js",
+    "signedpack": "rimraf dist && tsc && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz",
+    "signedpublish": "rimraf dist && tsc && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz"
   },
   "devDependencies": {
     "@types/node": "^8.5.7",
     "@types/node-fetch": "^1.6.7",
+    "@types/recursive-readdir": "^2.2.0",
     "rimraf": "^2.6.2"
   }
 }
