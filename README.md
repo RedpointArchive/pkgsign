@@ -29,8 +29,7 @@ Because `npm` nor `yarn` support package verification yet, this is the only way 
 ```
 git clone https://github.com/RedpointGames/pkgsign .
 yarn                                  # install dependencies
-yarn build                            # build pkgsign
-yarn verify                           # verify the signature.json provided in this repository
+yarn verify . --full                  # build pkgsign and verify the signature.json provided in this repository
                                       # (should be signed by hachque at keybase.io)
 yarn pack --filename=pkgsign.tgz      # make an unsigned package for local use
 npm install -g ./pkgsign.tgz          # install pkgsign globally
