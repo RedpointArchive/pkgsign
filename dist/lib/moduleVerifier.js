@@ -117,7 +117,7 @@ class ModuleVerifier {
                 verifier = new keybaseVerifier_1.KeybaseVerifier(this.trustStore);
             }
             else if (signature.identity.pgpPublicKeyUrl !== undefined) {
-                verifier = new pgpVerifier_1.PgpVerifier();
+                verifier = new pgpVerifier_1.PgpVerifier(this.trustStore);
             }
             // Request the verifier verify the signature.
             if (!(yield verifier.verify(signature.identity, signature.signature, deterministicSignature))) {

@@ -35,7 +35,7 @@ class PgpSigner {
                 detached: true,
             };
             const signedResult = yield openpgp.sign(options);
-            return signedResult.signature;
+            return signedResult.signature.replace(/\r\n/g, "\n");
         });
     }
 }

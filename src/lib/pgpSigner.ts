@@ -27,6 +27,6 @@ export class PgpSigner implements Signer {
             detached: true,
         };
         const signedResult = await openpgp.sign(options);
-        return signedResult.signature;
+        return signedResult.signature.replace(/\r\n/g, "\n");
     }
 }

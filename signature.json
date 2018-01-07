@@ -123,11 +123,11 @@
     },
     {
       "path": "dist/lib/moduleVerifier.js",
-      "sha512": "a31b17ce339871372494ff3c5a1a6db5442d837e352093b2e94ee9441c4b1bbfcd5f19f8d3c1afc14c205eeedb6d41daf28b62114b69f967509833e8e8acbd93"
+      "sha512": "c78e92749e45b43a972b844fcafed0788ef36dfdbbe432b37c2937f1bb49ed1a47abda57086cd836507a1367df9b6e5e9cfac3fa8c597e9243bf4050d201ae33"
     },
     {
       "path": "dist/lib/moduleVerifier.js.map",
-      "sha512": "1a7a9504fc2ecb47a3e30191a286e47e0c9ce5548ff0518ce9f4aec281b59712056157dd00f0ad5adb2323bbcb2f12d49362536c8d28a5f93040db156d073ee3"
+      "sha512": "d7c85735fa7d832fc24faf174c0fe76c0486ac628b7c0703e783629efb19fd66d0de859590bf3deffb638bd1fddad80f666c8a2cccb1bf820de7d4e511c57b56"
     },
     {
       "path": "dist/lib/pgpSigner.d.ts",
@@ -135,23 +135,23 @@
     },
     {
       "path": "dist/lib/pgpSigner.js",
-      "sha512": "6bbd58a26ce25ad947125b67e9038c86f4202cc311bc21f07192d1f8546453fb5a1a7a0b7ebd12914038f88d26d639872a313ad46259250706f8bf3f0bc8fdaa"
+      "sha512": "0e2d3f446be21a37e5443051cd3e22bcb5b355ce6fbb57016a0338ff8647e53d40d11376c8b59c25e8cf45c853c1b9ce7ec85277e9e01918812a7f66c8f2ca37"
     },
     {
       "path": "dist/lib/pgpSigner.js.map",
-      "sha512": "a7495638f390432be262bc1569e8723159367f5dfb218a04c154092225d1056eef1806daf4bf76ec521b467d6cb4f0b4025f83653386c601dfb4ee9b664d1a35"
+      "sha512": "6f8f6ced9a3e2d87232ddfbe7d6a04c2dc973e50806ede2ed2b103a772eaa62fc95ec8ae08f7a10a0deaf8c3e390d58c366fadd8cee5721b12e8602504cca3f0"
     },
     {
       "path": "dist/lib/pgpVerifier.d.ts",
-      "sha512": "f9758cc3a760cbcdbc60ff64f8b446d27ef014babd9edb768f65063279031d5bef1ec319676d5d29eab86b6c77a6f7dd21747590309d6778731ae403423256c4"
+      "sha512": "c4b5cef270b198929ec992b72b767eb894186e83a5a3274a31676d7814f7a9cdd73a5a2b17f569a6560402b6319032a742ecd0ea5f86136bd96bfe4a4779f970"
     },
     {
       "path": "dist/lib/pgpVerifier.js",
-      "sha512": "7d5b2ceef198b29f2e19ae641894aeb698f8e9550fdc4ec9b5168045e13e0766e835b8fbb461446582339940dcf76a2fd098ec3d6bb9da02a36d416d337ccb03"
+      "sha512": "8db2598fb3a9f9389b6a6aae32b82cb1179ac6bf33c7821e455215e549681cad6c1507c928e63c040f70170d01bd48c73da0b8b7e4b9f40a16404cc161c08858"
     },
     {
       "path": "dist/lib/pgpVerifier.js.map",
-      "sha512": "a725178fad756241672ac98f794adaf0ebd351138d4492f8be0beef707cc5bc517abaaed93753b4362cf6f67d7ee91c4e341597401c69fa307775560927839f3"
+      "sha512": "6d6f8d3456476950be9b0dd22073ed9eb0bfe50fe4a654bf737e00615a9635da43afb09310f98fdac931a5cf7324a19e6c31380400f5bd015055314c0d0afa0e"
     },
     {
       "path": "dist/lib/signer.d.ts",
@@ -223,15 +223,15 @@
     },
     {
       "path": "src/lib/moduleVerifier.ts",
-      "sha512": "56aab43123780602bd84ab35cae8eec2ae16ac5983720de0116be5a59f5210e46b6b2736217ca09ad0eea536ea366597c49ac39f02ff2220754bae287d8c6f41"
+      "sha512": "ef83a3392f1484d1878080f96ba9c728dd34eb286db4c1fe5495cf1ce6329aae6e6d1814b2283a9bf7bb026845f9017399e61f36584262443013047179f6f02f"
     },
     {
       "path": "src/lib/pgpSigner.ts",
-      "sha512": "82f59b3092b4e078d698868aaa814b6dcbfebf488cda1e5943abd1a842e58d068c8ca6f700ca31e94876d3de74712369594d739a1dded9a8fccaa4625a539f34"
+      "sha512": "4d42556a510ad97011cc640c393feed963d271530cd742571379117cc87e9023b697d4ee8c281814b1f39e7a6355f3505bbbb054e702d5899bb277f508102d6a"
     },
     {
       "path": "src/lib/pgpVerifier.ts",
-      "sha512": "a029b910ccde9bb66c768b7371a4145d309723aa61b48f868c8c40d8389b37a1c6948ea8a4b8fbebe1b18d2b9be0dfce8e035055aeecdd54ea754b6d25312935"
+      "sha512": "34e4bd9f6e4149826db01bb9c0d91cfc318727e2e691c1ac1030cf8e2cb7698ddf2575fef9ab1a2bf4ec3cebdfefb272693056a39eb9b1a72036a19553aed2d1"
     },
     {
       "path": "src/lib/signer.ts",
@@ -246,7 +246,7 @@
       "sha512": "bc07bd1fec252e3cde384ded8caf2319956ad4489d264198515d1e653e7318b7011c6d596897ef5faa62adbbfb0b959fce6d4fc8b4926f8141f61fb4d1ec4e77"
     }
   ],
-  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJaUkpVCRB89yvKKRr01wAAe0UQAKCnN66ZUACRuxL9UJqcHAV9\n5fDzumOG5R2wn83rggDtDqf5k+pTm/5TMXYV8o77J7VR09tCTcqNIhAXsQaQutC4\nCDRcSC+wa3Z00wvu2drK2ejknsFYjHeZLBclP92nSxyb97y4xBTyn3zMbn4p893r\nfiAkMLxMu8R5V2GfHcDRh5h2t1/pZu7I/Lv1JFGtL05o1XQxAFT0zLvd7YB8d3x0\n82401hKpeYeEC8q+vMWRmaalAcBg4nWhXfA7O12chbYxz3BZcXqlbA3khvBwRtcZ\nqgaxs43OJA3YeJjEM1aP+oeunb0pArmoOeDB9wHANxgdNwbk63ohZmSalNDbMva8\ninkEJ8srPwm4xv57oCl/XLjd0mbTlCIyIz1qhqtqF4md6Ey72TW3iINX8Zo2jEvE\nQGfVmlS0UhqNH014+XnJcA63CIE2XkgK2gL3vQ0UFLfU39vOFjrU9AXzicqK/5jc\nnrV1Htv+t/sjJ0tg1HMFRELX9e+2kKj8lRaBedZJetjqlQC0Tw4lX05UBMmg3BmU\nJx2uBzPjWP6whFf/GEztlSeSDRAeeJ6MQ82+HTk9nrUtGO5jicS+XFYDJKtMykmX\notegqIts6KsgpTomXKHAbuwtLNbiOmz9Pof014JdSr+2W7pUYsC8OTL2yBiVm0ot\nzI+a2PqQQMqWhlEgzBP5\n=XWkz\n-----END PGP SIGNATURE-----\n",
+  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJaUk+TCRB89yvKKRr01wAAJsgQAHT3BiK/vcQ7+uV90i5Fg2u5\nI0lrnWq7/lQ+RnhprQH22IdHnZeqR078KGN7cCqF7PTNEQ4J4G84Q1uxeVwdgnih\nXEVDbVm/dMXjVMwVRDiWwjDkCVstaifMBhkd5WjPXXKTUjaZ+5U5ZFpX/+qCbNzQ\nkj2FAz7TPlfDa2LkJS6o/hePwQ2YEU0q1YO4zia0ssbhU3Em6cmcy4waQVzomRKL\ntwDcW9vuUK+IhvfD6v7HATXElaHZKFxIoI8wwjxXQkiYefbc5Xad0sWtp005ncfj\nWjkOlvBaNBKN5WE2VHmVLufyiJfDQPPjjpWfX09faWxyf5mZRQQRBaZ6RVzJ4zFK\nvPkYxQ70WVO6rnN9DGTlVzNwyxVaKoUqlLlxtIDLjjH/x4gd+EieLXccEf0NTbZM\nZVp1ZuuKX0qTLQzKFLhblt0SzcCMlHBvTrZBVDwLVGiaqoggSjMDN96oGr8X2+UX\nwD+RyAwnI04JVFcfplUGQYaqsDgJ0BlUJmI/AiWvyOyLO1t2yu9ahD51c6aIxv3B\n8xuo9EXj78raku2cj5z94SLCqaGCyo+BQoTP/AAjPNHUDi7RIAydStrc1yAptz9L\nwAvjL6mZxPodGkIGHeY9ruKecnA57ZTBSlw8rnLw/OfYwlS/fcut9SE4S47EqaIs\nuHO6oGryFlpv7z5xrt5n\n=fzW/\n-----END PGP SIGNATURE-----\n",
   "identity": {
     "keybaseUser": "hachque"
   }

@@ -126,7 +126,7 @@ export class ModuleVerifier {
         if (signature.identity.keybaseUser !== undefined) {
             verifier = new KeybaseVerifier(this.trustStore);
         } else if (signature.identity.pgpPublicKeyUrl !== undefined) {
-            verifier = new PgpVerifier();
+            verifier = new PgpVerifier(this.trustStore);
         }
 
         // Request the verifier verify the signature.
