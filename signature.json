@@ -3,31 +3,31 @@
   "files": [
     {
       "path": "package.json",
-      "sha512": "39d775a48d6c0c00b1bea88b6ca5e65bafe3c961d2b2276642f284366fc5245a4bda7daa076e5593d73fa962397920855ff843b4d9302cbc4ce502926f5453da"
+      "sha512": "83d5ef84b1509a12330852a750ef2dd209881e8374f95d1533845b4feed31b2175d2b810e1b5b0f2027a4f1a78940b13e538807cb22c96afd894a9e1dc28b3fe"
     },
     {
       "path": "LICENSE.md",
-      "sha512": "687e81d6ffec5e431546ec90726fc9a44da74b308d0258ccdf2f4180750be7835b3523f6bbba059f5dd26fd5a72b23f6d3fb0634cc356137648b241bf31960ab"
+      "sha512": "920655be8fd32df46af2069bff24ee9359bfcdfcbc73b588f01c0e79ec043a98c68c0437b1a1c00c06eda8a24a20a69b299d9d0e5502e0fe00a92239608d4ff5"
     },
     {
       "path": "README.md",
-      "sha512": "cc82114c65f9c03c1b0ca695281e616dcfcf0e56ec113c180fad1d982180dd4ad35f976e0e8241d44d9b293dd70e13d6a4523bde5febe816e09aa72238394229"
+      "sha512": "f20b82f74cf3f7b2a202afe9170a53b45df690d6ae3f67d6b5640c900e7a9607d1a2c1c4d87fa42106bbcd45f0c5cbd33f27efe1543f1024a5bd24274912b90d"
     },
     {
       "path": "tsconfig.json",
-      "sha512": "91d920dde2e77433142dc8e2aeac32234f6664dfc70d5ae22ebd53e41a964dc9892fe7092fac75ba590593dd6ebf7ed95af1350053ffd7fff96311361abce16a"
+      "sha512": "80c1a9710ab8a025a7a1f41164ade1559f76db656f222fe9821a2646a88e01751d4b0823e58217ea3970afe2a741573dcbd42f8369a23e14e68374542f21eb4e"
     },
     {
       "path": "yarn.lock",
-      "sha512": "e5952dc34f3fce807475fc5fa0b002492b53571371e0db549d8339d23ddb2bdd1d9e9fed412a75f29000368acf4ff1afc109ec325573336c97054447143e4130"
+      "sha512": "eb950ed8097038459257b2714d7ad0bf11ed6e25d7cfea700bd81e6e8cae99285176848e43fa83eda5c09bb9622f09133e4674317db39c7e77c3e22ba40ebcd7"
     },
     {
       "path": "dist/commands/sign.d.ts",
-      "sha512": "1d6351196bf82f9116b09b7688759fe687806b8827fcafd3a02663ab15f26476727b40936e8599e8d9dbdc99e974e127f74cda5e12a773a8535391e5a01c290c"
+      "sha512": "eef6ab8d27f93487b4070653bb59a4982e382464b933200e8850f1a1bded7937d49fb15eb585b4683fc4b345309cfbdf91663e020da44a47a779bdc62ec30dc5"
     },
     {
       "path": "dist/commands/sign.js",
-      "sha512": "3d3ffe2e45d0121da9aee175e77de4b91eea4d9137dad8cb30e8a8ab142f80e8425b10d14ccc09fb8c377bcb8c7c6e1bfb7db078176989ea75e04bb2fe8f73db"
+      "sha512": "9c14876cb46ff923fce2f5ce0e130129ed6ef752f35f5be8bea3a0c8bc93a8573b60c9d3aca22a684968aaeb97dbbfa57da6168bb822d45e3f1f6bc465ff0bb3"
     },
     {
       "path": "dist/commands/sign.js.map",
@@ -35,11 +35,11 @@
     },
     {
       "path": "dist/commands/verify.d.ts",
-      "sha512": "1a83eebf9ad979f97a8ec612026b09d711852b6678b8607e13b7e43f3d2066cc8b4fc98a7446e95cfc23096a9540f526b7ee9d44400e5dc72cc0cecdcda6c5ac"
+      "sha512": "20b8d5c05b576f4e852eea85ea26794e8237ca597911baf515d2840a66e4066d8de86e050c49aeee86bd2ab31a9b6aa5d5eedf26da07424ecafe9e6d2cd650e1"
     },
     {
       "path": "dist/commands/verify.js",
-      "sha512": "8adde030e8b9bd3ed6e10aa56fea19d60649205fda0e24dc31cfc50559e19311287e4f326cd6531d247557c109f457374ef5a5200f0095b442b337cddc26c766"
+      "sha512": "ff0c31ffda14093825f6b7c317f84dc5a8236eae7b235ff7c93e84da180d7a8502df95e19d6f22a02b62a01b56ddb107259caad34c9cd6d460d6dc41f243e10b"
     },
     {
       "path": "dist/commands/verify.js.map",
@@ -51,7 +51,7 @@
     },
     {
       "path": "dist/index.js",
-      "sha512": "b5a6882aabe437e36c0b67f6e8f9eea29ccb63876299ca81b57783730257235678dac9d27310c553a6b601569b9d849b80892f0c9bb330043afb6ef1c765f3ec"
+      "sha512": "5fd4ee722c88cc77c0051d9596d74b5c7fdbd1de0f0a05e8f630b8d6e5893d471c74cd857fea9a88c2efe0738db447acdd0f257b6fd3aade33d4eefbae7d30cc"
     },
     {
       "path": "dist/index.js.map",
@@ -59,11 +59,11 @@
     },
     {
       "path": "dist/lib/deterministicSignature.d.ts",
-      "sha512": "dfbdeba564c504c50f482c4abaa237ee74d0713d0dc637dbe9cf6e928aeee7e006edd27fe2abac88807b6957d7c1d252de21286350371541c1807bb2ea0db043"
+      "sha512": "94ca0c39684c81d1b4bb9e1d9bbc81cfc4136de9ef20dc92e271c784494b06c2d07989409f9ac4c472820b6256085cf3d82dadfd6cdfcf731261947b815689c0"
     },
     {
       "path": "dist/lib/deterministicSignature.js",
-      "sha512": "2507f408de577556354d220e0738a75a8c69deb034a27aaf0fa49a20f593c43025ab3c1973cea61ff2c3631606a782bd1d6cfa769432f71c8d3d7009b75bd867"
+      "sha512": "646a98e37997f068540fa36ae48fc865aed89424b685a24fe8511f9692381e3fb3f7c1ad699b6dbc088976a47087773d957161c5ac3b36f4c83527ce89fb9170"
     },
     {
       "path": "dist/lib/deterministicSignature.js.map",
@@ -71,23 +71,23 @@
     },
     {
       "path": "dist/lib/fsPromise.d.ts",
-      "sha512": "f08f540648881aa76bd58fbc5f4064d8a1805f263480a99d56dc4a18a18d0278aa0172f85f3795b6f57171d46de241dd7eef510eac590a2686a1ca5d94ea4d39"
+      "sha512": "d9aaa989d0594c91cfe7fae118b2e5b77c324aa368bb829807c1598127a9d343fbd8c57f66b7220ba3906682f7bd071a2d3c99cb3ef2ef0bb842b62bbcae5c48"
     },
     {
       "path": "dist/lib/fsPromise.js",
-      "sha512": "0ee7aadbaf828638aecd442d88c00fe9102ab696b86c3526ed1903a38b98fc7cd795632b57b35d895da716155080ad699731f3e34cb83d62fa81c68532092061"
+      "sha512": "b54456ef709cd29df6bb392e5f47190604307a783656bb07bd4ab5304231015da2af95cac22b66d84d9abb25d15fee3d5168b5d8d2abf29f78ac618c94c338f9"
     },
     {
       "path": "dist/lib/fsPromise.js.map",
-      "sha512": "b47e3d274654017c555d9e5bd649e3b862a471a62b40ea9dd0b1b37379a80b7dc752d8e89ca178a7de91e61a7fe4d652e2c6295d4a0d97a1f212752998162019"
+      "sha512": "423bb4fba50b223d7408a67a11f4af3c52b1e84484e37ba863d972987803ac7ba3b25796d305881da896fb699b23b4980968732f147541f97c19b2d0e1cb9ae0"
     },
     {
       "path": "dist/lib/keybaseSIgner.d.ts",
-      "sha512": "08959cdf706886f31f1d739cfb6a7eef56413392f6ec1d2f84de24362543461dbcb0cb07f9aa97615d6d4fe6aa5ea2552630f4b9f6b77a5dee37eb2fef426590"
+      "sha512": "0c09cf7e189ada1a3475c1d8517686f35a5d170270d9a5a941b4f0cd72cebbb47d2d5a635859dfd4e8eb617e25bef4e609defb497b3238df31093962fa2a1198"
     },
     {
       "path": "dist/lib/keybaseSIgner.js",
-      "sha512": "4fc780853ff4e92b11e039c6c88e8181091941555a7a49704c91fe28ecacbfd4d5eedd9220e2964e71cf79fb3c9657f6c84cf1b22bdab24a45d1c0dd79218f29"
+      "sha512": "c8b245e9831c9ac77ac0f17b635c595c205317731c7f71cf90838ad28ff5b732d6882ffe1052182272e7f6ea996deefccacac69fc447cdb12144c8e27d76db59"
     },
     {
       "path": "dist/lib/keybaseSIgner.js.map",
@@ -95,11 +95,11 @@
     },
     {
       "path": "dist/lib/keybaseVerifier.d.ts",
-      "sha512": "9a79e651a451c0df87804b24de6c651bfad485e5c22fd44123d6fdb5c4a4f222ef1ec3f8384d30b6ae81842f215d6be4c36e2fa52adb64646531536ac962bc3f"
+      "sha512": "0c0586f815d7511f3dd2dac2212f2169b6e5da2a6530998d5f41547e1eb5bb6ea833d98a587fa4453c08bb4a0c6b825dd2f68c35841acdaec3aa866b73f854f4"
     },
     {
       "path": "dist/lib/keybaseVerifier.js",
-      "sha512": "63382c0dc0a94f7f604a67e31a7fc59025814fe10c1fb89bb64215b52d23e435b549779891e4e5559b09355cfebd2360b9bbf02ce5860bd437c0e0adc4924c01"
+      "sha512": "15ac5f94eb47e9ac93c96261e07ef8fae309f33ccb2ae03477580c9d1e40c7f4c8bdeb947932f32d4119d8a277436d3917082a5e67d5dc18a3dbe9578310d9ee"
     },
     {
       "path": "dist/lib/keybaseVerifier.js.map",
@@ -107,11 +107,11 @@
     },
     {
       "path": "dist/lib/moduleHierarchyVerifier.d.ts",
-      "sha512": "7fe1114352f9bc546c81468f345b230d961c0414d4d5c3f8500a12726bf77ac3b46725f0a13855a181e3c03fcf5cc43515cca5ecc96a4063ce532eb61941289a"
+      "sha512": "5a6b830e88a10557a030c9f391f540a08ae9e3536afa3b29929b0b426fe90cd7595e62fa788cc18da5743d010ce55f2631a3100c39210a4f47a57ddfe1f7cfe0"
     },
     {
       "path": "dist/lib/moduleHierarchyVerifier.js",
-      "sha512": "63ced1afc4a48f4b375d3a285e06f2420943931813cb76cd3a98183bedf89aacda0c89bd66f9af5530a9fe6078ddfa311b3e7d1a693df8e9eeddbe1c3cbc333f"
+      "sha512": "4699d947a908e8daafdccd9219c65050d5fa0bd87686b64d0d7c2b95cf900f54a11062f504ad6786e74427b257671fa56cc0742303ecb6ee751727565d22d698"
     },
     {
       "path": "dist/lib/moduleHierarchyVerifier.js.map",
@@ -119,11 +119,11 @@
     },
     {
       "path": "dist/lib/moduleVerifier.d.ts",
-      "sha512": "7006bf2f21c74ea4f2db711cfe93dbb8595614c31579d10367432f9046bace9ffebd0e1053d0db875c4a4ed961a16535ab026431d855e4f5b21c519028732b8e"
+      "sha512": "05b0041345f830df13ca7999731c43fdbbf8609d3df8f70092d444087a2bf4f1eac806c3ac0db98227ade185add8ee770dc75c0de10f099e422af56b7d797e0e"
     },
     {
       "path": "dist/lib/moduleVerifier.js",
-      "sha512": "f62538f9121973ac6c1b2d2c7e27c20ad37a0088bb794a05906b5c66fa2e96b9a8c860dd93a7195f5a69d3d1569df62dc29790dc08f14a326aa96b511378701a"
+      "sha512": "a31b17ce339871372494ff3c5a1a6db5442d837e352093b2e94ee9441c4b1bbfcd5f19f8d3c1afc14c205eeedb6d41daf28b62114b69f967509833e8e8acbd93"
     },
     {
       "path": "dist/lib/moduleVerifier.js.map",
@@ -131,11 +131,11 @@
     },
     {
       "path": "dist/lib/pgpSigner.d.ts",
-      "sha512": "aaab454f89ae5c3502adf4e7c11faa0c55392671e70d39611895276110ea393e4b10174e70a944a33f8794b4a9b1d85f4525c2f8a542494537ef7d580edc8585"
+      "sha512": "964859355f645b15cbaaa3f3ae680872af2423862e95e1f1342eafda68793a17d6f32532b9130d8692a2f2cd46021907a0be2bf99fc825e1bb5d05ffcea31b19"
     },
     {
       "path": "dist/lib/pgpSigner.js",
-      "sha512": "15353495267ade02306411099744abf313df2c187b4d07bb5430336208bed53eeac07d80d4c9529e2d282bd26eb38c19feeb4d228ecb977934eeac3cdc5f5764"
+      "sha512": "6bbd58a26ce25ad947125b67e9038c86f4202cc311bc21f07192d1f8546453fb5a1a7a0b7ebd12914038f88d26d639872a313ad46259250706f8bf3f0bc8fdaa"
     },
     {
       "path": "dist/lib/pgpSigner.js.map",
@@ -143,11 +143,11 @@
     },
     {
       "path": "dist/lib/pgpVerifier.d.ts",
-      "sha512": "5a767e0ce97f98d32e71ce44e6161d9176a602d32c8ec286e1633e2a98f123d15ad2eac3462b0188b2811a3781cad52188bae4c44d3c9a1530d1f9ef6c71d006"
+      "sha512": "f9758cc3a760cbcdbc60ff64f8b446d27ef014babd9edb768f65063279031d5bef1ec319676d5d29eab86b6c77a6f7dd21747590309d6778731ae403423256c4"
     },
     {
       "path": "dist/lib/pgpVerifier.js",
-      "sha512": "41fff73046d1d308a00fbcd6840949936b2eefc5ab381322b99241ea0d220d8dd03ab820b028f5cb01c4a61753e82cb1f965572035a878d27405236ff6127217"
+      "sha512": "7d5b2ceef198b29f2e19ae641894aeb698f8e9550fdc4ec9b5168045e13e0766e835b8fbb461446582339940dcf76a2fd098ec3d6bb9da02a36d416d337ccb03"
     },
     {
       "path": "dist/lib/pgpVerifier.js.map",
@@ -155,11 +155,11 @@
     },
     {
       "path": "dist/lib/signer.d.ts",
-      "sha512": "fb74ecaa23f7a4635e3397ce184d2c72fd6f040f2676fe0b764b07192c37f47736391b03f534cb42aca63bf436c6fea364f8d2dbc02a73cb70b57c3d9abe8e33"
+      "sha512": "2a592098c404177ffd202af955b01d994534fabe092fc93fa49579a262f773a18f59d97d3de6e7450e398f658809823279f5203deac12b4e65fdde71f12220c2"
     },
     {
       "path": "dist/lib/signer.js",
-      "sha512": "e8100b1b2766cd2f4f9f242f2c7e419c2011f4182fab09737bf21e970db0f3dcd560d3e54ec909b2cd0516057282d9d0f7ce446d7ea22cdfa35133b0dcec0cf1"
+      "sha512": "2155c13cd51ec72f7150f80b814b15bc5ea7e1030a36c8ea0d389480fd0907038c2956ad4ba701a70df559bf229a959d8c863ebe53178fd9c7dfd426f53f6965"
     },
     {
       "path": "dist/lib/signer.js.map",
@@ -167,11 +167,11 @@
     },
     {
       "path": "dist/lib/trustStore.d.ts",
-      "sha512": "1218f5c3a1f7a7c1560f315a3863fbef2c66ac8aebf2188901ef9c0af589becf63501506ab8ac8a41f6873e53cdc62c23bc1fc5c08a3d3bf0c3220e74e1135b6"
+      "sha512": "4c1cc51b4288f5a2d5b1d62005d8bbd80720ce8d915adf88c07cd72a8dac52e8f2252c8e0a9d6a224add184457924c3c5031b1a6bd14168d51be4fb639cabc40"
     },
     {
       "path": "dist/lib/trustStore.js",
-      "sha512": "082fa0f14c09d19571deb310ef5ba6f69c5aceda4a7c0fccd241a218fd53ba0ed5eb0790536e9cd822ac7f9ca637299ace5d928a924d9775e10a8ed629b9269c"
+      "sha512": "483648b110b6be07f6c5c3e76f7303bc68eb881f9e3219dc9da1e521d2ad833705152a0be703b44f3d64a4efe665b27fe3fb5e8aefb34afca2ba0e8208cbf0f8"
     },
     {
       "path": "dist/lib/trustStore.js.map",
@@ -179,11 +179,11 @@
     },
     {
       "path": "dist/lib/verifier.d.ts",
-      "sha512": "f334e0a17aa952008f3160d16dc0e4b0f5cff238a4657990bd6d53ea0a1f015fa5f8344a2afb2fb89f673ffdf7b7848384df3278715c942f584d143458c49098"
+      "sha512": "4d0e17e4dad7d45cb16ac688d9f3ccc7fcfa519c8ce233d1578afd611ec8125ce3c2032b17e92b5fd9839b57a401c4e0af49f2a8ea088ac808d65ce2940984f2"
     },
     {
       "path": "dist/lib/verifier.js",
-      "sha512": "cb4a1042e181dc15b7b7a0641105b458bb8856fecb352e0e5b7ba708ebbc7076de2b990fb8ec263e20f741f4ffef6a52f5a2b22e315516e68c836913024421e3"
+      "sha512": "198dccfc283a05f4730c5f313d0d5021127aa72319175d30c9b117e13a9b5ef5cd051e6e33bcc475dbee839cf160c6ae2b0255f81d1020019adcaf970c4d87c0"
     },
     {
       "path": "dist/lib/verifier.js.map",
@@ -191,62 +191,62 @@
     },
     {
       "path": "src/commands/sign.ts",
-      "sha512": "3fff69ce9eecbc6d1a580e977968f42fe2142f09bca453d932ffa7c2eebb86dbb26d194daff5be74e514f22d369092c2fb52e45fcc277a47dccf026e1d81b9f9"
+      "sha512": "7590a8afdf30b367ccd81b2eb2f03a1c4e80fcafa37bf9d4ad968259569d92b57cc9267f60ed7f5b302c2066274ad3cdacbff45f228b7ffd9fd4f0bd2f9295cd"
     },
     {
       "path": "src/commands/verify.ts",
-      "sha512": "8c84e9182f40e33f72d182710907b4cebcf7757cbd699bc80d4c8d3bece9761d7a8627add564529a1f37c5afbb9cff68de405049fc5fdb5106844012b31fe2c2"
+      "sha512": "1aa8583c4ecd46f2c04e09031b812d4aaae9ecdb50bfb73ec3b033c3920d076dfc4871e46835e6310c80d842e00e0229cf7cdcd701b9d6a54d37262a19fb2969"
     },
     {
       "path": "src/index.ts",
-      "sha512": "74800fabfe108db3882ac25e932762e1e02a3cb7b9bbcb728fef1300d3a0b1a5a0f3e00edb0096186e95ec9c7e087269ee969b016141e0de53164d56503d1568"
+      "sha512": "5e3f15a227868d4d32c99abe268d9548e5283f1032ccdb078e996ab2afe6c2793b4557d32c02d13b7d16ea4cac849bb531ba3627f94a30819ddfb4255c93ed0a"
     },
     {
       "path": "src/lib/deterministicSignature.ts",
-      "sha512": "8a1f79a5c811c4568d7fe280df2a3ef07aadaff4d87b97014010af97f54444f5c41e658f4db1b7716924ea6ab62500a5534139345dcb9a123341bd08aeeb9224"
+      "sha512": "bca33bd3e90647b63469715db3d70f96a132da96ddd9f2724a31e3412908cb8d9f2350acf3753ae37dbfba92cb76107ea040983076dbd1cf65bf5e5e50addc55"
     },
     {
       "path": "src/lib/fsPromise.ts",
-      "sha512": "d366c517877718bb7204bb85ea0527cefe1e76cffd879f4ece361da53fcb1c4b2e750f5aff8c4b4a36c22896e83f907f5972ea87faa85627dd42872ece0600da"
+      "sha512": "43151dfd4ce6d46ca893599f8859ef3249ec4824f4f86ca9673866eac73df969dedd93bedcc068f0b5db83c1c7ed13cddddba7c17c173890d19e5964b74c122d"
     },
     {
       "path": "src/lib/keybaseSIgner.ts",
-      "sha512": "1498d9fe8e419f672e1605e7800b79e2b83c6566b59afef77cef6b60a84decce6eef53906d48465a6467f4229947876b17d68ef63fcabeb8f36755fe0a94917d"
+      "sha512": "a8f189579e52514dd7e002727d0ee5a13a4e1425d908b218c9e06aa617c76e694cb3f900ad2f1051b829b6bbe4c8372bedd755ec75b04a81b9a44213ac0017e2"
     },
     {
       "path": "src/lib/keybaseVerifier.ts",
-      "sha512": "b662c412c651e6d026dd7eb9edd15ce5b6ca6fda3000f8155d1c25fb3e66caaaf73bc3ec9e4a576ddb0e28bc6767f3ee7fa542f54af36b8d72a8829a549c8d66"
+      "sha512": "8474b8b7483cfd8be0a62628f43b2f647fdf93040082a2582c8850628a2ace9ed7d0e5d54bee3a7ddc4f0d15cdf264ad51f461633a5908d22e8f04e1b9d3af77"
     },
     {
       "path": "src/lib/moduleHierarchyVerifier.ts",
-      "sha512": "0e8b65b235cde6173b3bbd1e0f2200dcfd8adb4fcf4b249a1ce5e4d8f7b87ead3d6d4c407e096822b70cfda2a250f6207b2d534577c35c6d1f68628acc5fa258"
+      "sha512": "d1007b41bbd9e893ee313f83e4d7a20be75691d5312e00e758f1e7c0e35a16a21adfefac1c179200a26eca05d451b37af1de0fee3607f94fed91d1d246d5a4a8"
     },
     {
       "path": "src/lib/moduleVerifier.ts",
-      "sha512": "75b64ee032d4ca34459b94c4b52dcd2310d0367d0fb5609ae227c61827539ac7a47f256804e296e12cb2eaaed64c23e8c82cc9538c442c533a49e13ec0c7b82b"
+      "sha512": "56aab43123780602bd84ab35cae8eec2ae16ac5983720de0116be5a59f5210e46b6b2736217ca09ad0eea536ea366597c49ac39f02ff2220754bae287d8c6f41"
     },
     {
       "path": "src/lib/pgpSigner.ts",
-      "sha512": "3605f0dee4ef49c12c7b6f546eb9dee53c4049774765a7ba96135f464d17b77a331d5accbef49e3f5d1b831228c05ab7b18d4f5c1d866e5369a1d238ea34a1ee"
+      "sha512": "82f59b3092b4e078d698868aaa814b6dcbfebf488cda1e5943abd1a842e58d068c8ca6f700ca31e94876d3de74712369594d739a1dded9a8fccaa4625a539f34"
     },
     {
       "path": "src/lib/pgpVerifier.ts",
-      "sha512": "1fcd95fbeb284eabbe52e0c6631001b92497190c04691b007ab07d3831371dc3c7209c8ee2ecbfaf227a660da71b9d425bf17e16d8afc0d35fbc9e4721053cba"
+      "sha512": "a029b910ccde9bb66c768b7371a4145d309723aa61b48f868c8c40d8389b37a1c6948ea8a4b8fbebe1b18d2b9be0dfce8e035055aeecdd54ea754b6d25312935"
     },
     {
       "path": "src/lib/signer.ts",
-      "sha512": "f3bf3b3d0b651469f90912467d9c6e5ca28da8eff17ac9e334edeeccfd2ae25f2940cd6960e26fab7bc05ca167f21f6a3a50b05132029a2a759e3ef80d99fa36"
+      "sha512": "438f7e615085df60748fa10bd5e2e6c1d914554c8e7498e676ca8d3b35f7bc127e6bd46a54e701176f3b9a67975ecd03743188d385ca34fe3e9d0bc4715eee32"
     },
     {
       "path": "src/lib/trustStore.ts",
-      "sha512": "a13402dc11538667818055f6c6e1fb80e137505855cfa134ffd10cf178256a26b516db2257ab85333692f804241cf30827c57e17fc3d6d6738a0117190000d7a"
+      "sha512": "de700dd6b0f425cb9e894a1bf916a451d9e86d23afa1039531e4a58f51a6e78f58409fd0483fc439ad412b096684115390acec6941f05dbbeaaa9fb6a0ef1231"
     },
     {
       "path": "src/lib/verifier.ts",
-      "sha512": "e2d56d8e463637dc2285b6ab84b2da069466d6cac6c7ea49e7dd1988b55a4166f3f36103db5cb4cec7f04f656ac9a92f7e5245753a69798896e297ef750a5beb"
+      "sha512": "bc07bd1fec252e3cde384ded8caf2319956ad4489d264198515d1e653e7318b7011c6d596897ef5faa62adbbfb0b959fce6d4fc8b4926f8141f61fb4d1ec4e77"
     }
   ],
-  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJaUkYwCRB89yvKKRr01wAAh2AQAHWf7JMoVVKmqOFK/K7g3wMI\nViQxdTS0NSV5K5xUskj8URtEcw23D7JBlYZa3aVhJSvD36x4O967ik480Via+nQ8\nLXY85BPAvmGhnrICt7K/0U/gnUyBwuvk0a+647TyPjZYpJwXTj1ECVzU22CP6Tc3\nkxzsRLkziJ9umbtmcbAQBE61/JvFa1iI04KMT3ruf2BElI8Z+Zg48UYTDFNYwntU\noU6fMpJyK9WtMgU70IY6pEUjDq4Q+0/dhzKqKeVQj4nXCYc83ewxpzmuFTCqJe6m\nFD+FM17XD62RILAg4DUhjhD/asb4uvIG2ZQikDEW7vFMALPi5tRkGRuFdK8/McA4\n2CI7inK+KL34o+DPJjHo8yhI0celOUSt+fLZqCf0zx/MMas6xAEJLBNQZLJBSe70\nK7qaV0T40vKjUomT9PQ9Smk+4rioZr4XytRS1ahOl++ZOwUq9QdIfc4xpl4tijrD\nScB210CgTT12JJikf0EULUeNGm9o/vXJ70Qi84nk3Y2InaAarPkJT2igg3QPXgHT\ne59UvTP5yqAtWAJaJ9zN3u4OdnSKaaRprb/GtPWqVoVTc9cU3edwRQ3aFIgsOmRq\nh5Eg3nQQXRtjhwiCo0s5JxbFoFQsCbUGXqt2xqpba+TvFd8UulyqcCT6AQUjFYqZ\nJY3xEtDRb3FDbleC/4LF\n=TZPQ\n-----END PGP SIGNATURE-----\n",
+  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJaUkiBCRB89yvKKRr01wAAuRMQAF6LpPwfUreGzMQDpkDcpre9\n9vd+q8W0D3cT+BER7ibeVdZ/CNtQpQPoT5lr81bVmPOPB1pm4Ek5tY9xiLzlzym8\nB+OWq0CZvNhk2xq+Zgxr5coj1G2Vg2USK++icQZkajEQvgzhqZD77NtvEnb/q+nl\npI0HBHwwjNa64udSr+obck61+bt5qMoKgjN9VhLeMCk/N+wCmyVKpgKEVMJYk/yk\nIQ1eteXAEi1TdeBxQ7mVqFEWy4UzlcUMStP8MDTzvurzX/QuG3q3KOUpn9Dh8AIa\nq8W0bjPWIJPstC1NMGCBFzIQy9obn7D/R8Mryn8TLPO7E2xzKxTIskRrJxut8whp\nI95VDzzkj58cOVjz2wd8Hcoy31xPJZYDpa/RpZlgV8em36WIEM03fbyMWF8SpY27\nCHelpT4onayget/Z9KhwzCkwkCjt/gqwlUL6gyihMZG9gDCbp6tvYvm1I5YLp2mG\nWSgJM9TAYLplLQcYYj8gfwCujYlx8S79eMGzL5vbjKB28/pbySz5+hoUL+ZJN9cl\npLYnxqpCqF27kCu16QVfsD3Fa8PSwye8JbkNXGOFe03k58/W67c4GmgUFomW4P1I\nfduYO7kBsIuBV/OzMcQnhm/F43xE7xBpS7qFSl6Iy4DoBvmYiYJ/KovCXw19Rkek\njZSZjEOkDYWWPerBkaEI\n=8z14\n-----END PGP SIGNATURE-----\n",
   "identity": {
     "keybaseUser": "hachque"
   }

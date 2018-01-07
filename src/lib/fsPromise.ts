@@ -3,6 +3,8 @@ import * as recursive from 'recursive-readdir';
 import * as crypto from 'crypto';
 import * as targz from 'targz';
 import * as tmp from 'tmp';
+import * as isBinaryFile from 'isbinaryfile';
+import * as eolFix from 'eol-fix-stream';
 
 export function readdirPromise(dir: string): Promise<string[]> {
     return new Promise<string[]>((resolve, reject) => {
@@ -66,15 +68,34 @@ export function recursivePromise(path): Promise<string[]> {
 
 export function sha512OfFile(path): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-        const fstream = fs.createReadStream(path);
-        const hash = crypto.createHash('sha512');
-        hash.setEncoding('hex');
+        isBinaryFile(path, (err, isBinary) => {
+            if (err) {
+                reject(err);
+                return;
+            }
 
-        fstream.on('end', function() {
-            hash.end();
-            resolve(hash.read() as string);
+            let shouldPipe = false;
+            if (!isBinary) {
+                // We have to convert all CRLF to LF because of how Git
+                // clones text files on Windows.
+                shouldPipe = true;
+            }
+
+            let fstream = fs.createReadStream(path);
+            const hash = crypto.createHash('sha512');
+            hash.setEncoding('hex');
+    
+            fstream.on('end', function() {
+                hash.end();
+                resolve(hash.read() as string);
+            });
+
+            if (shouldPipe) {
+                fstream = fstream.pipe(eolFix());
+            }
+
+            fstream.pipe(hash);
         });
-        fstream.pipe(hash);
     });
 }
 

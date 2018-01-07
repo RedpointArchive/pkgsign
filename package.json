@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "clime": "^0.5.9",
+    "eol-fix-stream": "^1.0.0",
+    "isbinaryfile": "^3.0.2",
     "node-cmd": "^3.0.0",
     "node-fetch": "^1.7.3",
     "npm-packlist": "^1.1.10",
@@ -30,10 +32,10 @@
     "signedpublish": "rimraf dist && tsc && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz"
   },
   "devDependencies": {
-    "@types/tmp": "^0.0.33",
     "@types/node": "^8.5.7",
     "@types/node-fetch": "^1.6.7",
     "@types/recursive-readdir": "^2.2.0",
+    "@types/tmp": "^0.0.33",
     "rimraf": "^2.6.2",
     "ts-node": "^3.3.0",
     "typescript": "^2.6.1"
