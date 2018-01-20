@@ -28,6 +28,10 @@
   dependencies:
     "@types/node" "*"
 
+"@types/strip-ansi@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@types/strip-ansi/-/strip-ansi-3.0.0.tgz#9b63d453a6b54aa849182207711a08be8eea48ae"
+
 "@types/tmp@^0.0.33":
   version "0.0.33"
   resolved "https://registry.yarnpkg.com/@types/tmp/-/tmp-0.0.33.tgz#1073c4bc824754ae3d10cfab88ab0237ba964e4d"

@@ -3,7 +3,7 @@
   "files": [
     {
       "path": "package.json",
-      "sha512": "b2239698f49a431cf6fd6c666e449a3fd76bb05d78cc9617dbdf75d934d775554162ea28a3a8a1d4f77f88b5a7f0fa457e0d72e046ffba127465ae6f0d6b206e"
+      "sha512": "8bdcb6998911d775809aa698b09a65b66e99517034f01aaed73aa470f5c8f91929d4df96aeac5320c83f8631dd4610c90d1a1406ab6f3ba35e3f90d54045de87"
     },
     {
       "path": "LICENSE.md",
@@ -19,7 +19,7 @@
     },
     {
       "path": "yarn.lock",
-      "sha512": "33d2e3c9377093d6915a3473a1637b3b2da162131ba759818ff35541f5d5e991ca8263a818bbebec5c90ede4bc576453fd802b53558d7c04c97ac7aa9432c0f4"
+      "sha512": "bda9e7b12244f39b7d9acfd804a64b6168e3c5e46336ea894cdc1f5759418f084e39584b06c381c91bdbe89b08aef7eaaae1a40f966c93a948ca87a373ae423c"
     },
     {
       "path": "dist/commands/sign.d.ts",
@@ -87,11 +87,11 @@
     },
     {
       "path": "dist/lib/keybaseSIgner.js",
-      "sha512": "c8b245e9831c9ac77ac0f17b635c595c205317731c7f71cf90838ad28ff5b732d6882ffe1052182272e7f6ea996deefccacac69fc447cdb12144c8e27d76db59"
+      "sha512": "9bdf26edfa9902acb19c10feed5f568f3ebe432e38d42b7bb625f2d6618bf08c6852332b753f2b58d6d1f4f255dacc4e49b1b773c83ab571524b112277aed69c"
     },
     {
       "path": "dist/lib/keybaseSIgner.js.map",
-      "sha512": "d0c36bc59ac621724b656f821259ed0bd510a70dcd1f70f1e625e41c241d726157464451a7a0d93e1af52dad8fac5e9cf98d75c7f97dd0eb140a93a97a37c07b"
+      "sha512": "3473fb799a281311fd219b98b29b3c81e84835ae6edb601dca8f9ada7f3a58289aaeeb163cbe823e017560534ebf904fbd3365eee8723f50eec6b8c1eaba5fe4"
     },
     {
       "path": "dist/lib/keybaseVerifier.d.ts",
@@ -211,7 +211,7 @@
     },
     {
       "path": "src/lib/keybaseSIgner.ts",
-      "sha512": "a8f189579e52514dd7e002727d0ee5a13a4e1425d908b218c9e06aa617c76e694cb3f900ad2f1051b829b6bbe4c8372bedd755ec75b04a81b9a44213ac0017e2"
+      "sha512": "ed05318bfe596e6847405c8f25a8d8d89fbf07b0c8f2950985485ce295bcd8aa9f81cb431bc84946ccc8a30776f61147fae6ab66ad20886151c607dd4083aa26"
     },
     {
       "path": "src/lib/keybaseVerifier.ts",
@@ -250,7 +250,7 @@
       "sha512": "1aeb28a9e6e0aecd9a376ec172d1a83bef177bf759c667b337bb1ad6b45455d657468af6d4b867ebec103b882a693e750b118078b34eaeeeef8b634ae5f1b2f5"
     }
   ],
-  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJaYvFHCRB89yvKKRr01wAAUNEQAIFC9ttrfzeqriz+xTWXo+e8\n6TAKudDhJ3lEV9h8SXzByA5E1ZfVQ50t93lIrWB+PzFBvWS5LKhT/IaTxELL+Q+a\nMnO8awYY/pkQp4xVMWvHS7gDGBIhRK5Z55zvX4UHUKrI5ifIOwvVt5HYeKn7vj8G\n6DosJebQVYWRQr3mZpPnSp/GDUSRN8E8kjlnFf6ShZ+8APo3UOTTJydYP9r3cZtm\ndV/nml977Et5FmZfM0q5jHiMKUNUhyj3n/5Bhps5OPrAO3PkgSOLK+3GHDrUeW+6\n1yn45+KUp/Xh4MWHRrvpOIlVbs78/N2ocjABVUEBm0McYYtUrlWtqD+ACCXzJAxK\njYTLUzODkz4jdHu75ve8FNRI3oVXLaVo55xxd/opUn8YUMita5s7GW793YjFjoew\nIK/7cVdpEtaiz8+4CBn73u8wMZ6yGsDzFTu7tkuVF5c6JAN5wQGUsthAhJywr9gp\nXyKiXNHFyy6ogBK3xNBrwzSrAos0WsB+b8N+JnILYC+9Pkd0l/kkkqot9fWwh9ev\nxmbbGO/Q3jO46xNkPlEkHD3+yRhGF1VaNuC4/dG3xDRqrFYI390Q7A+E2IvWHxrz\nu4AOkx/cRP+cQxQ12KDMKjiXIzGgnmD6OnmMRqehFa6UpZLeY4VGE0qKd1amBSGz\nizOpJ66uy6Mg2STlDzzk\n=ZGpv\n-----END PGP SIGNATURE-----\n",
+  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJaYvKeCRB89yvKKRr01wAAn6wQAEqucXq3LkIk0iVo9F95CBQR\nASuWeJ5+G9XFk045yGOK7DSwa7Q3U91zz5bFEEtPtRxZQAV7NtjhGk0/aIbkiSHi\nrQB2GIhAa7a3eloU82u7E2oMTXOs7BeoQtNIXZsodVsBhnoikVnS9m+EM7VBJ8vX\nWXqf+jZXUC8QX5yWD+OGIWS5OZ+fw8FpDdzs4lg9PgLPO95jmid8XroqASwMemV2\n0FMsUhYcNNmtWSoAeZcDhqjyeOgHi6OVd2XEVsHlYBAxYICQajF7MHsYWuuk4mLF\nIPwlm/HqWQDG2IHIhWxZaOkv2bjEn9JtdNDlUtyFd/UwA30XfxCHzzG/2nSJ3Poa\nN0QRKkUYYwb2pjfsTOCDJs5rE2S6lCwXEhYTjQlPg63L3KsjoZIfuZgPRHTJ45X/\numlTK2GK05PSoAvzEzmGOP4wcZJ2djwgjl9TRq5v4WePVjz7iNqj1RWrLY/bv0b6\nTn2xmD99+6U/e44CSsDbalD+nPHQYBkYDOsoNIdB3nJUyOuMkeCjdPoqPjIUFnGU\nTIPn3M+CAdZ5VfS/wrXRjiI2+l8Sy3FIVWnQ/I+rnB62lCdJKRWwVLv77XRH0se0\nZ9D8t8E94UMlwvAxm5U9opBNY3MWH9utcz4YKeVVm9zAniAcyccjEVzCK0qmlr70\nx6XcXd+KVhu62tGReu9v\n=s0/a\n-----END PGP SIGNATURE-----\n",
   "identity": {
     "keybaseUser": "hachque"
   }

@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const cmd = require("node-cmd");
 const path_1 = require("path");
 const fsPromise_1 = require("./fsPromise");
+const stripAnsi = Promise.resolve().then(() => require('strip-ansi'));
 class KeybaseSigner {
     getIdentity() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -31,8 +32,9 @@ class KeybaseSigner {
                     }
                 });
             });
+            let stripAnsiFn = yield stripAnsi;
             return {
-                keybaseUser: keybaseIdentity,
+                keybaseUser: stripAnsiFn(keybaseIdentity),
             };
         });
     }

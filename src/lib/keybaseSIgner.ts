@@ -3,6 +3,7 @@ import { Signer } from "./signer";
 import { SignatureIdentity } from "./deterministicSignature";
 import { join } from 'path';
 import { writeFilePromise, createWorkingDirectory, unlinkPromise } from './fsPromise';
+const stripAnsi = import('strip-ansi');
 
 export class KeybaseSigner implements Signer {
     public async getIdentity(): Promise<SignatureIdentity> {
@@ -24,8 +25,9 @@ export class KeybaseSigner implements Signer {
                 }
             )
         });
+        let stripAnsiFn = await stripAnsi;
         return {
-            keybaseUser: keybaseIdentity,
+            keybaseUser: stripAnsiFn(keybaseIdentity),
         };
     }
 
