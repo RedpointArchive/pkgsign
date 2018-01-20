@@ -1,4 +1,4 @@
-import { SignatureIdentity } from "./deterministicSignature";
+import { SignatureIdentity } from './signature/signatureIdentity';
 export declare class TrustStore {
     constructor();
     getOrFetchCachedPublicKeys(cacheName: string, fetch: () => Promise<string>): Promise<string>;

@@ -14,7 +14,7 @@ class KeybaseVerifier {
     constructor(trustStore) {
         this.trustStore = trustStore;
     }
-    verify(identity, signature, deterministicSignature) {
+    verify(identity, signature, deterministicString) {
         return __awaiter(this, void 0, void 0, function* () {
             let didFetch = false;
             const fetchPub = () => __awaiter(this, void 0, void 0, function* () {
@@ -26,7 +26,7 @@ class KeybaseVerifier {
                 try {
                     const publicKeys = openpgp.key.readArmored(rawPublicKeys).keys;
                     const verifyOptions = {
-                        message: openpgp.message.fromText(deterministicSignature),
+                        message: openpgp.message.fromText(deterministicString),
                         signature: openpgp.signature.readArmored(signature),
                         publicKeys: publicKeys
                     };

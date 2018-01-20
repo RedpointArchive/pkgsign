@@ -1,8 +1,8 @@
 import * as cmd from 'node-cmd';
 import { Signer } from "./signer";
-import { SignatureIdentity } from "./deterministicSignature";
 import { join } from 'path';
 import { writeFilePromise, createWorkingDirectory, unlinkPromise } from './fsPromise';
+import { SignatureIdentity } from './signature/signatureIdentity';
 const stripAnsi = import('strip-ansi');
 
 export class KeybaseSigner implements Signer {
@@ -31,12 +31,12 @@ export class KeybaseSigner implements Signer {
         };
     }
 
-    public async signEntries(deterministicSignature: string): Promise<string> {
+    public async signEntries(deterministicString: string): Promise<string> {
         console.log('requesting keybase pgp sign deterministic signature...');
         console.log('(you may receive an interactive prompt from keybase)');
         const wd = await createWorkingDirectory();
         const fileToSignPath = join(wd, 'signature.sig');
-        await writeFilePromise(fileToSignPath, deterministicSignature);
+        await writeFilePromise(fileToSignPath, deterministicString);
         const keybaseSignature = await new Promise<string>((resolve, reject) => {
             cmd.get(
                 'keybase pgp sign --detached -i "' + fileToSignPath + '"',

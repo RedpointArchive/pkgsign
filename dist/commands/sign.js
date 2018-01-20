@@ -24,10 +24,12 @@ const clime_1 = require("clime");
 const path = require("path");
 const fs_1 = require("fs");
 const fsPromise_1 = require("../lib/fsPromise");
-const deterministicSignature_1 = require("../lib/deterministicSignature");
-const keybaseSIgner_1 = require("../lib/keybaseSIgner");
+const keybaseSigner_1 = require("../lib/keybaseSigner");
 const pgpSigner_1 = require("../lib/pgpSigner");
 const packlist = require("npm-packlist");
+const signatureFilesEntry_1 = require("../lib/signature/signatureFilesEntry");
+const signature_1 = require("../lib/signature");
+const signatureIdentityEntry_1 = require("../lib/signature/signatureIdentityEntry");
 class SignOptions extends clime_1.Options {
 }
 __decorate([
@@ -68,7 +70,7 @@ let default_1 = class default_1 extends clime_1.Command {
                 signer = new pgpSigner_1.PgpSigner(options.privateKeyPath, options.privateKeyPassphrase, options.publicKeyUrl);
             }
             else if (options.withSigner == 'keybase') {
-                signer = new keybaseSIgner_1.KeybaseSigner();
+                signer = new keybaseSigner_1.KeybaseSigner();
             }
             else {
                 throw new Error('Not supported signer type: ' + options.withSigner);
@@ -105,16 +107,24 @@ let default_1 = class default_1 extends clime_1.Command {
                     sha512: hash,
                 });
             }
-            console.log('creating deterministic signature...');
-            const signatureToSign = deterministicSignature_1.createSignatureFromEntries(entries);
-            console.log('creating signature document...');
+            console.log('obtaining identity...');
             const identity = yield signer.getIdentity();
+            console.log('creating signature...');
             const signatureDocument = {
-                version: 'v1alpha',
-                files: entries,
-                signature: yield signer.signEntries(signatureToSign),
-                identity: identity,
+                entries: [
+                    new signatureFilesEntry_1.SignatureFilesEntry({
+                        files: entries,
+                    }),
+                    new signatureIdentityEntry_1.SignatureIdentityEntry({
+                        identity: identity,
+                    })
+                ],
+                signature: '',
             };
+            console.log('creating deterministic string...');
+            const deterministicString = signature_1.createDeterministicString(signatureDocument);
+            console.log('signing deterministic string...');
+            signatureDocument.signature = yield signer.signEntries(deterministicString);
             const signatureDocumentJson = JSON.stringify(signatureDocument, null, 2);
             yield fsPromise_1.writeFilePromise(path.join(wd, 'package', 'signature.json'), signatureDocumentJson);
             yield fsPromise_1.unlinkPromise(tarballPath);
@@ -144,16 +154,24 @@ let default_1 = class default_1 extends clime_1.Command {
                     sha512: hash,
                 });
             }
-            console.log('creating deterministic signature...');
-            const signatureToSign = deterministicSignature_1.createSignatureFromEntries(entries);
-            console.log('creating signature document...');
+            console.log('obtaining identity...');
             const identity = yield signer.getIdentity();
+            console.log('creating signature...');
             const signatureDocument = {
-                version: 'v1alpha',
-                files: entries,
-                signature: yield signer.signEntries(signatureToSign),
-                identity: identity,
+                entries: [
+                    new signatureFilesEntry_1.SignatureFilesEntry({
+                        files: entries,
+                    }),
+                    new signatureIdentityEntry_1.SignatureIdentityEntry({
+                        identity: identity,
+                    })
+                ],
+                signature: '',
             };
+            console.log('creating deterministic string...');
+            const deterministicString = signature_1.createDeterministicString(signatureDocument);
+            console.log('signing deterministic string...');
+            signatureDocument.signature = yield signer.signEntries(deterministicString);
             const signatureDocumentJson = JSON.stringify(signatureDocument, null, 2);
             yield fsPromise_1.writeFilePromise(path.join(packagePath, 'signature.json'), signatureDocumentJson);
             console.log('signature.json has been created in package directory');

@@ -1,15 +1,15 @@
 import { Verifier } from "./verifier";
-import { SignatureIdentity } from "./deterministicSignature";
 import fetch from "node-fetch";
 import * as openpgp from 'openpgp';
 import { TrustStore } from "./trustStore";
 import * as crypto from 'crypto';
+import { SignatureIdentity } from "./signature/signatureIdentity";
 
 export class PgpVerifier implements Verifier {
     constructor(private trustStore: TrustStore) {
     }
 
-    public async verify(identity: SignatureIdentity, signature: string, deterministicSignature: string) {
+    public async verify(identity: SignatureIdentity, signature: string, deterministicString: string) {
         if (!identity.pgpPublicKeyUrl.startsWith('https://')) {
             // public key URLs must be HTTPS.
             return false;
@@ -26,7 +26,7 @@ export class PgpVerifier implements Verifier {
             try {
                 const publicKeys = openpgp.key.readArmored(rawPublicKeys).keys;
                 const verifyOptions = {
-                    message: openpgp.message.fromText(deterministicSignature),
+                    message: openpgp.message.fromText(deterministicString),
                     signature: openpgp.signature.readArmored(signature),
                     publicKeys: publicKeys
                 };

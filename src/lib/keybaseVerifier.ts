@@ -1,15 +1,14 @@
-import { SignatureIdentity } from "./deterministicSignature";
 import * as openpgp from 'openpgp';
 import { Verifier } from "./verifier";
 import fetch from "node-fetch";
 import { TrustStore } from "./trustStore";
+import { SignatureIdentity } from './signature/signatureIdentity';
 
 export class KeybaseVerifier implements Verifier {
     constructor(private trustStore: TrustStore) {
-        
     }
 
-    public async verify(identity: SignatureIdentity, signature: string, deterministicSignature: string) {
+    public async verify(identity: SignatureIdentity, signature: string, deterministicString: string) {
         let didFetch = false;
         const fetchPub = async () => {
             console.log('fetching public keys of user ' + identity.keybaseUser + '...');
@@ -21,7 +20,7 @@ export class KeybaseVerifier implements Verifier {
             try {
                 const publicKeys = openpgp.key.readArmored(rawPublicKeys).keys;
                 const verifyOptions = {
-                    message: openpgp.message.fromText(deterministicSignature),
+                    message: openpgp.message.fromText(deterministicString),
                     signature: openpgp.signature.readArmored(signature),
                     publicKeys: publicKeys
                 };

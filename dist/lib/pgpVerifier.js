@@ -15,7 +15,7 @@ class PgpVerifier {
     constructor(trustStore) {
         this.trustStore = trustStore;
     }
-    verify(identity, signature, deterministicSignature) {
+    verify(identity, signature, deterministicString) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!identity.pgpPublicKeyUrl.startsWith('https://')) {
                 // public key URLs must be HTTPS.
@@ -31,7 +31,7 @@ class PgpVerifier {
                 try {
                     const publicKeys = openpgp.key.readArmored(rawPublicKeys).keys;
                     const verifyOptions = {
-                        message: openpgp.message.fromText(deterministicSignature),
+                        message: openpgp.message.fromText(deterministicString),
                         signature: openpgp.signature.readArmored(signature),
                         publicKeys: publicKeys
                     };

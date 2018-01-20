@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import fetch from 'node-fetch';
 import * as openpgp from 'openpgp';
-import { SignatureFileEntry, createSignatureFromEntries, SignatureInfo } from './deterministicSignature';
+import { SignatureInfo } from './signature';
 import { readFilePromise, readdirPromise } from './fsPromise';
 import { ModuleVerificationResult, ModuleVerifier } from './moduleVerifier';
 import { TrustStore } from './trustStore';

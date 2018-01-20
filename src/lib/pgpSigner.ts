@@ -1,7 +1,7 @@
 import { Signer } from "./signer";
-import { SignatureIdentity } from "./deterministicSignature";
 import { readFilePromise } from "./fsPromise";
 import * as openpgp from 'openpgp';
+import { SignatureIdentity } from "./signature/signatureIdentity";
 
 export class PgpSigner implements Signer {
     constructor(
@@ -16,13 +16,13 @@ export class PgpSigner implements Signer {
         };
     }
 
-    public async signEntries(deterministicSignature: string): Promise<string> {
+    public async signEntries(deterministicString: string): Promise<string> {
         console.log('signing with private pgp key...');
         const privateKeyFileContents = await readFilePromise(this.privateKeyPath);
         const privateKeyObject = openpgp.key.readArmored(privateKeyFileContents).keys[0];
         privateKeyObject.decrypt(this.privateKeyPassphrase);
         const options = {
-            data: deterministicSignature,
+            data: deterministicString,
             privateKeys: privateKeyObject,
             detached: true,
         };
