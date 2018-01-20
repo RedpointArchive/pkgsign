@@ -58,6 +58,8 @@ export class ModuleHierarchyVerifier {
         } catch (e) {
             if (e && e.code == 'ENOENT') {
                 // this package has no child modules.
+            } else if (e && e.code == 'ENOTDIR') {
+                // this is not a package (e.g. .yarn-integrity file)
             } else {
                 throw e;
             }
