@@ -2,3 +2,5 @@
 /src/**/*.js
 /src/**/*.js.map
 /pkgsign.tgz
+
+yarn-error.log
