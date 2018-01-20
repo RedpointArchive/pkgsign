@@ -36,13 +36,13 @@ class KeybaseSigner {
             };
         });
     }
-    signEntries(deterministicSignature) {
+    signEntries(deterministicString) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('requesting keybase pgp sign deterministic signature...');
             console.log('(you may receive an interactive prompt from keybase)');
             const wd = yield fsPromise_1.createWorkingDirectory();
             const fileToSignPath = path_1.join(wd, 'signature.sig');
-            yield fsPromise_1.writeFilePromise(fileToSignPath, deterministicSignature);
+            yield fsPromise_1.writeFilePromise(fileToSignPath, deterministicString);
             const keybaseSignature = yield new Promise((resolve, reject) => {
                 cmd.get('keybase pgp sign --detached -i "' + fileToSignPath + '"', (err, data, stderr) => {
                     if (err) {
@@ -59,4 +59,4 @@ class KeybaseSigner {
     }
 }
 exports.KeybaseSigner = KeybaseSigner;
-//# sourceMappingURL=keybaseSIgner.js.map
+//# sourceMappingURL=keybaseSigner.js.map

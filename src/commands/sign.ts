@@ -9,11 +9,13 @@ import * as cmd from 'node-cmd';
 import * as path from 'path';
 import { lstatSync, unlinkSync } from 'fs';
 import { unlinkPromise, recursivePromise, sha512OfFile, writeFilePromise, createWorkingDirectory, decompress, compress } from '../lib/fsPromise';
-import { SignatureFileEntry, createSignatureFromEntries, SignatureInfo } from '../lib/deterministicSignature';
 import { Signer } from '../lib/signer';
-import { KeybaseSigner } from '../lib/keybaseSIgner';
+import { KeybaseSigner } from '../lib/keybaseSigner';
 import { PgpSigner } from '../lib/pgpSigner';
 import * as packlist from 'npm-packlist';
+import { SignatureFileEntry, SignatureFilesEntry } from '../lib/signature/signatureFilesEntry';
+import { SignatureInfo, createDeterministicString } from '../lib/signature';
+import { SignatureIdentityEntry } from '../lib/signature/signatureIdentityEntry';
   
 export class SignOptions extends Options {
     @option({
@@ -96,17 +98,27 @@ export default class extends Command {
             });
         }
 
-        console.log('creating deterministic signature...');
-        const signatureToSign = createSignatureFromEntries(entries);
-
-        console.log('creating signature document...');
+        console.log('obtaining identity...');
         const identity = await signer.getIdentity();
+
+        console.log('creating signature...');
         const signatureDocument: SignatureInfo = {
-            version: 'v1alpha',
-            files: entries,
-            signature: await signer.signEntries(signatureToSign),
-            identity: identity,
+            entries: [
+                new SignatureFilesEntry({
+                    files: entries,
+                }),
+                new SignatureIdentityEntry({
+                    identity: identity,
+                })
+            ],
+            signature: '',
         };
+
+        console.log('creating deterministic string...');
+        const deterministicString = createDeterministicString(signatureDocument);
+
+        console.log('signing deterministic string...');
+        signatureDocument.signature = await signer.signEntries(deterministicString);
 
         const signatureDocumentJson = JSON.stringify(signatureDocument, null, 2);
         await writeFilePromise(path.join(wd, 'package', 'signature.json'), signatureDocumentJson);
@@ -139,17 +151,27 @@ export default class extends Command {
             });
         }
 
-        console.log('creating deterministic signature...');
-        const signatureToSign = createSignatureFromEntries(entries);
-
-        console.log('creating signature document...');
+        console.log('obtaining identity...');
         const identity = await signer.getIdentity();
+
+        console.log('creating signature...');
         const signatureDocument: SignatureInfo = {
-            version: 'v1alpha',
-            files: entries,
-            signature: await signer.signEntries(signatureToSign),
-            identity: identity,
+            entries: [
+                new SignatureFilesEntry({
+                    files: entries,
+                }),
+                new SignatureIdentityEntry({
+                    identity: identity,
+                })
+            ],
+            signature: '',
         };
+
+        console.log('creating deterministic string...');
+        const deterministicString = createDeterministicString(signatureDocument);
+
+        console.log('signing deterministic string...');
+        signatureDocument.signature = await signer.signEntries(deterministicString);
 
         const signatureDocumentJson = JSON.stringify(signatureDocument, null, 2);
         await writeFilePromise(path.join(packagePath, 'signature.json'), signatureDocumentJson);

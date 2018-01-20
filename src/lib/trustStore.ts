@@ -1,7 +1,7 @@
-import { SignatureIdentity } from "./deterministicSignature";
 import * as path from 'path';
 import * as fs from 'fs';
 import { readFilePromise, writeFilePromise } from "./fsPromise";
+import { SignatureIdentity } from './signature/signatureIdentity';
 
 interface CachedData {
     data: string;

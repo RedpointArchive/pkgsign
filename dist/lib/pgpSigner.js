@@ -23,14 +23,14 @@ class PgpSigner {
             };
         });
     }
-    signEntries(deterministicSignature) {
+    signEntries(deterministicString) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('signing with private pgp key...');
             const privateKeyFileContents = yield fsPromise_1.readFilePromise(this.privateKeyPath);
             const privateKeyObject = openpgp.key.readArmored(privateKeyFileContents).keys[0];
             privateKeyObject.decrypt(this.privateKeyPassphrase);
             const options = {
-                data: deterministicSignature,
+                data: deterministicString,
                 privateKeys: privateKeyObject,
                 detached: true,
             };

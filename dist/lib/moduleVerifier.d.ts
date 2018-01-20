@@ -1,5 +1,5 @@
-import { SignatureIdentity } from "./deterministicSignature";
 import { TrustStore } from "./trustStore";
+import { SignatureIdentity } from "./signature/signatureIdentity";
 export declare enum ModuleVerificationStatus {
     Compromised = 0,
     Unsigned = 1,
