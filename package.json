@@ -11,17 +11,18 @@
     "pkgsign": "dist/index.js"
   },
   "dependencies": {
-    "clime": "^0.5.9",
-    "eol-fix-stream": "^1.0.0",
-    "isbinaryfile": "^3.0.2",
-    "node-cmd": "^3.0.0",
-    "node-fetch": "^1.7.3",
-    "npm-packlist": "^1.1.10",
-    "openpgp": "^2.6.1",
-    "prompt": "^1.0.0",
-    "recursive-readdir": "^2.2.1",
-    "targz": "^1.0.1",
-    "tmp": "^0.0.33"
+    "clime": "0.5.9",
+    "eol-fix-stream": "1.0.0",
+    "get-installed-path": "4.0.8",
+    "isbinaryfile": "3.0.2",
+    "node-cmd": "3.0.0",
+    "node-fetch": "1.7.3",
+    "npm-packlist": "1.1.10",
+    "openpgp": "2.6.1",
+    "prompt": "1.0.0",
+    "recursive-readdir": "2.2.1",
+    "targz": "1.0.1",
+    "tmp": "0.0.33"
   },
   "scripts": {
     "build": "rimraf dist && tsc",

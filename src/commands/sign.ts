@@ -14,7 +14,7 @@ import { KeybaseSigner } from '../lib/keybaseSigner';
 import { PgpSigner } from '../lib/pgpSigner';
 import * as packlist from 'npm-packlist';
 import { SignatureFileEntry, SignatureFilesEntry } from '../lib/signature/signatureFilesEntry';
-import { SignatureInfo, createDeterministicString } from '../lib/signature';
+import { SignatureInfo, createDeterministicString, SignatureEntry } from '../lib/signature';
 import { SignatureIdentityEntry } from '../lib/signature/signatureIdentityEntry';
   
 export class SignOptions extends Options {
@@ -39,6 +39,12 @@ export class SignOptions extends Options {
         description: 'when signing with \'pgp\', this is the HTTPS URL to the public key that pkgsign can download to verify the package',
     })
     publicKeyUrl: string;
+    @option({
+        name: 'sign-on-behalf-of-dependencies',
+        toggle: true,
+        description: 'sign all of the unsigned package dependencies, and include hashes and signatures for all their files in this package',
+    })
+    signOnBehalfOfDependencies: boolean;
 }
 
 @command({
@@ -67,9 +73,12 @@ export default class extends Command {
         }
 
         if (path.endsWith(".tgz") && lstatSync(path).isFile()) {
+            if (options.signOnBehalfOfDependencies) {
+                throw new Error('Unable to sign dependencies of tarball');
+            }
             await this.signTarball(signer, path);
         } else {
-            await this.signDirectory(signer, path);
+            await this.signDirectory(signer, path, options.signOnBehalfOfDependencies);
         }
     }
 
@@ -129,12 +138,13 @@ export default class extends Command {
         console.log('package tarball has been signed');
     }
 
-    private async signDirectory(signer: Signer, packagePath: string): Promise<void> {
+    private async signDirectory(signer: Signer, packagePath: string, signOnBehalfOfDependencies: boolean): Promise<void> {
         console.log('building file list...');
         const files = await packlist({
             path: packagePath
         });
-        let entries: SignatureFileEntry[] = [];
+        let fileEntries: SignatureFileEntry[] = [];
+        let entries: SignatureEntry[] = [];
         for (let relPath of files) {
             const hash = await sha512OfFile(path.join(packagePath, relPath));
             const normalisedPath = relPath.replace(/\\/g, '/');
@@ -145,25 +155,31 @@ export default class extends Command {
                 // anyway).
                 continue;
             }
-            entries.push({
+            fileEntries.push({
                 path: normalisedPath,
                 sha512: hash,
             });
         }
+        entries.push(new SignatureFilesEntry({
+            files: fileEntries,
+        }));
 
         console.log('obtaining identity...');
         const identity = await signer.getIdentity();
+        entries.push(new SignatureIdentityEntry({
+            identity: identity,
+        }));
+
+        if (signOnBehalfOfDependencies) {
+            console.log('signing untrusted dependencies and including expected identities...');
+        } else {
+            console.log('including expected identities for dependencies...');
+        }
+        const dependencySigner = new DependencySigner(signOnBehalfOfDependencies);
 
         console.log('creating signature...');
         const signatureDocument: SignatureInfo = {
-            entries: [
-                new SignatureFilesEntry({
-                    files: entries,
-                }),
-                new SignatureIdentityEntry({
-                    identity: identity,
-                })
-            ],
+            entries: entries,
             signature: '',
         };
 
