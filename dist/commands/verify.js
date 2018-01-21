@@ -24,7 +24,7 @@ const clime_1 = require("clime");
 const fs_1 = require("fs");
 const moduleHierarchyVerifier_1 = require("../lib/moduleHierarchyVerifier");
 const moduleVerifier_1 = require("../lib/moduleVerifier");
-const prompt = require("prompt");
+const inquirer = require("inquirer");
 const path = require("path");
 const path_1 = require("path");
 const trustStore_1 = require("../lib/trustStore");
@@ -79,7 +79,6 @@ let default_1 = class default_1 extends clime_1.Command {
             let result = yield moduleVerifier.verify(base, files, options.packageName || '');
             // Prompt user to trust package if untrusted.
             if (result.status == moduleVerifier_1.ModuleVerificationStatus.Untrusted && !options.nonInteractive) {
-                prompt.start();
                 let identityString = '';
                 if (result.untrustedIdentity.keybaseUser !== undefined) {
                     identityString = result.untrustedIdentity.keybaseUser + ' on keybase.io';
@@ -87,23 +86,13 @@ let default_1 = class default_1 extends clime_1.Command {
                 else {
                     identityString = 'public key at ' + result.untrustedIdentity.pgpPublicKeyUrl;
                 }
-                const trustResults = yield new Promise((resolve, reject) => {
-                    prompt.get({
+                const trustResults = yield inquirer.prompt([{
                         name: 'pkg',
-                        type: 'boolean',
-                        description: 'Package \'' + result.packageName + '\' is not trusted, but is signed by ' + identityString + '. ' +
+                        type: 'confirm',
+                        message: 'Package \'' + result.packageName + '\' is not trusted, but is signed by ' + identityString + '. ' +
                             'Do you want to trust this identity to sign \'' + result.packageName + '\' now and forever',
-                        required: true,
                         default: false
-                    }, (err, results) => {
-                        if (err) {
-                            reject(err);
-                        }
-                        else {
-                            resolve(results);
-                        }
-                    });
-                });
+                    }]);
                 let trustStore = new trustStore_1.TrustStore();
                 let didModify = false;
                 if (trustResults['pkg']) {
@@ -152,33 +141,23 @@ let default_1 = class default_1 extends clime_1.Command {
                     }
                     if (prompts.filter((value) => path_1.basename(value.name) == result.packageName).length == 0) {
                         prompts.push({
-                            name: path,
-                            type: 'boolean',
-                            description: 'Package \'' + result.packageName + '\' is not trusted, but is signed by ' + identityString + '. ' +
+                            name: Buffer.from(path).toString('base64'),
+                            type: 'confirm',
+                            message: 'Package \'' + result.packageName + '\' is not trusted, but is signed by ' + identityString + '. ' +
                                 'Do you want to trust this identity to sign \'' + result.packageName + '\' now and forever',
-                            required: true,
                             default: false
                         });
                     }
                 }
             }
             if (prompts.length > 0 && !options.nonInteractive) {
-                prompt.start();
                 let didModify = false;
-                const trustResults = yield new Promise((resolve, reject) => {
-                    prompt.get(prompts, (err, results) => {
-                        if (err) {
-                            reject(err);
-                        }
-                        else {
-                            resolve(results);
-                        }
-                    });
-                });
+                const trustResults = yield inquirer.prompt(prompts);
                 let trustStore = new trustStore_1.TrustStore();
                 for (let path in trustResults) {
                     if (trustResults[path]) {
-                        yield trustStore.addTrusted(results[path].untrustedIdentity, results[path].packageName);
+                        let realpath = Buffer.from(path, 'base64').toString('ascii');
+                        yield trustStore.addTrusted(results[realpath].untrustedIdentity, results[realpath].packageName);
                         didModify = true;
                     }
                 }

@@ -8,7 +8,7 @@ import {
 import { lstatSync } from 'fs';
 import { ModuleHierarchyVerifier } from '../lib/moduleHierarchyVerifier';
 import { ModuleVerificationStatus, ModuleVerifier } from '../lib/moduleVerifier';
-import * as prompt from 'prompt';
+import * as inquirer from 'inquirer';
 import * as path from 'path';
 import { basename } from 'path';
 import { TrustStore } from '../lib/trustStore';
@@ -69,29 +69,19 @@ export default class extends Command {
 
         // Prompt user to trust package if untrusted.
         if (result.status == ModuleVerificationStatus.Untrusted && !options.nonInteractive) {
-            prompt.start();
             let identityString = '';
             if (result.untrustedIdentity.keybaseUser !== undefined) {
                 identityString = result.untrustedIdentity.keybaseUser + ' on keybase.io';
             } else {
                 identityString = 'public key at ' + result.untrustedIdentity.pgpPublicKeyUrl;
             }
-            const trustResults = await new Promise<any>((resolve, reject) => {
-                prompt.get({
-                    name: 'pkg',
-                    type: 'boolean',
-                    description: 'Package \'' + result.packageName + '\' is not trusted, but is signed by ' + identityString + '. ' + 
-                        'Do you want to trust this identity to sign \'' + result.packageName + '\' now and forever',
-                    required: true,
-                    default: false
-                }, (err, results) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(results);
-                    }
-                });
-            });
+            const trustResults = await inquirer.prompt([{
+                name: 'pkg',
+                type: 'confirm',
+                message: 'Package \'' + result.packageName + '\' is not trusted, but is signed by ' + identityString + '. ' +
+                    'Do you want to trust this identity to sign \'' + result.packageName + '\' now and forever',
+                default: false
+            }]);
             let trustStore = new TrustStore();
             let didModify = false;
             if (trustResults['pkg']) {
@@ -144,11 +134,10 @@ export default class extends Command {
                 }
                 if (prompts.filter((value) => basename(value.name) == result.packageName).length == 0) {
                     prompts.push({
-                        name: path,
-                        type: 'boolean',
-                        description: 'Package \'' + result.packageName + '\' is not trusted, but is signed by ' + identityString + '. ' + 
+                        name: Buffer.from(path).toString('base64'),
+                        type: 'confirm',
+                        message: 'Package \'' + result.packageName + '\' is not trusted, but is signed by ' + identityString + '. ' +
                             'Do you want to trust this identity to sign \'' + result.packageName + '\' now and forever',
-                        required: true,
                         default: false
                     });
                 }
@@ -156,23 +145,15 @@ export default class extends Command {
         }
 
         if (prompts.length > 0 && !options.nonInteractive) {
-            prompt.start();
             let didModify = false;
-            const trustResults = await new Promise<any>((resolve, reject) => {
-                prompt.get(prompts, (err, results) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(results);
-                    }
-                });
-            });
+            const trustResults = await inquirer.prompt(prompts);
             let trustStore = new TrustStore();
             for (let path in trustResults) {
                 if (trustResults[path]) {
+                    let realpath = Buffer.from(path, 'base64').toString('ascii');
                     await trustStore.addTrusted(
-                        results[path].untrustedIdentity,
-                        results[path].packageName
+                        results[realpath].untrustedIdentity,
+                        results[realpath].packageName
                     );
                     didModify = true;
                 }

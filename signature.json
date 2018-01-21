@@ -5,7 +5,7 @@
       "files": [
         {
           "path": "package.json",
-          "sha512": "8bdcb6998911d775809aa698b09a65b66e99517034f01aaed73aa470f5c8f91929d4df96aeac5320c83f8631dd4610c90d1a1406ab6f3ba35e3f90d54045de87"
+          "sha512": "ac53c0de50dc6c362e227e7150f405347158b46ab0b889ba1085cbbda8c22667b6cdad4b122f9d0333c8c8ff973ca0405b876f444c6fc077318e1d95dda4f807"
         },
         {
           "path": "LICENSE.md",
@@ -21,7 +21,7 @@
         },
         {
           "path": "yarn.lock",
-          "sha512": "bda9e7b12244f39b7d9acfd804a64b6168e3c5e46336ea894cdc1f5759418f084e39584b06c381c91bdbe89b08aef7eaaae1a40f966c93a948ca87a373ae423c"
+          "sha512": "608f10cf56a9907e2f08a7b8259331b6e7e63b055594634ec8c387020ae8e19bead193349c8a4e3f9e548fa0d64d2d1a2b201864a338e117ac2917298743a09a"
         },
         {
           "path": "dist/commands/sign.d.ts",
@@ -41,11 +41,11 @@
         },
         {
           "path": "dist/commands/verify.js",
-          "sha512": "ff0c31ffda14093825f6b7c317f84dc5a8236eae7b235ff7c93e84da180d7a8502df95e19d6f22a02b62a01b56ddb107259caad34c9cd6d460d6dc41f243e10b"
+          "sha512": "e0452c4866b387a7c6f35dd3f6444b4da723682a96a1fa4630aa5765494fe0d4ef4bbb345172ea0a24b32746fcfddad13103709f2e40de237d09ed97b7875711"
         },
         {
           "path": "dist/commands/verify.js.map",
-          "sha512": "e6a7f084ab66f41e31ba9be20e7d360023831c2cb02b56930879445d5f2dfa2b9b87566f1cfdf35de91de2436f24ae9c2c071d44684e1d08533da365dbc2dfbf"
+          "sha512": "5cbbb868500ab41801e298bec5bd379cf90a1da9c5e913868117c051c38bf84a2846b51761f6543af63f83dffa1e39f03e3c649e6431e0044c56625840d95cf1"
         },
         {
           "path": "dist/index.d.ts",
@@ -257,7 +257,7 @@
         },
         {
           "path": "src/commands/verify.ts",
-          "sha512": "1aa8583c4ecd46f2c04e09031b812d4aaae9ecdb50bfb73ec3b033c3920d076dfc4871e46835e6310c80d842e00e0229cf7cdcd701b9d6a54d37262a19fb2969"
+          "sha512": "8550b8ee10c131c5a60f0dedb21ccbd1d5a62763bdff676a798731a4d4391ab6e966286ebb35ae850b3fffe8bb0fcd8feff9efad85cece18c63e667c8d1967ca"
         },
         {
           "path": "src/index.ts",
@@ -340,5 +340,5 @@
       }
     }
   ],
-  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJaYvVlCRB89yvKKRr01wAA/TkQAMLBHYMozlltn5VljQ5KYibO\nqb00Y/gh3q0b7Voy8Z0UdHe95ROacFJR9Dkqj0VT/zR54UvN1bz58AqFbQXXK5ch\nu0TTOmJ+O9VXxchB0n6531KxpWYrLyRh7QgCdvs2X6ciegWzvJlW+isUea2pySFy\nu6XC/vMXgpuWnboWX4mHUFEmHdxtdeG8Xj6ld2yYUtHmM/7I+fBkzNwE39mTgODb\nhnuNshRPRLcqf0OPztJFh9Uzk0Y81V87QnU5nZyZdsCwiJ9ZiT2Vttp+UQWbmg8Q\nv28a/kui+MQiENZZh2HqbScOl6UgEB+BjXsL+BxI8Olc+r8V/ev2qFIymeJlOjlE\nOnaQktOUMWvbd8FngSn+JSKqoNPNHGC29xj6wCpyt1801YLnNqwPh1DY7ESzMtSX\nFW7qD5vEQMyYvLmXoTuU/wjivH8E8j81qbVR35gPZqALcGMJvYa5fse7LIdigWx4\n+NOz3bXi175ukZrB63r8kgkDo0ijOe8a5chyAVE6bNYymDlmBJdOVzjLoLaeml9g\nd4fUTcoLVq9n8ktgLosSycmm5kIFWm//CLztZdgliZTFQUON54xw46DYmZXpJN9h\nDlJWIq7vJmsoTRVJWoszjIgW8kafV56pus8wJPgMGSEtYMjZ0mMwPMJECIxk7mKN\nxrGsSeyWpzxdnYcGzjvH\n=YFJO\n-----END PGP SIGNATURE-----\n"
+  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJaZDPMCRB89yvKKRr01wAAUEIQAE1+jXd3PM+OtzCeL9HFi44b\n1wE7PEzwsRp3bWp+AXDnySo1wx2MF5r/TSyFy8mj+hsnpedy1NAN2oG63RFb/5xh\nvVK0YXofHqrnMoEBqmg7ri3n9hL/OVdxrVXK0nGtU0P4LiHOID3SjeY08o2FkMSL\nI/eX3e14vghko1lN/bGm0GwopDJY7pL+Hu60ouOfBr84scNUkCpZt/PoRbeWyj/9\nBqqEI2gETk63+8x42SCBT3nYusa6/Dj2oEO9GhbUInaATpgWIFMhLjGkydqC0fEn\n/rpWeznFF92zbG8CSmSDkVNwabisN3PGslpXrT3Z5rfcyLcTmy4qv/4T8hHXuSPj\nruIQNRplVBHQAeyRw9/IBPYS6Sp0tem67SKxfS58pERR6z8dku3fbTUwASP5eZaE\nxER/3Kd/xP2N341ZEEiGUDMmS2TyHva5wnKgI96n8subQhwmJL6XRNR0kVSPjeib\n3MB6ijCwJ62HVqFRCNHGGcljCL3VRDHZmC+eQq6SYBftDrlZyrSKKyazDAAzRVoW\nRrITiKOE6JT0wxggA44UvSDZzBLIW05zzxKADBut4HKobOYLJuTwwqXi9wHYygrz\nJ2eJYwnfOoN5zVAZeRhE3volQ85gio5oABhqw6AivxQ113wNOeJtceD9jO4Gj76C\nggkerIpu1OZWJpcsoWbV\n=CRan\n-----END PGP SIGNATURE-----\n"
 }
