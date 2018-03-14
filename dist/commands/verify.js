@@ -58,6 +58,10 @@ exports.VerifyOptions = VerifyOptions;
 let default_1 = class default_1 extends clime_1.Command {
     execute(path, options) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (path === undefined) {
+                // Default path to the current directory if not provided.
+                path = '.';
+            }
             if (path.endsWith(".tgz") && fs_1.lstatSync(path).isFile()) {
                 yield this.verifyTarball(path, options);
             }
@@ -236,7 +240,7 @@ __decorate([
     __param(0, clime_1.param({
         name: 'pkgdir|tarball',
         description: 'path to package directory or tarball',
-        required: true,
+        required: false,
     })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, VerifyOptions]),

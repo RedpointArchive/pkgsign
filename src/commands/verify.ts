@@ -42,11 +42,16 @@ export default class extends Command {
         @param({
             name: 'pkgdir|tarball',
             description: 'path to package directory or tarball',
-            required: true,
+            required: false,
         })
         path: string,
         options: VerifyOptions,
     ): Promise<void> {
+        if (path === undefined) {
+            // Default path to the current directory if not provided.
+            path = '.';
+        }
+
         if (path.endsWith(".tgz") && lstatSync(path).isFile()) {
             await this.verifyTarball(path, options);
         } else {
