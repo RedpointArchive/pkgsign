@@ -2,6 +2,8 @@
 
 _A CLI tool for signing and verifying npm and yarn packages._
 
+![pkgsign status](https://us-central1-pkgsign.cloudfunctions.net/pkgsign-badge?name=pkgsign&expectedIdentity=%40hachque)
+
 pkgsign is a tool for adding signatures to npm and yarn packages, as well as verifying those packages using known signatures. It allows for signing packages with PGP private keys or [keybase.io](https://keybase.io/) for simplicity.
 
 ## Why pkgsign?
@@ -88,6 +90,16 @@ pkgsign sign --signer pgp --pgp-private-key-path ./privkey.key --pgp-private-key
 To sign a tarball with a PGP keypair, pass the tarball path instead of a package directory.
 
 It should be noted the public key HTTPS URL is used as the identity - if the URL ever changes, it's the same thing as someone else signing your package, and pkgsign will consider the package with a different URL as compromised.
+
+## GitHub Badges
+
+If you want to display the signing status of your project on GitHub, you can use the following Markdown:
+
+```
+![pkgsign status](https://us-central1-pkgsign.cloudfunctions.net/pkgsign-badge?name={name}&expectedIdentity={identity})
+```
+
+Replace `{name}` with the URL encoded package name on NPM, and `{identity}` with the URL encoded form of either `@name` for keybase.io identities, or the URL encoded form of the HTTPS URL for PGP identities.
 
 ## Contributing
 
