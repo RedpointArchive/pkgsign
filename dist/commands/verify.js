@@ -198,8 +198,15 @@ let default_1 = class default_1 extends clime_1.Command {
             console.log(untrustedCount + ' untrusted');
             console.log(trustedCount + ' trusted');
             if (options.full) {
-                const padRight = (input) => {
-                    while (input.length < 25) {
+                let targetLength = 0;
+                for (let path in results) {
+                    if (results[path].packageName.length > targetLength) {
+                        targetLength = results[path].packageName.length;
+                    }
+                }
+                targetLength += 2;
+                const padRight = (input, len) => {
+                    while (input.length < len) {
                         input = input + ' ';
                     }
                     return input;
@@ -222,8 +229,8 @@ let default_1 = class default_1 extends clime_1.Command {
                             status = 'trusted';
                             break;
                     }
-                    console.log(padRight(results[path].packageName) + ' ' +
-                        padRight(status) + ' ' +
+                    console.log(padRight(results[path].packageName, targetLength) + ' ' +
+                        padRight(status, 25) + ' ' +
                         (result.reason || ''));
                 }
             }

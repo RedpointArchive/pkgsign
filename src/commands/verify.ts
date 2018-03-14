@@ -201,8 +201,15 @@ export default class extends Command {
         console.log(trustedCount + ' trusted');
 
         if (options.full) {
-            const padRight = (input: string) => {
-                while (input.length < 25) {
+            let targetLength = 0;
+            for (let path in results) {
+                if (results[path].packageName.length > targetLength) {
+                    targetLength = results[path].packageName.length;
+                }
+            }
+            targetLength += 2;
+            const padRight = (input: string, len: number) => {
+                while (input.length < len) {
                     input = input + ' ';
                 }
                 return input;
@@ -226,8 +233,8 @@ export default class extends Command {
                         break;
                 }
                 console.log(
-                    padRight(results[path].packageName) + ' ' + 
-                    padRight(status) + ' ' +
+                    padRight(results[path].packageName, targetLength) + ' ' + 
+                    padRight(status, 25) + ' ' +
                     (result.reason || ''));
             }
         }
