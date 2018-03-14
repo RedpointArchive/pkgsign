@@ -116,7 +116,7 @@ class ModuleVerifier {
                     packageName: expectedPackageName,
                 };
             }
-            if (packageInfo == null || packageInfo.name != expectedPackageName) {
+            if (packageInfo == null || (packageInfo.name || '') != expectedPackageName) {
                 return {
                     status: ModuleVerificationStatus.Compromised,
                     reason: 'Provided package name in package.json did not match expected package name',

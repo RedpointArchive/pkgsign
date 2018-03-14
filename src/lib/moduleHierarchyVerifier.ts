@@ -35,7 +35,7 @@ export class ModuleHierarchyVerifier {
                     // This is the top-level module we want to verify. Because this module might be
                     // cloned by the user with Git into a directory name that doesn't match, we
                     // trust package.json for the expected package name instead.
-                    expectedPackageName = moduleInfo.untrustedPackageInfo.name;
+                    expectedPackageName = moduleInfo.untrustedPackageInfo.name || '';
                 }
                 let result = await moduleVerifier.verify(
                     moduleInfo.path,

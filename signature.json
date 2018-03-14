@@ -101,11 +101,11 @@
         },
         {
           "path": "dist/lib/moduleHierarchyVerifier.js",
-          "sha512": "326e309ef9181126320bdab3f8f1334c2a86d801bfede6586862472cd75402f3b2606b9890896b0ddfb8756415f06bd3656f2f21ed5bfc7ecc9d99ab1fe0d5d8"
+          "sha512": "b7454b9faa8fb8518886b723d9d3cf79990ee554730fa93032eb3d90f3da405b3ddb5c435c8f094db451d89bc3668331fb33dafa65f91db38187c298f873f419"
         },
         {
           "path": "dist/lib/moduleHierarchyVerifier.js.map",
-          "sha512": "d843a7cfd75beb4d3ba6e2f083262866c0cd9a663555428dfe0a0005168ce0e41a4b39b22b299e6441c89883d4cf44d7d7e8b62ee6f9add6288e000f1b6256e0"
+          "sha512": "e378576435a2c29506a3a611ffe305c77afad092df6ed8a18a9f095ef93101c1d08c11daf0cd2b9f7e2b482e5897502f877b473faefc2c77ee0d50d638954a5a"
         },
         {
           "path": "dist/lib/moduleVerifier.d.ts",
@@ -113,11 +113,11 @@
         },
         {
           "path": "dist/lib/moduleVerifier.js",
-          "sha512": "da5f82c5cb176a21034d16ca7ca6d631068e76e77416de48723d64e9e7036ee7ec943ae541e0e88c9f9a1b9f3fab71342988bb2f843d94da4c8b73bcac37a6e7"
+          "sha512": "f304acd5cab19b11adaa53d7522d6d6909efadf2813fb5b8810dda7d6131645fa66aa4315c298970f0c25d001d7cacda682c7ec21092afcd2e51512f1b30ed73"
         },
         {
           "path": "dist/lib/moduleVerifier.js.map",
-          "sha512": "e9e82a32add39fbf7fadb390b234a0d7a3a31e39067834764de69abfb99ea8885e09646f98dd2bc4c163292ebf30107c26a00749fb1d082e3063beeaea21733f"
+          "sha512": "36d34fd9676881e7fc452ed025aef801a363180f45e88727a60660d42d23a077ff0e3a7891574a966790f509a4787add755e5668d6b770723071930f57dcdeb3"
         },
         {
           "path": "dist/lib/pgpSigner.d.ts",
@@ -277,11 +277,11 @@
         },
         {
           "path": "src/lib/moduleHierarchyVerifier.ts",
-          "sha512": "1220aae8f0709c436f1a08658376db57335b72d07acb55c00e0c0741bc5d28750e515ef5186649d8470e3c18ffb495b887da182edfd31cd8305d4d8ca5221326"
+          "sha512": "a456fd58dff06bf54730ecb77b236dd104dab57f77ab31d35a135b96dc9cd338c28a494a78bd2f7807d78cda2d5616368f758d65efa5176f1f125bd801ed1364"
         },
         {
           "path": "src/lib/moduleVerifier.ts",
-          "sha512": "ee97362c88fefb509f545018bb1bebb5e43a0c42cd23af06cded2d50a90a7e815a4f396ad919d705525f903dadde6b9c16adfec793307c2b3440372a46707c4a"
+          "sha512": "c7660808d081ce08ef7563983811289626e262fe896944ab76a2b81e9ef039c906eb43f1b4f29f19e48761adb2133da4ae0af90c7365870ed8a25643d879b7b2"
         },
         {
           "path": "src/lib/pgpSigner.ts",
@@ -340,5 +340,5 @@
       }
     }
   ],
-  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJaqQWlCRB89yvKKRr01wAA/VIQAGjq0RApdvP3P90leoOwN/YS\nR+o++4zQ8hStpdTeJkh/xmtVkNfKOHi++Gaj6/TTn/iudcSP1jZcQLQKMqhIruX5\nRhQ3bksrU0rt/caLjIujEnAvyBBx1YBf/8KTvgr4yxX35sZzIG51Iosb5TmLmBxa\n1fCEboKuGOevydZ3dmoIXnHvynlMUx0zRdOiJS6bbBOMzWn9vCyBM9V0b98uRzWp\nTQBMeGMPAO0R2M/kRS/KBrclRv6mGzyrwZHSJ9rFVsuhNQMcWo9rKtItEcb08HBx\nZVsQn7/tQsi/JtZAicuZnL5NowaycB8lJGZR00rs5UwpiQgawGS33dcKf8XTGMVB\nmtPkMjV0ZoB0rNv8uo3z/qaEuJaJAucYHLNeSovkJXiwSZmLikW5N19pSvsfJEXy\nInyqYPfWOmH8vrIMAps5oD176qeiEv8ouFUy+RfQrd7ldGhIN6axPMkQqjAa9Q+R\ngQlQJ/whN/zkRLlkyJQZAv8v3A1b8yDGHOV9vwjv0uenPr1gBLWGq6SNLeh6YGu8\nYMgEUKmJvBf7QrINF1fqnihLGuoD2MNTNPCw+06Ztemt5M56jwSaieiToGEwqSJ9\nWeo7Tp9hDKr5XtjERcqFo9X27Fc/i6pkBqQj17gt+mitH0iFZN5ZdtzhMxoRDsXo\n7uh1TgGSIhzTB5V5pIQF\n=+cTQ\n-----END PGP SIGNATURE-----\n"
+  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJaqQkGCRB89yvKKRr01wAAhdEQAB4pVCIv1ankpeq8Mlopyx6a\nB9mIIBGMBOTzXSn9qu3Ca4pH4fiLBRmOf8VdAc/1UJuTfavvaJz0/3GIsFjNVh49\n46u2yNR3vwipuX4x96qLSd1kqNDCuAQ6NeOU2Mzep8c5Rebkv22VWrDEZ205BqvX\n4JFozciKw+5syuiaZoAC/zDnkzw+JI5Qwjv2c73NNLBB6ghe9907GtteuEGIWkFG\n7XC/4dmqao3gLECsSAK2orLfj89DDl3gDyxRvFhSga53zpcn/dOcCjKmNajNHMic\nD7Wk3AazrteJQphCkGi+x5xG49EfYbRFgRtMtJc7KMHncU6xJLf8HN2zHfbo5QHP\nfsz6KX2qVTdNcOHU2x0cy+NMLdt3UiPLD7kl5AkCWqRws8+/2vc3sXIBO3TOQfie\nVMLkx0zeWBE5vrRWU/LWQBeepXoStcghIJYDurL9F2rhi+NlJc2hDw+a+rLhReuF\n/X1Qk9Wig6sgF4VAnv5VxLRKlyjcUyZFb4HBufQER4Eg+UvczYJkO2PmcWZCTuTn\nKDgXKd/bwPz4NWI+3jpqrKoJOIpRVHEFQKXLZtw2msepOZf/RWs+QVN1Xprr6wH9\nA74u+fGWuIbk8lhSQ43QmxBCLsvlQKM9qmw+TqmIPgvIPnGnnUWH/8OyQVYdLIPv\n1gp323JHqO241z2OKv9s\n=WAGq\n-----END PGP SIGNATURE-----\n"
 }
