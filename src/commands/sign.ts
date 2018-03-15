@@ -8,7 +8,7 @@ import {
 import * as cmd from 'node-cmd';
 import * as path from 'path';
 import { lstatSync, unlinkSync } from 'fs';
-import { unlinkPromise, recursivePromise, sha512OfFile, writeFilePromise, createWorkingDirectory, decompress, compress } from '../lib/fsPromise';
+import { unlinkPromise, recursivePromise, sha512OfFile, writeFilePromise, createWorkingDirectory, decompress, compress, readFilePromise } from '../lib/fsPromise';
 import { Signer } from '../lib/signer';
 import { KeybaseSigner } from '../lib/keybaseSigner';
 import { PgpSigner } from '../lib/pgpSigner';
@@ -16,6 +16,8 @@ import * as packlist from 'npm-packlist';
 import { SignatureFileEntry, SignatureFilesEntry } from '../lib/signature/signatureFilesEntry';
 import { SignatureInfo, createDeterministicString } from '../lib/signature';
 import { SignatureIdentityEntry } from '../lib/signature/signatureIdentityEntry';
+import { queueTelemetry } from '../lib/telemetry';
+import { identityToString } from '../lib/signature/signatureIdentity';
   
 export class SignOptions extends Options {
     @option({
@@ -74,6 +76,18 @@ export default class extends Command {
     }
 
     private async signTarball(signer: Signer, tarballPath: string): Promise<void> {
+        // We never record package names for tarballs, since we don't load package.json
+        // and thus don't know if the private flag is set. We never send identifiable telemetry
+        // on private packages.
+        await queueTelemetry({
+            action: 'sign-tarball',
+            packageName: '',
+            packageVersion: '',
+            packageIsSigned: true,
+            signingIdentity: '',
+            identityIsTrusted: true,
+        });
+
         const wd = await createWorkingDirectory();
         console.log('extracting unsigned tarball...');
         await decompress(tarballPath, wd);
@@ -135,6 +149,7 @@ export default class extends Command {
             path: packagePath
         });
         let entries: SignatureFileEntry[] = [];
+        let packageInfo: any = null;
         for (let relPath of files) {
             const hash = await sha512OfFile(path.join(packagePath, relPath));
             const normalisedPath = relPath.replace(/\\/g, '/');
@@ -145,6 +160,10 @@ export default class extends Command {
                 // anyway).
                 continue;
             }
+            if (normalisedPath == 'package.json') {
+                const packageJson = await readFilePromise(path.join(packagePath, relPath));
+                packageInfo = JSON.parse(packageJson);
+            }
             entries.push({
                 path: normalisedPath,
                 sha512: hash,
@@ -153,6 +172,42 @@ export default class extends Command {
 
         console.log('obtaining identity...');
         const identity = await signer.getIdentity();
+
+        if (packageInfo != null && packageInfo.name != undefined) {
+            if (packageInfo.private != true) {
+                // This is not a private package, so record telemetry with the package
+                // name included.
+                await queueTelemetry({
+                    action: 'sign-directory',
+                    packageName: packageInfo.name,
+                    packageVersion: packageInfo.version || '',
+                    packageIsSigned: true,
+                    signingIdentity: identityToString(identity),
+                    identityIsTrusted: true,
+                });
+            } else {
+                // Private package, don't include any package information.
+                await queueTelemetry({
+                    action: 'sign-directory',
+                    packageName: '',
+                    packageVersion: '',
+                    packageIsSigned: true,
+                    signingIdentity: '',
+                    identityIsTrusted: true,
+                });
+            }
+        } else {
+            // Can't read package.json or it doesn't exist - don't include
+            // any package information.
+            await queueTelemetry({
+                action: 'sign-directory',
+                packageName: '',
+                packageVersion: '',
+                packageIsSigned: true,
+                signingIdentity: '',
+                identityIsTrusted: true,
+            });
+        }
 
         console.log('creating signature...');
         const signatureDocument: SignatureInfo = {

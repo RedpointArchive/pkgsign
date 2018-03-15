@@ -29,7 +29,10 @@ export enum ModuleVerificationStatus {
 export interface ModuleVerificationResult {
     status: ModuleVerificationStatus;
     packageName: string;
+    untrustedPackageVersion: string;
+    isPrivate: boolean;
     reason?: string;
+    trustedIdentity?: SignatureIdentity;
     untrustedIdentity?: SignatureIdentity;
 }
 
@@ -37,6 +40,18 @@ export class ModuleVerifier {
     constructor(private trustStore: TrustStore) { }
 
     public async verify(dir: string, relFilesOnDisk: string[], expectedPackageName: string): Promise<ModuleVerificationResult> {
+        // Try to read whether or not the module is private early so we
+        // can return the information to the caller. This field is untrusted, and
+        // is only used by telemetry when determining the amount of data to send.
+        let isPrivate = true;
+        let untrustedPackageVersion = '';
+        try {
+            let earlyPackageInfo = JSON.parse(await readFilePromise(path.join(dir, 'package.json')));
+            isPrivate = earlyPackageInfo.private || false;
+            untrustedPackageVersion = earlyPackageInfo.version || '';
+        } catch (e) {
+        }
+
         // Load the signature document.
         let signature: SignatureInfo | null = null;
         try {
@@ -48,24 +63,13 @@ export class ModuleVerifier {
                 status: ModuleVerificationStatus.Unsigned,
                 reason: 'Missing or unparsable signature.json',
                 packageName: expectedPackageName,
+                untrustedPackageVersion: untrustedPackageVersion,
+                isPrivate: isPrivate,
             };
         }
 
         // Build up our deterministic string to validate the signature against.
         const deterministicString = createDeterministicString(signature);
-
-        // Verify each of the entries.
-        let context = {
-            dir: dir,
-            relFilesOnDisk: relFilesOnDisk,
-            expectedPackageName: expectedPackageName,
-        };
-        for (let entry of signature.entries) {
-            let entryResult = await entry.verify(context);
-            if (entryResult !== null) {
-                return entryResult;
-            }
-        }
         
         // Find an entry that provides an identity.
         let identity: SignatureIdentity | null = null;
@@ -81,6 +85,8 @@ export class ModuleVerifier {
                 status: ModuleVerificationStatus.Compromised,
                 reason: 'No identity information in signature.json',
                 packageName: expectedPackageName,
+                untrustedPackageVersion: untrustedPackageVersion,
+                isPrivate: isPrivate,
             };
         }
 
@@ -97,7 +103,25 @@ export class ModuleVerifier {
                 status: ModuleVerificationStatus.Compromised,
                 reason: 'Unknown identity in signature.json',
                 packageName: expectedPackageName,
+                untrustedPackageVersion: untrustedPackageVersion,
+                isPrivate: isPrivate,
             };
+        }
+
+        // Verify each of the entries.
+        let context = {
+            dir: dir,
+            relFilesOnDisk: relFilesOnDisk,
+            expectedPackageName: expectedPackageName,
+            untrustedIdentity: identity,
+            untrustedPackageVersion: untrustedPackageVersion,
+            isPrivate: isPrivate,
+        };
+        for (let entry of signature.entries) {
+            let entryResult = await entry.verify(context);
+            if (entryResult !== null) {
+                return entryResult;
+            }
         }
 
         // Request the verifier verify the signature.
@@ -106,6 +130,9 @@ export class ModuleVerifier {
                 status: ModuleVerificationStatus.Compromised,
                 reason: 'The signature does not match',
                 packageName: expectedPackageName,
+                untrustedPackageVersion: untrustedPackageVersion,
+                isPrivate: isPrivate,
+                untrustedIdentity: identity,
             };
         }
 
@@ -119,6 +146,9 @@ export class ModuleVerifier {
                 status: ModuleVerificationStatus.Compromised,
                 reason: 'Missing or unparsable package.json',
                 packageName: expectedPackageName,
+                untrustedPackageVersion: untrustedPackageVersion,
+                isPrivate: isPrivate,
+                untrustedIdentity: identity,
             };
         }
 
@@ -127,6 +157,9 @@ export class ModuleVerifier {
                 status: ModuleVerificationStatus.Compromised,
                 reason: 'Provided package name in package.json did not match expected package name',
                 packageName: expectedPackageName,
+                untrustedPackageVersion: untrustedPackageVersion,
+                isPrivate: isPrivate,
+                untrustedIdentity: identity,
             };
         }
 
@@ -136,12 +169,17 @@ export class ModuleVerifier {
             return {
                 status: ModuleVerificationStatus.Trusted,
                 packageName: expectedPackageName,
+                untrustedPackageVersion: untrustedPackageVersion,
+                isPrivate: isPrivate,
+                trustedIdentity: identity,
             };
         } else {
             return {
                 status: ModuleVerificationStatus.Untrusted,
                 untrustedIdentity: identity,
                 packageName: expectedPackageName,
+                untrustedPackageVersion: untrustedPackageVersion,
+                isPrivate: isPrivate,
             }
         }
     }

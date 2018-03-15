@@ -4,9 +4,11 @@ import fetch from 'node-fetch';
 import * as openpgp from 'openpgp';
 import { SignatureInfo } from './signature';
 import { readFilePromise, readdirPromise } from './fsPromise';
-import { ModuleVerificationResult, ModuleVerifier } from './moduleVerifier';
+import { ModuleVerificationResult, ModuleVerifier, ModuleVerificationStatus } from './moduleVerifier';
 import { TrustStore } from './trustStore';
 import * as packlist from 'npm-packlist';
+import { queueTelemetry } from '../lib/telemetry';
+import { identityToString } from './signature/signatureIdentity';
 
 export interface ModuleInfo {
     untrustedPackageInfo: any;
@@ -43,6 +45,29 @@ export class ModuleHierarchyVerifier {
                     expectedPackageName
                 );
                 results[moduleInfo.path] = result;
+                if (result.isPrivate) {
+                    // Don't send identifiable telemetry about private packages.
+                    await queueTelemetry({
+                        action: 'verify-module',
+                        packageName: '',
+                        packageVersion: '',
+                        packageIsSigned: result.status != ModuleVerificationStatus.Unsigned,
+                        signingIdentity: '',
+                        identityIsTrusted: result.status == ModuleVerificationStatus.Trusted,
+                    });
+                } else {
+                    // Send telemetry for public packages.
+                    await queueTelemetry({
+                        action: 'verify-module',
+                        packageName: result.packageName,
+                        packageVersion: result.untrustedPackageVersion,
+                        packageIsSigned: result.status != ModuleVerificationStatus.Unsigned,
+                        signingIdentity: result.trustedIdentity != undefined ?
+                            identityToString(result.trustedIdentity) : (
+                                result.untrustedIdentity != undefined ? identityToString(result.untrustedIdentity) : ''),
+                        identityIsTrusted: result.status == ModuleVerificationStatus.Trusted,
+                    });
+                }
             })(moduleInfo));
         }
         await Promise.all(promises);

@@ -13,6 +13,8 @@ import * as path from 'path';
 import { basename } from 'path';
 import { TrustStore } from '../lib/trustStore';
 import { createWorkingDirectory, decompress, recursivePromise, readFilePromise } from '../lib/fsPromise';
+import { queueTelemetry } from '../lib/telemetry';
+import { identityToString } from '../lib/signature/signatureIdentity';
 
 export class VerifyOptions extends Options {
     @option({
@@ -71,6 +73,30 @@ export default class extends Command {
         console.log('verifying package...');
         const moduleVerifier = new ModuleVerifier(new TrustStore());
         let result = await moduleVerifier.verify(base, files, options.packageName || '');
+        
+        if (result.isPrivate) {
+            // Don't send identifiable telemetry about private packages.
+            await queueTelemetry({
+                action: 'verify-module',
+                packageName: '',
+                packageVersion: '',
+                packageIsSigned: result.status != ModuleVerificationStatus.Unsigned,
+                signingIdentity: '',
+                identityIsTrusted: result.status == ModuleVerificationStatus.Trusted,
+            });
+        } else {
+            // Send telemetry for public packages.
+            await queueTelemetry({
+                action: 'verify-module',
+                packageName: result.packageName,
+                packageVersion: result.untrustedPackageVersion,
+                packageIsSigned: result.status != ModuleVerificationStatus.Unsigned,
+                signingIdentity: result.trustedIdentity != undefined ?
+                    identityToString(result.trustedIdentity) : (
+                        result.untrustedIdentity != undefined ? identityToString(result.untrustedIdentity) : ''),
+                identityIsTrusted: result.status == ModuleVerificationStatus.Trusted,
+            });
+        }
 
         // Prompt user to trust package if untrusted.
         if (result.status == ModuleVerificationStatus.Untrusted && !options.nonInteractive) {
@@ -95,6 +121,32 @@ export default class extends Command {
                     result.packageName
                 );
                 didModify = true;
+
+                if (!result.isPrivate) {
+                    await queueTelemetry({
+                        action: 'grant-trust',
+                        packageName: result.packageName,
+                        packageVersion: result.untrustedPackageVersion,
+                        packageIsSigned: true,
+                        signingIdentity: result.trustedIdentity != undefined ?
+                            identityToString(result.trustedIdentity) : (
+                                result.untrustedIdentity != undefined ? identityToString(result.untrustedIdentity) : ''),
+                        identityIsTrusted: true,
+                    });
+                }
+            } else {
+                if (!result.isPrivate) {
+                    await queueTelemetry({
+                        action: 'not-grant-trust',
+                        packageName: result.packageName,
+                        packageVersion: result.untrustedPackageVersion,
+                        packageIsSigned: true,
+                        signingIdentity: result.trustedIdentity != undefined ?
+                            identityToString(result.trustedIdentity) : (
+                                result.untrustedIdentity != undefined ? identityToString(result.untrustedIdentity) : ''),
+                        identityIsTrusted: false,
+                    });
+                }
             }
 
             result = await moduleVerifier.verify(base, files, options.packageName || '');
@@ -121,6 +173,8 @@ export default class extends Command {
     }
 
     private async verifyDirectory(path: string, options: VerifyOptions): Promise<void> {
+        // Telemetry sending is done directly inside ModuleHierarchyVerifier, per package.
+
         let moduleHierarchyVerifier = new ModuleHierarchyVerifier(path);
         let results = await moduleHierarchyVerifier.verify();
 
@@ -154,13 +208,39 @@ export default class extends Command {
             const trustResults = await inquirer.prompt(prompts);
             let trustStore = new TrustStore();
             for (let path in trustResults) {
+                let realpath = Buffer.from(path, 'base64').toString('ascii');
                 if (trustResults[path]) {
-                    let realpath = Buffer.from(path, 'base64').toString('ascii');
                     await trustStore.addTrusted(
                         results[realpath].untrustedIdentity,
                         results[realpath].packageName
                     );
                     didModify = true;
+
+                    if (!results[realpath].isPrivate) {
+                        await queueTelemetry({
+                            action: 'grant-trust',
+                            packageName: results[realpath].packageName,
+                            packageVersion: results[realpath].untrustedPackageVersion,
+                            packageIsSigned: true,
+                            signingIdentity: results[realpath].trustedIdentity != undefined ?
+                                identityToString(results[realpath].trustedIdentity) : (
+                                    results[realpath].untrustedIdentity != undefined ? identityToString(results[realpath].untrustedIdentity) : ''),
+                            identityIsTrusted: true,
+                        });
+                    }
+                } else {
+                    if (!results[realpath].isPrivate) {
+                        await queueTelemetry({
+                            action: 'not-grant-trust',
+                            packageName: results[realpath].packageName,
+                            packageVersion: results[realpath].untrustedPackageVersion,
+                            packageIsSigned: true,
+                            signingIdentity: results[realpath].trustedIdentity != undefined ?
+                                identityToString(results[realpath].trustedIdentity) : (
+                                    results[realpath].untrustedIdentity != undefined ? identityToString(results[realpath].untrustedIdentity) : ''),
+                            identityIsTrusted: false,
+                        });
+                    }
                 }
             }
 

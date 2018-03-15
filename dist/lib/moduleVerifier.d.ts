@@ -9,7 +9,10 @@ export declare enum ModuleVerificationStatus {
 export interface ModuleVerificationResult {
     status: ModuleVerificationStatus;
     packageName: string;
+    untrustedPackageVersion: string;
+    isPrivate: boolean;
     reason?: string;
+    trustedIdentity?: SignatureIdentity;
     untrustedIdentity?: SignatureIdentity;
 }
 export declare class ModuleVerifier {

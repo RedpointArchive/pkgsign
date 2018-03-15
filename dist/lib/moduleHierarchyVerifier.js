@@ -13,6 +13,8 @@ const fsPromise_1 = require("./fsPromise");
 const moduleVerifier_1 = require("./moduleVerifier");
 const trustStore_1 = require("./trustStore");
 const packlist = require("npm-packlist");
+const telemetry_1 = require("../lib/telemetry");
+const signatureIdentity_1 = require("./signature/signatureIdentity");
 class ModuleHierarchyVerifier {
     constructor(dir) {
         this.dir = dir;
@@ -40,6 +42,29 @@ class ModuleHierarchyVerifier {
                     }
                     let result = yield moduleVerifier.verify(moduleInfo.path, yield packlist({ path: moduleInfo.path }), expectedPackageName);
                     results[moduleInfo.path] = result;
+                    if (result.isPrivate) {
+                        // Don't send identifiable telemetry about private packages.
+                        yield telemetry_1.queueTelemetry({
+                            action: 'verify-module',
+                            packageName: '',
+                            packageVersion: '',
+                            packageIsSigned: result.status != moduleVerifier_1.ModuleVerificationStatus.Unsigned,
+                            signingIdentity: '',
+                            identityIsTrusted: result.status == moduleVerifier_1.ModuleVerificationStatus.Trusted,
+                        });
+                    }
+                    else {
+                        // Send telemetry for public packages.
+                        yield telemetry_1.queueTelemetry({
+                            action: 'verify-module',
+                            packageName: result.packageName,
+                            packageVersion: result.untrustedPackageVersion,
+                            packageIsSigned: result.status != moduleVerifier_1.ModuleVerificationStatus.Unsigned,
+                            signingIdentity: result.trustedIdentity != undefined ?
+                                signatureIdentity_1.identityToString(result.trustedIdentity) : (result.untrustedIdentity != undefined ? signatureIdentity_1.identityToString(result.untrustedIdentity) : ''),
+                            identityIsTrusted: result.status == moduleVerifier_1.ModuleVerificationStatus.Trusted,
+                        });
+                    }
                 }))(moduleInfo));
             }
             yield Promise.all(promises);

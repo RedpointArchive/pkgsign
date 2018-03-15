@@ -45,6 +45,9 @@ class SignatureFilesEntry {
                         status: moduleVerifier_1.ModuleVerificationStatus.Compromised,
                         reason: normalisedPath + ' exists in the package, but was not in the signature',
                         packageName: context.expectedPackageName,
+                        untrustedIdentity: context.untrustedIdentity,
+                        untrustedPackageVersion: context.untrustedPackageVersion,
+                        isPrivate: context.isPrivate,
                     };
                 }
                 const hash = yield fsPromise_1.sha512OfFile(path.join(context.dir, normalisedPath));
@@ -53,6 +56,9 @@ class SignatureFilesEntry {
                         status: moduleVerifier_1.ModuleVerificationStatus.Compromised,
                         reason: normalisedPath + ' does not have content that was signed for (mismatched hash)',
                         packageName: context.expectedPackageName,
+                        untrustedIdentity: context.untrustedIdentity,
+                        untrustedPackageVersion: context.untrustedPackageVersion,
+                        isPrivate: context.isPrivate,
                     };
                 }
             }
@@ -75,6 +81,9 @@ class SignatureFilesEntry {
                         status: moduleVerifier_1.ModuleVerificationStatus.Compromised,
                         reason: fileEntry.path + ' is expected by the signature, but is missing in the package',
                         packageName: context.expectedPackageName,
+                        untrustedIdentity: context.untrustedIdentity,
+                        untrustedPackageVersion: context.untrustedPackageVersion,
+                        isPrivate: context.isPrivate,
                     };
                 }
             }
