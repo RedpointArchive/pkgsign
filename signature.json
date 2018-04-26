@@ -241,11 +241,11 @@
         },
         {
           "path": "dist/lib/signature/signaturePackageJsonEntry.js",
-          "sha512": "a9218f47a271b4bb8f1ed618bddf0739a6307975ee05b20b0181ca813bfe131fda80b588ab3a5b86414f6acccadf0174c2a76012ce5f931871ded2b5ce481ca3"
+          "sha512": "50f0bd66c26729fb645f0ed8a2c27def1f6ea08c9e381f74eab50c6ad08c86d62ac12f8a27eea40a1aeac2115eb07e97c48e5b35de573f169c9af4276e94de55"
         },
         {
           "path": "dist/lib/signature/signaturePackageJsonEntry.js.map",
-          "sha512": "451653fda50c0582cd51961684297a8007783b39a9a6ccc2a828ca225d9ac3e7a69fd5ffe76479bbc7499425dc62480fa43c860e2757ab66c89c73cd446e5f5a"
+          "sha512": "29388cd6eae6dda8b51b4bfeb16550cd85e84bcf169f8ff848d7218909cfdb78230eb60310ddf5fd3c893cdf12635ca8c41a6053162a21247e23054aee2dea57"
         },
         {
           "path": "dist/lib/signature/verificationContext.d.ts",
@@ -381,7 +381,7 @@
         },
         {
           "path": "src/lib/signature/signaturePackageJsonEntry.ts",
-          "sha512": "c6fcd29ddb509225361b12f9b8d46cff9e1f2809b1edc2342c771d4e7be11a70e7b57de7daa5a160e188bea27671c7ae25744b722f491c1f11669b9f32f5e41e"
+          "sha512": "8b123c584c764bf1a9be907a78c4c760f665c62b3dbe451409b033de59ea6d237ef64b0efb84df3051e09e912cec398df9939d40b57b34b933eca3d8b7157cdf"
         },
         {
           "path": "src/lib/signature/verificationContext.ts",
@@ -427,11 +427,9 @@
       "entry": "packageJson/v1alpha1",
       "packageJson": {
         "name": "pkgsign",
-        "version": "0.2.0-alpha.2",
+        "version": "0.2.0-alpha.4",
         "description": "A CLI tool for signing and verifying npm and yarn packages.",
         "main": "index.js",
-        "repository": "https://github.com/RedpointGames/pkgsign",
-        "author": "Redpoint Games",
         "license": "MIT",
         "private": false,
         "bin": {
@@ -481,5 +479,5 @@
       }
     }
   ],
-  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJa4gzDCRB89yvKKRr01wAAV5sQAHaOuOGZCxHxJhDzzfg6n7xB\nsHalfX23Axckqizt0qFp1X8rVybor34KJFT/t7UEUdWb0MCjnwytDbneWOVRvux2\nT375HuPum45HiEdT7+rGCoTakpe8ivTUz1a4ieAYW7pqMoZoOMwJHbRyqHBjaoCT\n7Tr26zv2pqg81u5X5sVO3VkwEm9h0COt5ub+FGB0vNpZpdQa11HuGUzSB0ryJpYv\nocq8XTInbKlmCzAv+TSFIcyXCbmqq34XA+n/DMaI1ZXmVZtljWuFzXlHyd551sUd\n1/wklWl5fyXTeqn5WOM5/sH7p2JuDOcN8b71/xjl/Xj5LrNgnr6rgAgAe9+1jU8p\nVBR5XWGM3lIYOdGHiXZAuh9dcgt9O49mkd24th6bI+q+Yvr9ZQBNdS1sUV1LSg6B\nCmxn3A3PZFwOCVih5Dj/ElOZUNg4rzXrR9SAJIZfHMLhdNI8L1vSHA9uE9eOxgZk\noPNVfFKK7f+UeRZorUKu+19F1vLGTi6L2p6blSglfHT0MMC/lt4O/7/Wlh/z8oq5\n8zC0MrpRFOqBuSVKGsPXEPYnKffCYz4jVXdxiA5xMl1DFjTNU/4PD2T1T2j8bufW\n6OVeD/QHqvHDxWeSWx4d7qRuK6UbFrsPSVI+uG3M9ekRST7iJn7JQLnOi73WB3S0\naaqqzU3RyXp4TDWmO/HA\n=uhAr\n-----END PGP SIGNATURE-----\n"
+  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJa4hN2CRB89yvKKRr01wAAdJoQAMQaF+WaYCbx+7Cb29gBKhio\nzGvRvjb35RDBtk66JYD86tBnVz30gS867ub96wgDWmlQUeZGRsAHhPlStWXYskA6\n5SqBRlT5gpogNTXFGhhUKtWjFHw2ISqhJm3qVJ5lcsl1ZKXfCHvdN1cfMcSljjzn\nBlWcTy1IDXqhvi2M98rrzKa+5DEvb9Lb1J/ADRfW9t3jtUfi3maiyWcnO3xEC9F+\nIaJpAxR8VnzrWY3/wH7Ap7vTbqcM6/7MqBJW3DPE+sZkuancN2Yfb/L69yaKIJjI\ncChXQ6yp541ykpPGX9O9+Cg+R7+o2eja7UYouLpxiFazkPjP8JKIaXTA6V99jZ6V\n08AIweQ5hH3fFDpNVkZ/QEadXTmqS80TStmh1S49enUjMQI9c42yZUGYg9NlM3r8\nkXZiABHgdW6bqioRyLpwzYPwuHCfbw6jU1Qv+x6ZN5/1arRYRO2a5PiK0UKfB09w\nsKy1ytqNX1aIwilOkAeU05mKtnOkXP3PPoQT89jYupwjgJbdxH0jzUi9tsOIpMtV\nu+J06soQsBqzi7jr31/XCGo44ZSCNLHepTxh74/u+tZ+A/l8LbCiqIeOq8CCfIrC\nkR+kAt7Sh+Dul2uE9OwESofBPnbXMBeKiTtoQc1vaeIFBbopEf44dBa/1bPzY+l+\nN+bObGOijPKi5fV1dh/7\n=haYb\n-----END PGP SIGNATURE-----\n"
 }
