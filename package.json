@@ -1,6 +1,6 @@
 {
   "name": "pkgsign",
-  "version": "0.2.0-alpha.2",
+  "version": "0.2.0-alpha.3",
   "description": "A CLI tool for signing and verifying npm and yarn packages.",
   "main": "index.js",
   "repository": "https://github.com/RedpointGames/pkgsign",
@@ -16,7 +16,6 @@
     "eol-fix-stream": "^1.0.0",
     "inquirer": "^5.0.0",
     "isbinaryfile": "^3.0.2",
-    "json-normalize": "^1.1.2",
     "node-cmd": "^3.0.0",
     "node-fetch": "^1.7.3",
     "node-machine-id": "^1.1.10",

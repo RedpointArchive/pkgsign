@@ -2,7 +2,7 @@ import { SignatureEntry } from "../signature";
 import { VerificationContext } from "./verificationContext";
 import { ModuleVerificationResult, ModuleVerificationStatus } from "../moduleVerifier";
 import { SignatureIdentity } from "./signatureIdentity";
-import { stringifySync } from 'json-normalize';
+import { normalizeSync as stringifySync } from './jsonNormalize';
 import * as fs from 'fs';
 import * as path from 'path';
 

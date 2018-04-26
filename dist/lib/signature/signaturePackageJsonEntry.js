@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const moduleVerifier_1 = require("../moduleVerifier");
-const json_normalize_1 = require("json-normalize");
+const jsonNormalize_1 = require("./jsonNormalize");
 const fs = require("fs");
 const path = require("path");
 const generatedNpmKeys = [
@@ -48,7 +48,7 @@ class SignaturePackageJsonEntry {
         exports.stripNpmMetadataFieldFromPackageInfo(this.packageJson);
     }
     toDeterministicString() {
-        return json_normalize_1.stringifySync(this.packageJson);
+        return jsonNormalize_1.normalizeSync(this.packageJson);
     }
     verify(context) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -96,8 +96,8 @@ class SignaturePackageJsonEntry {
                 // Strip NPM metadata from actual package.json value.
                 exports.stripNpmMetadataFieldFromPackageInfo(packageJsonActual);
                 // Stringify both our expected and actual values.
-                const normalizedActual = json_normalize_1.stringifySync(packageJsonActual);
-                const normalizedExpected = json_normalize_1.stringifySync(this.packageJson);
+                const normalizedActual = jsonNormalize_1.normalizeSync(packageJsonActual);
+                const normalizedExpected = jsonNormalize_1.normalizeSync(this.packageJson);
                 // If they don't match, then package.json doesn't match the expected value.
                 if (normalizedActual !== normalizedExpected) {
                     return {
