@@ -80,4 +80,28 @@ class TrustStore {
     }
 }
 exports.TrustStore = TrustStore;
+class TestTrustStore {
+    constructor() { }
+    getOrFetchCachedPublicKeys(cacheName, fetch) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield fsPromise_1.readFilePromise(path.join(__dirname, '..', '..', 'test', 'test.pub'));
+        });
+    }
+    fetchCachedPublicKeys(cacheName, fetch) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield fsPromise_1.readFilePromise(path.join(__dirname, '..', '..', 'test', 'test.pub'));
+        });
+    }
+    isTrusted(identity, packageName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return identity.pgpPublicKeyUrl === 'https://pkgsign.test.invalid.url/test.pub';
+        });
+    }
+    addTrusted(identity, packageName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // No implementation.
+        });
+    }
+}
+exports.TestTrustStore = TestTrustStore;
 //# sourceMappingURL=trustStore.js.map

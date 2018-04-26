@@ -1,4 +1,5 @@
 import { SignatureIdentity } from "./signatureIdentity";
+import { SignatureEntry } from "../signature";
 
 export interface VerificationContext {
     // The directory of the module being verified.
@@ -18,4 +19,7 @@ export interface VerificationContext {
 
     // Whether the module is private.
     isPrivate: boolean;
+
+    // A list of all of the signature entries included in the signature (unverified).
+    signatureEntries: SignatureEntry[];
 }

@@ -32,6 +32,7 @@ const signature_1 = require("../lib/signature");
 const signatureIdentityEntry_1 = require("../lib/signature/signatureIdentityEntry");
 const telemetry_1 = require("../lib/telemetry");
 const signatureIdentity_1 = require("../lib/signature/signatureIdentity");
+const signaturePackageJsonEntry_1 = require("../lib/signature/signaturePackageJsonEntry");
 class SignOptions extends clime_1.Options {
 }
 __decorate([
@@ -67,6 +68,16 @@ exports.SignOptions = SignOptions;
 let default_1 = class default_1 extends clime_1.Command {
     execute(path, options) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (yield this.executeInternal(path, options)) {
+                process.exitCode = 0;
+            }
+            else {
+                process.exitCode = 1;
+            }
+        });
+    }
+    executeInternal(path, options) {
+        return __awaiter(this, void 0, void 0, function* () {
             let signer;
             if (options.withSigner == 'pgp') {
                 signer = new pgpSigner_1.PgpSigner(options.privateKeyPath, options.privateKeyPassphrase, options.publicKeyUrl);
@@ -78,71 +89,27 @@ let default_1 = class default_1 extends clime_1.Command {
                 throw new Error('Not supported signer type: ' + options.withSigner);
             }
             if (path.endsWith(".tgz") && fs_1.lstatSync(path).isFile()) {
-                yield this.signTarball(signer, path);
+                return yield this.signTarball(signer, path);
             }
             else {
-                yield this.signDirectory(signer, path);
+                return yield this.signDirectory(signer, path);
             }
         });
     }
     signTarball(signer, tarballPath) {
         return __awaiter(this, void 0, void 0, function* () {
-            // We never record package names for tarballs, since we don't load package.json
-            // and thus don't know if the private flag is set. We never send identifiable telemetry
-            // on private packages.
-            yield telemetry_1.queueTelemetry({
-                action: 'sign-tarball',
-                packageName: '',
-                packageVersion: '',
-                packageIsSigned: true,
-                signingIdentity: '',
-                identityIsTrusted: true,
-            });
             const wd = yield fsPromise_1.createWorkingDirectory();
             console.log('extracting unsigned tarball...');
             yield fsPromise_1.decompress(tarballPath, wd);
             console.log('building file list...');
             const base = path.join(wd, "package");
-            const files = yield fsPromise_1.recursivePromise(base);
-            let entries = [];
-            for (let fullPath of files) {
-                const hash = yield fsPromise_1.sha512OfFile(fullPath);
-                const normalisedPath = fullPath.substr(base.length + 1).replace(/\\/g, '/');
-                if (normalisedPath == 'signature.json') {
-                    // This file might be included in the Git repo to sign the contents of the
-                    // latest commit against Keybase or PGP, but it should never be included
-                    // in the signature (because we're about to replace it in the signed package
-                    // anyway).
-                    continue;
-                }
-                entries.push({
-                    path: normalisedPath,
-                    sha512: hash,
-                });
-            }
-            console.log('obtaining identity...');
-            const identity = yield signer.getIdentity();
-            console.log('creating signature...');
-            const signatureDocument = {
-                entries: [
-                    new signatureFilesEntry_1.SignatureFilesEntry({
-                        files: entries,
-                    }),
-                    new signatureIdentityEntry_1.SignatureIdentityEntry({
-                        identity: identity,
-                    })
-                ],
-                signature: '',
-            };
-            console.log('creating deterministic string...');
-            const deterministicString = signature_1.createDeterministicString(signatureDocument);
-            console.log('signing deterministic string...');
-            signatureDocument.signature = yield signer.signEntries(deterministicString);
-            const signatureDocumentJson = JSON.stringify(signatureDocument, null, 2);
-            yield fsPromise_1.writeFilePromise(path.join(wd, 'package', 'signature.json'), signatureDocumentJson);
+            let files = yield fsPromise_1.recursivePromise(base);
+            files = files.map(fullPath => fullPath.substr(base.length + 1));
+            yield this.signFileList(signer, base, files, 'sign-tarball');
             yield fsPromise_1.unlinkPromise(tarballPath);
             yield fsPromise_1.compress(wd, tarballPath);
             console.log('package tarball has been signed');
+            return true;
         });
     }
     signDirectory(signer, packagePath) {
@@ -151,10 +118,17 @@ let default_1 = class default_1 extends clime_1.Command {
             const files = yield packlist({
                 path: packagePath
             });
-            let entries = [];
+            yield this.signFileList(signer, packagePath, files, 'sign-directory');
+            console.log('signature.json has been created in package directory');
+            return true;
+        });
+    }
+    signFileList(signer, basePath, relativeFilePaths, telemetryAction) {
+        return __awaiter(this, void 0, void 0, function* () {
             let packageInfo = null;
-            for (let relPath of files) {
-                const hash = yield fsPromise_1.sha512OfFile(path.join(packagePath, relPath));
+            let entries = [];
+            for (let relPath of relativeFilePaths) {
+                const hash = yield fsPromise_1.sha512OfFile(path.join(basePath, relPath));
                 const normalisedPath = relPath.replace(/\\/g, '/');
                 if (normalisedPath == 'signature.json') {
                     // This file might be included in the Git repo to sign the contents of the
@@ -164,8 +138,18 @@ let default_1 = class default_1 extends clime_1.Command {
                     continue;
                 }
                 if (normalisedPath == 'package.json') {
-                    const packageJson = yield fsPromise_1.readFilePromise(path.join(packagePath, relPath));
-                    packageInfo = JSON.parse(packageJson);
+                    // This file will be included in it's own package entry.
+                    const packageJson = yield fsPromise_1.readFilePromise(path.join(basePath, relPath));
+                    try {
+                        packageInfo = JSON.parse(packageJson);
+                        // Strip NPM metadata from package.json.
+                        signaturePackageJsonEntry_1.stripNpmMetadataFieldFromPackageInfo(packageInfo);
+                        continue;
+                    }
+                    catch (e) {
+                        console.warn('unable to parse package.json as JSON for signing');
+                        packageInfo = undefined; /* do not include package json signature entry, so file validation will fallback to exact match */
+                    }
                 }
                 entries.push({
                     path: normalisedPath,
@@ -174,12 +158,13 @@ let default_1 = class default_1 extends clime_1.Command {
             }
             console.log('obtaining identity...');
             const identity = yield signer.getIdentity();
+            // Queue telemetry if needed.
             if (packageInfo != null && packageInfo.name != undefined) {
                 if (packageInfo.private != true) {
                     // This is not a private package, so record telemetry with the package
                     // name included.
                     yield telemetry_1.queueTelemetry({
-                        action: 'sign-directory',
+                        action: telemetryAction,
                         packageName: packageInfo.name,
                         packageVersion: packageInfo.version || '',
                         packageIsSigned: true,
@@ -190,7 +175,7 @@ let default_1 = class default_1 extends clime_1.Command {
                 else {
                     // Private package, don't include any package information.
                     yield telemetry_1.queueTelemetry({
-                        action: 'sign-directory',
+                        action: telemetryAction,
                         packageName: '',
                         packageVersion: '',
                         packageIsSigned: true,
@@ -203,7 +188,7 @@ let default_1 = class default_1 extends clime_1.Command {
                 // Can't read package.json or it doesn't exist - don't include
                 // any package information.
                 yield telemetry_1.queueTelemetry({
-                    action: 'sign-directory',
+                    action: telemetryAction,
                     packageName: '',
                     packageVersion: '',
                     packageIsSigned: true,
@@ -219,7 +204,12 @@ let default_1 = class default_1 extends clime_1.Command {
                     }),
                     new signatureIdentityEntry_1.SignatureIdentityEntry({
                         identity: identity,
-                    })
+                    }),
+                    ...(packageInfo === undefined ? [] : [
+                        new signaturePackageJsonEntry_1.SignaturePackageJsonEntry({
+                            packageJson: packageInfo
+                        })
+                    ]),
                 ],
                 signature: '',
             };
@@ -228,8 +218,7 @@ let default_1 = class default_1 extends clime_1.Command {
             console.log('signing deterministic string...');
             signatureDocument.signature = yield signer.signEntries(deterministicString);
             const signatureDocumentJson = JSON.stringify(signatureDocument, null, 2);
-            yield fsPromise_1.writeFilePromise(path.join(packagePath, 'signature.json'), signatureDocumentJson);
-            console.log('signature.json has been created in package directory');
+            yield fsPromise_1.writeFilePromise(path.join(basePath, 'signature.json'), signatureDocumentJson);
         });
     }
 };

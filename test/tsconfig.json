@@ -9,12 +9,10 @@
     "sourceMap": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "rootDir": "src",
-    "outDir": "dist"
+    "rootDir": ".",
+    "noEmit": true
   },
-  "exclude": [
-    "dist",
-    "node_modules",
-    "test",
+  "files": [
+    "index.ts",
   ]
 }

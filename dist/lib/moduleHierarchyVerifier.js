@@ -11,13 +11,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const fsPromise_1 = require("./fsPromise");
 const moduleVerifier_1 = require("./moduleVerifier");
-const trustStore_1 = require("./trustStore");
 const packlist = require("npm-packlist");
 const telemetry_1 = require("../lib/telemetry");
 const signatureIdentity_1 = require("./signature/signatureIdentity");
 class ModuleHierarchyVerifier {
-    constructor(dir) {
+    constructor(dir, trustStore) {
         this.dir = dir;
+        this.trustStore = trustStore;
     }
     verify() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -28,8 +28,7 @@ class ModuleHierarchyVerifier {
                 path: this.dir,
             });
             let promises = [];
-            let trustStore = new trustStore_1.TrustStore();
-            let moduleVerifier = new moduleVerifier_1.ModuleVerifier(trustStore);
+            let moduleVerifier = new moduleVerifier_1.ModuleVerifier(this.trustStore);
             let results = {};
             for (let moduleInfo of modules) {
                 promises.push(((moduleInfo) => __awaiter(this, void 0, void 0, function* () {

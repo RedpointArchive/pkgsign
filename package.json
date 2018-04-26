@@ -16,6 +16,7 @@
     "eol-fix-stream": "^1.0.0",
     "inquirer": "^5.0.0",
     "isbinaryfile": "^3.0.2",
+    "json-normalize": "^1.1.2",
     "node-cmd": "^3.0.0",
     "node-fetch": "^1.7.3",
     "node-machine-id": "^1.1.10",
@@ -35,7 +36,8 @@
     "sign": "rimraf dist && tsc && node util/normalize.js && node dist/index.js sign .",
     "verify": "rimraf dist && tsc && node util/normalize.js && node dist/index.js verify . --full",
     "signedpack": "rimraf dist && tsc && node util/normalize.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz",
-    "signedpublish": "rimraf dist && tsc && node util/normalize.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz"
+    "signedpublish": "rimraf dist && tsc && node util/normalize.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz",
+    "test": "ava-ts"
   },
   "devDependencies": {
     "@types/node": "^8.5.7",
@@ -43,8 +45,10 @@
     "@types/recursive-readdir": "^2.2.0",
     "@types/strip-ansi": "^3.0.0",
     "@types/tmp": "^0.0.33",
+    "ava": "^0.25.0",
+    "ava-ts": "^0.24.4",
     "rimraf": "^2.6.2",
-    "ts-node": "^3.3.0",
+    "ts-node": "^6.0.1",
     "typescript": "^2.6.1"
   }
 }

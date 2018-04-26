@@ -1,7 +1,7 @@
 import { SignatureInfo, createDeterministicString, SignatureParser } from "./signature";
 import { readFilePromise, sha512OfFile } from "./fsPromise";
 import * as path from 'path';
-import { TrustStore } from "./trustStore";
+import { ITrustStore } from "./trustStore";
 import { Verifier } from "./verifier";
 import { KeybaseVerifier } from "./keybaseVerifier";
 import { PgpVerifier } from "./pgpVerifier";
@@ -37,7 +37,7 @@ export interface ModuleVerificationResult {
 }
 
 export class ModuleVerifier {
-    constructor(private trustStore: TrustStore) { }
+    constructor(private trustStore: ITrustStore) { }
 
     public async verify(dir: string, relFilesOnDisk: string[], expectedPackageName: string): Promise<ModuleVerificationResult> {
         // Try to read whether or not the module is private early so we
@@ -116,6 +116,7 @@ export class ModuleVerifier {
             untrustedIdentity: identity,
             untrustedPackageVersion: untrustedPackageVersion,
             isPrivate: isPrivate,
+            signatureEntries: signature.entries,
         };
         for (let entry of signature.entries) {
             let entryResult = await entry.verify(context);

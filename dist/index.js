@@ -33,5 +33,6 @@ function execute(argv) {
         }
     });
 }
+exports.execute = execute;
 execute(process.argv);
 //# sourceMappingURL=index.js.map

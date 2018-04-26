@@ -18,7 +18,9 @@ import { SignatureInfo, createDeterministicString } from '../lib/signature';
 import { SignatureIdentityEntry } from '../lib/signature/signatureIdentityEntry';
 import { queueTelemetry } from '../lib/telemetry';
 import { identityToString } from '../lib/signature/signatureIdentity';
-  
+import * as fs from 'fs';
+import { SignaturePackageJsonEntry, stripNpmMetadataFieldFromPackageInfo } from '../lib/signature/signaturePackageJsonEntry';
+
 export class SignOptions extends Options {
     @option({
         name: 'signer',
@@ -55,7 +57,18 @@ export default class extends Command {
         })
         path: string,
         options: SignOptions
-    ) {
+    ): Promise<void> {
+        if (await this.executeInternal(path, options)) {
+            process.exitCode = 0;
+        } else {
+            process.exitCode = 1;
+        }
+    }
+
+    public async executeInternal(
+        path: string,
+        options: SignOptions
+    ): Promise<boolean> {
         let signer: Signer;
         if (options.withSigner == 'pgp') {
             signer = new PgpSigner(
@@ -69,89 +82,48 @@ export default class extends Command {
         }
 
         if (path.endsWith(".tgz") && lstatSync(path).isFile()) {
-            await this.signTarball(signer, path);
+            return await this.signTarball(signer, path);
         } else {
-            await this.signDirectory(signer, path);
+            return await this.signDirectory(signer, path);
         }
     }
 
-    private async signTarball(signer: Signer, tarballPath: string): Promise<void> {
-        // We never record package names for tarballs, since we don't load package.json
-        // and thus don't know if the private flag is set. We never send identifiable telemetry
-        // on private packages.
-        await queueTelemetry({
-            action: 'sign-tarball',
-            packageName: '',
-            packageVersion: '',
-            packageIsSigned: true,
-            signingIdentity: '',
-            identityIsTrusted: true,
-        });
-
+    private async signTarball(signer: Signer, tarballPath: string): Promise<boolean> {
         const wd = await createWorkingDirectory();
         console.log('extracting unsigned tarball...');
         await decompress(tarballPath, wd);
 
         console.log('building file list...');
         const base = path.join(wd, "package");
-        const files = await recursivePromise(base);
-        let entries: SignatureFileEntry[] = [];
-        for (let fullPath of files) {
-            const hash = await sha512OfFile(fullPath);
-            const normalisedPath = fullPath.substr(base.length + 1).replace(/\\/g, '/');
-            if (normalisedPath == 'signature.json') {
-                // This file might be included in the Git repo to sign the contents of the
-                // latest commit against Keybase or PGP, but it should never be included
-                // in the signature (because we're about to replace it in the signed package
-                // anyway).
-                continue;
-            }
-            entries.push({
-                path: normalisedPath,
-                sha512: hash,
-            });
-        }
+        let files = await recursivePromise(base);
+        files = files.map(fullPath => fullPath.substr(base.length + 1));
 
-        console.log('obtaining identity...');
-        const identity = await signer.getIdentity();
-
-        console.log('creating signature...');
-        const signatureDocument: SignatureInfo = {
-            entries: [
-                new SignatureFilesEntry({
-                    files: entries,
-                }),
-                new SignatureIdentityEntry({
-                    identity: identity,
-                })
-            ],
-            signature: '',
-        };
-
-        console.log('creating deterministic string...');
-        const deterministicString = createDeterministicString(signatureDocument);
-
-        console.log('signing deterministic string...');
-        signatureDocument.signature = await signer.signEntries(deterministicString);
-
-        const signatureDocumentJson = JSON.stringify(signatureDocument, null, 2);
-        await writeFilePromise(path.join(wd, 'package', 'signature.json'), signatureDocumentJson);
+        await this.signFileList(signer, base, files, 'sign-tarball');
 
         await unlinkPromise(tarballPath);
         await compress(wd, tarballPath);
 
         console.log('package tarball has been signed');
+        return true;
     }
 
-    private async signDirectory(signer: Signer, packagePath: string): Promise<void> {
+    private async signDirectory(signer: Signer, packagePath: string): Promise<boolean> {
         console.log('building file list...');
         const files = await packlist({
             path: packagePath
         });
+        
+        await this.signFileList(signer, packagePath, files, 'sign-directory');
+
+        console.log('signature.json has been created in package directory');
+        return true;
+    }
+
+    private async signFileList(signer: Signer, basePath: string, relativeFilePaths: string[], telemetryAction: string): Promise<void> {
+        let packageInfo: any | null | undefined = null;
         let entries: SignatureFileEntry[] = [];
-        let packageInfo: any = null;
-        for (let relPath of files) {
-            const hash = await sha512OfFile(path.join(packagePath, relPath));
+        for (let relPath of relativeFilePaths) {
+            const hash = await sha512OfFile(path.join(basePath, relPath));
             const normalisedPath = relPath.replace(/\\/g, '/');
             if (normalisedPath == 'signature.json') {
                 // This file might be included in the Git repo to sign the contents of the
@@ -161,8 +133,19 @@ export default class extends Command {
                 continue;
             }
             if (normalisedPath == 'package.json') {
-                const packageJson = await readFilePromise(path.join(packagePath, relPath));
-                packageInfo = JSON.parse(packageJson);
+                // This file will be included in it's own package entry.
+                const packageJson = await readFilePromise(path.join(basePath, relPath));
+                try {
+                    packageInfo = JSON.parse(packageJson);
+
+                    // Strip NPM metadata from package.json.
+                    stripNpmMetadataFieldFromPackageInfo(packageInfo);
+
+                    continue;
+                } catch (e) {
+                    console.warn('unable to parse package.json as JSON for signing');
+                    packageInfo = undefined; /* do not include package json signature entry, so file validation will fallback to exact match */
+                }
             }
             entries.push({
                 path: normalisedPath,
@@ -173,12 +156,13 @@ export default class extends Command {
         console.log('obtaining identity...');
         const identity = await signer.getIdentity();
 
+        // Queue telemetry if needed.
         if (packageInfo != null && packageInfo.name != undefined) {
             if (packageInfo.private != true) {
                 // This is not a private package, so record telemetry with the package
                 // name included.
                 await queueTelemetry({
-                    action: 'sign-directory',
+                    action: telemetryAction,
                     packageName: packageInfo.name,
                     packageVersion: packageInfo.version || '',
                     packageIsSigned: true,
@@ -188,7 +172,7 @@ export default class extends Command {
             } else {
                 // Private package, don't include any package information.
                 await queueTelemetry({
-                    action: 'sign-directory',
+                    action: telemetryAction,
                     packageName: '',
                     packageVersion: '',
                     packageIsSigned: true,
@@ -200,7 +184,7 @@ export default class extends Command {
             // Can't read package.json or it doesn't exist - don't include
             // any package information.
             await queueTelemetry({
-                action: 'sign-directory',
+                action: telemetryAction,
                 packageName: '',
                 packageVersion: '',
                 packageIsSigned: true,
@@ -217,7 +201,12 @@ export default class extends Command {
                 }),
                 new SignatureIdentityEntry({
                     identity: identity,
-                })
+                }),
+                ...(packageInfo === undefined ? [] : [
+                    new SignaturePackageJsonEntry({
+                        packageJson: packageInfo
+                    })
+                ]),
             ],
             signature: '',
         };
@@ -229,8 +218,6 @@ export default class extends Command {
         signatureDocument.signature = await signer.signEntries(deterministicString);
 
         const signatureDocumentJson = JSON.stringify(signatureDocument, null, 2);
-        await writeFilePromise(path.join(packagePath, 'signature.json'), signatureDocumentJson);
-
-        console.log('signature.json has been created in package directory');
+        await writeFilePromise(path.join(basePath, 'signature.json'), signatureDocumentJson);
     }
 }

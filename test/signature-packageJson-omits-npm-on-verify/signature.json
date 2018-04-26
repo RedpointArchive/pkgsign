@@ -1,0 +1,21 @@
+{
+  "entries": [
+    {
+      "entry": "files/v1alpha1",
+      "files": []
+    },
+    {
+      "entry": "identity/v1alpha1",
+      "identity": {
+        "pgpPublicKeyUrl": "https://pkgsign.test.invalid.url/test.pub"
+      }
+    },
+    {
+      "entry": "packageJson/v1alpha1",
+      "packageJson": {
+        "name": "signature-packageJson-omits-npm-on-verify"
+      }
+    }
+  ],
+  "signature": "-----BEGIN PGP SIGNATURE-----\nVersion: OpenPGP.js v2.6.1\nComment: https://openpgpjs.org\n\nwsBcBAEBCAAQBQJa4gLYCRCLBSW1RGQF9wAAAuoIAM00Vtiqxs9E0PSg8sgN\npvNV+wYWrE3gd0MPWw5l/D32t0ASNZzRr036nOBFa/DusNRxz1HFAjU9IdtA\nwfIsmGEuPQRDTdiyfEioNgv8J9dk1Wud6wMJwLLhYsItzZo9yDT1m7kBUbUx\nh0Aa0C2l4x1W3Hs12Ng8xq7FnDicqcagwNLdCmnVJOmGRXtPALB0qlAhFwaf\npG0zeFY79+s2yl8GpdueC5sd9+52F9MzZVrg48fh0gHD5IF7hLXj0D9Iz8WP\nVZHAtH5JO/cvi5yuEVo6ETtY2Nz5+OezCeYl3fgArPzudyaXnsnv8kYPUzSP\nyPhwsFc+Ea1c5bNB+CqgHUA=\n=mEe4\n-----END PGP SIGNATURE-----\n"
+}

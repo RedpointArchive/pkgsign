@@ -4,6 +4,7 @@ import { LegacySignatureInfo } from "./signature/legacySignatureInfo";
 import { VerificationContext } from "./signature/verificationContext";
 import { ModuleVerificationResult } from "./moduleVerifier";
 import { SignatureIdentity } from "./signature/signatureIdentity";
+import { SignaturePackageJsonEntry, SignaturePackageJsonEntryData } from "./signature/signaturePackageJsonEntry";
 
 export interface SignatureInfo {
     entries: SignatureEntry[];
@@ -58,6 +59,9 @@ export class SignatureParser {
                         break;
                     case "identity/v1alpha1":
                         instance = new SignatureIdentityEntry(rawEntries[i] as any as SignatureIdentityEntryData);
+                        break;
+                    case "packageJson/v1alpha1":
+                        instance = new SignaturePackageJsonEntry(rawEntries[i] as any as SignaturePackageJsonEntryData);
                         break;
                 }
                 if (instance === null) {

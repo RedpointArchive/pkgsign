@@ -109,6 +109,7 @@ class ModuleVerifier {
                 untrustedIdentity: identity,
                 untrustedPackageVersion: untrustedPackageVersion,
                 isPrivate: isPrivate,
+                signatureEntries: signature.entries,
             };
             for (let entry of signature.entries) {
                 let entryResult = yield entry.verify(context);

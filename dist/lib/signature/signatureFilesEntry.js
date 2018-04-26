@@ -25,11 +25,15 @@ class SignatureFilesEntry {
     }
     verify(context) {
         return __awaiter(this, void 0, void 0, function* () {
+            const skipPackageJsonExactVerification = context.signatureEntries.some(x => x.entry === "packageJson/v1alpha1");
             // For each relative file on disk, make sure it appears in
             // the list of files the signature is signing for.
             for (let relFileOnDisk of context.relFilesOnDisk) {
                 let normalisedPath = relFileOnDisk.replace(/\\/g, '/');
                 if (normalisedPath == 'signature.json') {
+                    continue;
+                }
+                if (normalisedPath == 'package.json' && skipPackageJsonExactVerification) {
                     continue;
                 }
                 let found = false;

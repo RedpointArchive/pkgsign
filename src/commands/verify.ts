@@ -11,7 +11,7 @@ import { ModuleVerificationStatus, ModuleVerifier } from '../lib/moduleVerifier'
 import * as inquirer from 'inquirer';
 import * as path from 'path';
 import { basename } from 'path';
-import { TrustStore } from '../lib/trustStore';
+import { TrustStore, TestTrustStore } from '../lib/trustStore';
 import { createWorkingDirectory, decompress, recursivePromise, readFilePromise } from '../lib/fsPromise';
 import { queueTelemetry } from '../lib/telemetry';
 import { identityToString } from '../lib/signature/signatureIdentity';
@@ -34,6 +34,12 @@ export class VerifyOptions extends Options {
         description: 'if verifying a tarball, this is the expected package name',
     })
     packageName: string;
+    @option({
+        name: 'enable-test-trust-store',
+        toggle: true,
+        description: 'enables the test trust store, for debugging purposes only',
+    })
+    enableTestTrustStore: boolean;
 }
 
 @command({
@@ -49,19 +55,30 @@ export default class extends Command {
         path: string,
         options: VerifyOptions,
     ): Promise<void> {
+        if (await this.executeInternal(path, options)) {
+            process.exitCode = 0;
+        } else {
+            process.exitCode = 1;
+        }
+    }
+
+    public async executeInternal(
+        path: string,
+        options: VerifyOptions,
+    ): Promise<boolean> {
         if (path === undefined) {
             // Default path to the current directory if not provided.
             path = '.';
         }
 
         if (path.endsWith(".tgz") && lstatSync(path).isFile()) {
-            await this.verifyTarball(path, options);
+            return await this.verifyTarball(path, options);
         } else {
-            await this.verifyDirectory(path, options);
+            return await this.verifyDirectory(path, options);
         }
     }
 
-    private async verifyTarball(tarballPath: string, options: VerifyOptions): Promise<void> {
+    private async verifyTarball(tarballPath: string, options: VerifyOptions): Promise<boolean> {
         const wd = await createWorkingDirectory();
         console.log('extracting unsigned tarball...');
         await decompress(tarballPath, wd);
@@ -71,7 +88,7 @@ export default class extends Command {
         const files = (await recursivePromise(base)).map((fullPath) => fullPath.substr(base.length + 1).replace(/\\/g, '/'));
 
         console.log('verifying package...');
-        const moduleVerifier = new ModuleVerifier(new TrustStore());
+        const moduleVerifier = new ModuleVerifier(options.enableTestTrustStore ? new TestTrustStore() : new TrustStore());
         let result = await moduleVerifier.verify(base, files, options.packageName || '');
         
         if (result.isPrivate) {
@@ -154,28 +171,24 @@ export default class extends Command {
 
         switch (result.status) {
             case ModuleVerificationStatus.Compromised:
-                process.exitCode = 1;
                 console.log('package is compromised: ' + result.reason);
-                break;
+                return false;
             case ModuleVerificationStatus.Unsigned:
-                process.exitCode = 1;
                 console.log('package is unsigned: ' + result.reason);
-                break;
+                return false;
             case ModuleVerificationStatus.Untrusted:
-                process.exitCode = 1;
                 console.log('package is untrusted');
-                break;
+                return false;
             case ModuleVerificationStatus.Trusted:
-                process.exitCode = 0;
                 console.log('package is trusted');
-                break;
+                return true;
         }
     }
 
-    private async verifyDirectory(path: string, options: VerifyOptions): Promise<void> {
+    private async verifyDirectory(path: string, options: VerifyOptions): Promise<boolean> {
         // Telemetry sending is done directly inside ModuleHierarchyVerifier, per package.
 
-        let moduleHierarchyVerifier = new ModuleHierarchyVerifier(path);
+        let moduleHierarchyVerifier = new ModuleHierarchyVerifier(path, options.enableTestTrustStore ? new TestTrustStore() : new TrustStore());
         let results = await moduleHierarchyVerifier.verify();
 
         // First find any untrusted modules and ask the user if they
@@ -320,9 +333,9 @@ export default class extends Command {
         }
         
         if (compromisedCount > 0 || unsignedCount > 0 || untrustedCount > 0) {
-            process.exitCode = 1;
+            return false;
         } else {
-            process.exitCode = 0;
+            return true;
         }
     }
 }

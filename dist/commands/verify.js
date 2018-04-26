@@ -56,19 +56,37 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], VerifyOptions.prototype, "packageName", void 0);
+__decorate([
+    clime_1.option({
+        name: 'enable-test-trust-store',
+        toggle: true,
+        description: 'enables the test trust store, for debugging purposes only',
+    }),
+    __metadata("design:type", Boolean)
+], VerifyOptions.prototype, "enableTestTrustStore", void 0);
 exports.VerifyOptions = VerifyOptions;
 let default_1 = class default_1 extends clime_1.Command {
     execute(path, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (yield this.executeInternal(path, options)) {
+                process.exitCode = 0;
+            }
+            else {
+                process.exitCode = 1;
+            }
+        });
+    }
+    executeInternal(path, options) {
         return __awaiter(this, void 0, void 0, function* () {
             if (path === undefined) {
                 // Default path to the current directory if not provided.
                 path = '.';
             }
             if (path.endsWith(".tgz") && fs_1.lstatSync(path).isFile()) {
-                yield this.verifyTarball(path, options);
+                return yield this.verifyTarball(path, options);
             }
             else {
-                yield this.verifyDirectory(path, options);
+                return yield this.verifyDirectory(path, options);
             }
         });
     }
@@ -81,7 +99,7 @@ let default_1 = class default_1 extends clime_1.Command {
             const base = path.join(wd, "package");
             const files = (yield fsPromise_1.recursivePromise(base)).map((fullPath) => fullPath.substr(base.length + 1).replace(/\\/g, '/'));
             console.log('verifying package...');
-            const moduleVerifier = new moduleVerifier_1.ModuleVerifier(new trustStore_1.TrustStore());
+            const moduleVerifier = new moduleVerifier_1.ModuleVerifier(options.enableTestTrustStore ? new trustStore_1.TestTrustStore() : new trustStore_1.TrustStore());
             let result = yield moduleVerifier.verify(base, files, options.packageName || '');
             if (result.isPrivate) {
                 // Don't send identifiable telemetry about private packages.
@@ -156,28 +174,24 @@ let default_1 = class default_1 extends clime_1.Command {
             }
             switch (result.status) {
                 case moduleVerifier_1.ModuleVerificationStatus.Compromised:
-                    process.exitCode = 1;
                     console.log('package is compromised: ' + result.reason);
-                    break;
+                    return false;
                 case moduleVerifier_1.ModuleVerificationStatus.Unsigned:
-                    process.exitCode = 1;
                     console.log('package is unsigned: ' + result.reason);
-                    break;
+                    return false;
                 case moduleVerifier_1.ModuleVerificationStatus.Untrusted:
-                    process.exitCode = 1;
                     console.log('package is untrusted');
-                    break;
+                    return false;
                 case moduleVerifier_1.ModuleVerificationStatus.Trusted:
-                    process.exitCode = 0;
                     console.log('package is trusted');
-                    break;
+                    return true;
             }
         });
     }
     verifyDirectory(path, options) {
         return __awaiter(this, void 0, void 0, function* () {
             // Telemetry sending is done directly inside ModuleHierarchyVerifier, per package.
-            let moduleHierarchyVerifier = new moduleHierarchyVerifier_1.ModuleHierarchyVerifier(path);
+            let moduleHierarchyVerifier = new moduleHierarchyVerifier_1.ModuleHierarchyVerifier(path, options.enableTestTrustStore ? new trustStore_1.TestTrustStore() : new trustStore_1.TrustStore());
             let results = yield moduleHierarchyVerifier.verify();
             // First find any untrusted modules and ask the user if they
             // want to trust them.
@@ -309,10 +323,10 @@ let default_1 = class default_1 extends clime_1.Command {
                 }
             }
             if (compromisedCount > 0 || unsignedCount > 0 || untrustedCount > 0) {
-                process.exitCode = 1;
+                return false;
             }
             else {
-                process.exitCode = 0;
+                return true;
             }
         });
     }

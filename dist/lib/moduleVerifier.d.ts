@@ -1,4 +1,4 @@
-import { TrustStore } from "./trustStore";
+import { ITrustStore } from "./trustStore";
 import { SignatureIdentity } from "./signature/signatureIdentity";
 export declare enum ModuleVerificationStatus {
     Compromised = 0,
@@ -17,6 +17,6 @@ export interface ModuleVerificationResult {
 }
 export declare class ModuleVerifier {
     private trustStore;
-    constructor(trustStore: TrustStore);
+    constructor(trustStore: ITrustStore);
     verify(dir: string, relFilesOnDisk: string[], expectedPackageName: string): Promise<ModuleVerificationResult>;
 }

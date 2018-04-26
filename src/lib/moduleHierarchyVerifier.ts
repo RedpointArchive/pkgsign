@@ -5,7 +5,7 @@ import * as openpgp from 'openpgp';
 import { SignatureInfo } from './signature';
 import { readFilePromise, readdirPromise } from './fsPromise';
 import { ModuleVerificationResult, ModuleVerifier, ModuleVerificationStatus } from './moduleVerifier';
-import { TrustStore } from './trustStore';
+import { TrustStore, ITrustStore } from './trustStore';
 import * as packlist from 'npm-packlist';
 import { queueTelemetry } from '../lib/telemetry';
 import { identityToString } from './signature/signatureIdentity';
@@ -16,7 +16,7 @@ export interface ModuleInfo {
 }
 
 export class ModuleHierarchyVerifier {
-    constructor(private dir: string) { }
+    constructor(private dir: string, private trustStore: ITrustStore) { }
 
     public async verify(): Promise<{ [path: string]: ModuleVerificationResult }> {
         // build up a list of node modules we need to verify, based on the current directory
@@ -27,8 +27,7 @@ export class ModuleHierarchyVerifier {
         });
 
         let promises: Promise<void>[] = [];
-        let trustStore = new TrustStore();
-        let moduleVerifier = new ModuleVerifier(trustStore);
+        let moduleVerifier = new ModuleVerifier(this.trustStore);
         let results: { [path: string]: ModuleVerificationResult } = {};
         for (let moduleInfo of modules) {
             promises.push((async (moduleInfo) => {

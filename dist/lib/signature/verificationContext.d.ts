@@ -1,4 +1,5 @@
 import { SignatureIdentity } from "./signatureIdentity";
+import { SignatureEntry } from "../signature";
 export interface VerificationContext {
     dir: string;
     relFilesOnDisk: string[];
@@ -6,4 +7,5 @@ export interface VerificationContext {
     untrustedPackageVersion: string;
     untrustedIdentity: SignatureIdentity;
     isPrivate: boolean;
+    signatureEntries: SignatureEntry[];
 }

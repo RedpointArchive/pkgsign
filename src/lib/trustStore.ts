@@ -8,7 +8,14 @@ interface CachedData {
     expiryUtc: number;
 }
 
-export class TrustStore {
+export interface ITrustStore {
+    getOrFetchCachedPublicKeys(cacheName: string, fetch: () => Promise<string>): Promise<string>;
+    fetchCachedPublicKeys(cacheName: string, fetch: () => Promise<string>): Promise<string>;
+    isTrusted(identity: SignatureIdentity, packageName: string): Promise<boolean>;
+    addTrusted(identity: SignatureIdentity, packageName: string): Promise<void>;
+}
+
+export class TrustStore implements ITrustStore {
     constructor() { }
 
     public async getOrFetchCachedPublicKeys(cacheName: string, fetch: () => Promise<string>): Promise<string> {
@@ -74,5 +81,25 @@ export class TrustStore {
         }
 
         return trustStoreFolder;
+    }
+}
+
+export class TestTrustStore implements ITrustStore {
+    constructor() { }
+
+    public async getOrFetchCachedPublicKeys(cacheName: string, fetch: () => Promise<string>): Promise<string> {
+        return await readFilePromise(path.join(__dirname, '..', '..', 'test', 'test.pub'));
+    }
+
+    public async fetchCachedPublicKeys(cacheName: string, fetch: () => Promise<string>): Promise<string> {
+        return await readFilePromise(path.join(__dirname, '..', '..', 'test', 'test.pub'));
+    }
+
+    public async isTrusted(identity: SignatureIdentity, packageName: string): Promise<boolean> {
+        return identity.pgpPublicKeyUrl === 'https://pkgsign.test.invalid.url/test.pub';
+    }
+
+    public async addTrusted(identity: SignatureIdentity, packageName: string): Promise<void> {
+        // No implementation.
     }
 }

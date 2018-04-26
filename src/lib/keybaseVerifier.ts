@@ -1,11 +1,11 @@
 import * as openpgp from 'openpgp';
 import { Verifier } from "./verifier";
 import fetch from "node-fetch";
-import { TrustStore } from "./trustStore";
+import { ITrustStore } from "./trustStore";
 import { SignatureIdentity } from './signature/signatureIdentity';
 
 export class KeybaseVerifier implements Verifier {
-    constructor(private trustStore: TrustStore) {
+    constructor(private trustStore: ITrustStore) {
     }
 
     public async verify(identity: SignatureIdentity, signature: string, deterministicString: string) {
