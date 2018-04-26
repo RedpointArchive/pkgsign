@@ -20,6 +20,18 @@
           "sha512": "eb323fb46036c2f0c5b22e4c5025b15a9a4ddf1ce398637a6fce23044961d611d445cb1707b6fb87afb52a16a843749809a257c8f0fd36aa071b07afb2b57480"
         },
         {
+          "path": "dist/commands/default.d.ts",
+          "sha512": "aaf6612f6a0f13636cbab8cf1252a25315cf1c9cffd120522f96ae7d1c433c0810d2e9142b315c67d8c75b9a83cadd273481f19e95e61aaaa395076d3dad359b"
+        },
+        {
+          "path": "dist/commands/default.js",
+          "sha512": "461f07f53458924c53a210e68b778e2c9e07561105375d962e5cb7c656c1e5b208d221dd33478cc17279968de8d65ffab8a268a197d4792c24f2a9af980363b3"
+        },
+        {
+          "path": "dist/commands/default.js.map",
+          "sha512": "53d4ffe13ef7ab40f6f4436bf39395cb546ce8caa75d9310a35ce29fc0eebefa61f80a31b9a16694983a30f65d59186886ec7c32aa3f09a3d130226972c4ae29"
+        },
+        {
           "path": "dist/commands/sign.d.ts",
           "sha512": "1e1ca4e768befff66b675a0ef101eab6584688d30cd419b22bbcbe2b6628d869f6d80328c27b8a730fc95f08bc6d9a138b53ea5c6f552ad7e4366e897b372377"
         },
@@ -284,6 +296,10 @@
           "sha512": "8933affba343bcb07cb47ee5a62d8525721a4dda9be891d48674e176e93c4a67e24cddcf8f39a5d6b53bde189068f573b8976330edb3ac7872686c5b382de4c9"
         },
         {
+          "path": "src/commands/default.ts",
+          "sha512": "326f4bb09a44e0c717007d9b08566d15fb7b55b6710f8ace4f3e968c6ccefbc7dba2080e1505f475829731d04b5f8e3c0c1d9f142417323cf7aa93a04de9aae3"
+        },
+        {
           "path": "src/commands/sign.ts",
           "sha512": "7802a3f8854fc2ce6bb31c34d7d04c9ffc0849012a54b138c61dce9cf7c79d9567938e2c7d55eee765d799d5750ece3d5cc5ccfe57eeeceb640323ef00db0314"
         },
@@ -372,6 +388,14 @@
           "sha512": "7e269b52f4611d045ee39b360e0e90286aadc94743bd87597451cf1f32bcf3e671149507dda7c7ef05e04cc95cb7cb7c82976789048f7564019bba73892653ab"
         },
         {
+          "path": "util/ensure-prerelease.js",
+          "sha512": "3c91626ab2d22387a84969efc0cb2a16f5e14f829e8084e4061c07a0bf842b70ba5b307128ddb024ac03b9bd045cef5930c5a1e08920614bfc18b0f43c1e407c"
+        },
+        {
+          "path": "util/ensure-release.js",
+          "sha512": "e3b0151d8c8c72491853cc6b1cf0e24fa3126c853840b5c33541de0c95281d009dc0d6bc3ae3acd211eacb63a5d93be05835d721d589c34a068347d8feb4c46c"
+        },
+        {
           "path": "util/normalize.js",
           "sha512": "1aeb28a9e6e0aecd9a376ec172d1a83bef177bf759c667b337bb1ad6b45455d657468af6d4b867ebec103b882a693e750b118078b34eaeeeef8b634ae5f1b2f5"
         }
@@ -387,7 +411,7 @@
       "entry": "packageJson/v1alpha1",
       "packageJson": {
         "name": "pkgsign",
-        "version": "0.2.0-alpha.1",
+        "version": "0.2.0-alpha.2",
         "description": "A CLI tool for signing and verifying npm and yarn packages.",
         "main": "index.js",
         "repository": "https://github.com/RedpointGames/pkgsign",
@@ -423,7 +447,8 @@
           "sign": "rimraf dist && tsc && node util/normalize.js && node dist/index.js sign .",
           "verify": "rimraf dist && tsc && node util/normalize.js && node dist/index.js verify . --full",
           "signedpack": "rimraf dist && tsc && node util/normalize.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz",
-          "signedpublish": "rimraf dist && tsc && node util/normalize.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz",
+          "release": "ava-ts && rimraf dist && tsc && node util/normalize.js && node util/ensure-release.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz",
+          "prerelease": "ava-ts && rimraf dist && tsc && node util/normalize.js && node util/ensure-prerelease.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz --tag next",
           "test": "ava-ts"
         },
         "devDependencies": {
@@ -441,5 +466,5 @@
       }
     }
   ],
-  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJa4gVpCRB89yvKKRr01wAA//cQADsoQR//6d+T6/nEP2D7aLhy\nOQlc0Rf7pBeOBqBFMpVENjP2a310tOOZfHzB7pz4v0Uch7SZ48vBvnXi77oq3/wS\nTycUTBY6rXNVdhqM7zJwXXjM7/sybrRh6BL7v+onq8WzWSOavZ62H/ADHaVt/4rw\nZydqFEEeMRnmK8eL1Q2fpGPkgt5d7c7aD70e+9BzjGO1TAZZhp/LijNVw48EpaF/\ngTwJXvP3Ryle+YbnyO4gIIY9t5rjudQSuY/d8pId05q3DuaDQ5mRho1k2snxy1dT\nYiT6f11+k+CQM30SvAHLm9oroNMg8ja1Cx58JEeEqH87RnH6DQI0YaXsVTLXFOp2\nzXkNgsayLw3GScvvlCRrQipbOcXG/PJMJFiDt1df+4qzUYbkMsgccXYU8gt07yA4\nvHaI/4T3zSJMfGf6IKbJlQDz/0VxyACbQ94Du1UvKquZzzbEvBFKQI34/eVQLH2J\nhLKZOesK88z4hQcEb7RhwtDefvfr8Q7inSiIyj/+aIueaHr4vlKKRV+lO4k/2vdP\nL7qVxeXbGOv4nb0vSj+ZZhsFHeOEzxgXIERRLYmKVaTtgRMH0XcrS1VMWweZo2/u\nj7tHi2pqwClbPMMyM0BNy8oDNklNp7hhwIOYlgaSMhclLqbHorrSF3qefpgm12Ks\nj34CGQZRzd3SNRjmqjF1\n=WTEg\n-----END PGP SIGNATURE-----\n"
+  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJa4glwCRB89yvKKRr01wAAC40QAFx8JI+iC2x70EicnyuLcbIP\nzE8bZ/aPdL+jkjmgFdyR+PdXR2d5xz4lIVuTAcrf28rSdvEuCqA4CsizeOu2Hwlt\nN90U0IGgJ8zQjPIXDRZYRH5nn0ZbYevXWDKcfZiCKpaDUQOKacMszNwq53LG0AUE\nlBdD4qY/Ocjsd2nIcCFXkKzZx1G4N3i+WpUkgNF1Zvurqwjf70zbbyuU2jArwGLo\nxl702jixx+bRhtLVNP7jZ7HJD5NW3eHRLb+WpawhPSeyG7DJb5kHLkMsGPpYGEyQ\n7Q0ma5azqxmMubYR6jEg0kVrv8fOIdBzgmYa+46rgLRC3adNUkCsYcfRqYMRgJKD\n0BvZw+CkW4PSEBxX5xRwqD/gb8QsoVo0S+jC5FW7yC5QxSszjWrbP1IUV6C1wFRI\naoPAvjazxyOQFLJPx3vg6fgXl883nhcitXoahGEAiGechPxwpCGUjcrXIX9Gr56G\nAFvbnzyvIJr3AYxfI6hyWeHJOemOc2A80xDuzcp6SRi8HtKWa7oV1bTZTUCX3/Tw\nWf40HMYFL17v8SHbsUHRzr8Eb/13NqNSK2vN5NiimJPW5/o3+x4uF36kgBQG/Stj\nRslSzKKP83Du64B50KAoWW1fXzRiw9nfeoQHhob5BTkML2ezo3WVlujNJEIabx5B\nhp460y0sJRvbup9ANBUb\n=v/X1\n-----END PGP SIGNATURE-----\n"
 }
