@@ -46,6 +46,9 @@ class SignatureParser {
                     case "packageJson/v1alpha1":
                         instance = new signaturePackageJsonEntry_1.SignaturePackageJsonEntry(rawEntries[i]);
                         break;
+                    case "packageJson/v1alpha2":
+                        instance = new signaturePackageJsonEntry_1.SignaturePackageJsonPropertiesEntry(rawEntries[i]);
+                        break;
                 }
                 if (instance === null) {
                     throw new Error('unsupported entry type: ' + rawEntries[i].entry + ', try upgrading pkgsign');

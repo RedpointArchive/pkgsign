@@ -1,7 +1,6 @@
 import { machineIdSync } from 'node-machine-id';
 import fetch from 'node-fetch';
 import * as path from 'path';
-import * as child_process from 'child_process';
 import { readFileSync, writeFileSync } from 'fs';
 import * as tmp from 'tmp';
 import * as spawn from 'silent-spawn';

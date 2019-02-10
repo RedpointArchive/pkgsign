@@ -1,11 +1,10 @@
 import { SignatureInfo, createDeterministicString, SignatureParser } from "./signature";
-import { readFilePromise, sha512OfFile } from "./fsPromise";
+import { readFilePromise } from "./fsPromise";
 import * as path from 'path';
 import { ITrustStore } from "./trustStore";
 import { Verifier } from "./verifier";
 import { KeybaseVerifier } from "./keybaseVerifier";
 import { PgpVerifier } from "./pgpVerifier";
-import { SignatureIdentityEntry } from "./signature/signatureIdentityEntry";
 import { SignatureIdentity } from "./signature/signatureIdentity";
 
 export enum ModuleVerificationStatus {

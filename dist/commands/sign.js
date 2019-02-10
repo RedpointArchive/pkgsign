@@ -128,7 +128,6 @@ let default_1 = class default_1 extends clime_1.Command {
             let packageInfo = null;
             let entries = [];
             for (let relPath of relativeFilePaths) {
-                const hash = yield fsPromise_1.sha512OfFile(path.join(basePath, relPath));
                 const normalisedPath = relPath.replace(/\\/g, '/');
                 if (normalisedPath == 'signature.json') {
                     // This file might be included in the Git repo to sign the contents of the
@@ -143,7 +142,7 @@ let default_1 = class default_1 extends clime_1.Command {
                     try {
                         packageInfo = JSON.parse(packageJson);
                         // Strip NPM metadata from package.json.
-                        signaturePackageJsonEntry_1.stripNpmMetadataFieldFromPackageInfo(packageInfo);
+                        // REMOVAL: stripNpmMetadataFieldFromPackageInfo(packageInfo);
                         continue;
                     }
                     catch (e) {
@@ -151,6 +150,7 @@ let default_1 = class default_1 extends clime_1.Command {
                         packageInfo = undefined; /* do not include package json signature entry, so file validation will fallback to exact match */
                     }
                 }
+                const hash = yield fsPromise_1.sha512OfFile(path.join(basePath, relPath));
                 entries.push({
                     path: normalisedPath,
                     sha512: hash,
@@ -206,8 +206,9 @@ let default_1 = class default_1 extends clime_1.Command {
                         identity: identity,
                     }),
                     ...(packageInfo === undefined ? [] : [
-                        new signaturePackageJsonEntry_1.SignaturePackageJsonEntry({
-                            packageJson: packageInfo
+                        new signaturePackageJsonEntry_1.SignaturePackageJsonPropertiesEntry({
+                            packageJsonProperties: Object.keys(packageInfo).sort(),
+                            sha512: yield signaturePackageJsonEntry_1.SignaturePackageJsonPropertiesEntry.sha512OfObject(packageInfo, Object.keys(packageInfo))
                         })
                     ]),
                 ],

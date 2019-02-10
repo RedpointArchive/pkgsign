@@ -5,9 +5,8 @@ import {
     Options,
     option,
 } from 'clime';
-import * as cmd from 'node-cmd';
 import * as path from 'path';
-import { lstatSync, unlinkSync } from 'fs';
+import { lstatSync } from 'fs';
 import { unlinkPromise, recursivePromise, sha512OfFile, writeFilePromise, createWorkingDirectory, decompress, compress, readFilePromise } from '../lib/fsPromise';
 import { Signer } from '../lib/signer';
 import { KeybaseSigner } from '../lib/keybaseSigner';
@@ -18,8 +17,7 @@ import { SignatureInfo, createDeterministicString } from '../lib/signature';
 import { SignatureIdentityEntry } from '../lib/signature/signatureIdentityEntry';
 import { queueTelemetry } from '../lib/telemetry';
 import { identityToString } from '../lib/signature/signatureIdentity';
-import * as fs from 'fs';
-import { SignaturePackageJsonEntry, stripNpmMetadataFieldFromPackageInfo } from '../lib/signature/signaturePackageJsonEntry';
+import { SignaturePackageJsonPropertiesEntry } from '../lib/signature/signaturePackageJsonEntry';
 
 export class SignOptions extends Options {
     @option({
@@ -123,7 +121,6 @@ export default class extends Command {
         let packageInfo: any | null | undefined = null;
         let entries: SignatureFileEntry[] = [];
         for (let relPath of relativeFilePaths) {
-            const hash = await sha512OfFile(path.join(basePath, relPath));
             const normalisedPath = relPath.replace(/\\/g, '/');
             if (normalisedPath == 'signature.json') {
                 // This file might be included in the Git repo to sign the contents of the
@@ -137,16 +134,17 @@ export default class extends Command {
                 const packageJson = await readFilePromise(path.join(basePath, relPath));
                 try {
                     packageInfo = JSON.parse(packageJson);
-
+                    
                     // Strip NPM metadata from package.json.
-                    stripNpmMetadataFieldFromPackageInfo(packageInfo);
-
+                    // REMOVAL: stripNpmMetadataFieldFromPackageInfo(packageInfo);
+                    
                     continue;
                 } catch (e) {
                     console.warn('unable to parse package.json as JSON for signing');
                     packageInfo = undefined; /* do not include package json signature entry, so file validation will fallback to exact match */
                 }
             }
+            const hash = await sha512OfFile(path.join(basePath, relPath));
             entries.push({
                 path: normalisedPath,
                 sha512: hash,
@@ -203,8 +201,9 @@ export default class extends Command {
                     identity: identity,
                 }),
                 ...(packageInfo === undefined ? [] : [
-                    new SignaturePackageJsonEntry({
-                        packageJson: packageInfo
+                    new SignaturePackageJsonPropertiesEntry({
+                        packageJsonProperties: Object.keys(packageInfo).sort(),
+                        sha512: await SignaturePackageJsonPropertiesEntry.sha512OfObject(packageInfo, Object.keys(packageInfo))
                     })
                 ]),
             ],

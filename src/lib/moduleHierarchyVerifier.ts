@@ -1,11 +1,7 @@
-import * as fs from 'fs';
 import * as path from 'path';
-import fetch from 'node-fetch';
-import * as openpgp from 'openpgp';
-import { SignatureInfo } from './signature';
 import { readFilePromise, readdirPromise } from './fsPromise';
 import { ModuleVerificationResult, ModuleVerifier, ModuleVerificationStatus } from './moduleVerifier';
-import { TrustStore, ITrustStore } from './trustStore';
+import { ITrustStore } from './trustStore';
 import * as packlist from 'npm-packlist';
 import { queueTelemetry } from '../lib/telemetry';
 import { identityToString } from './signature/signatureIdentity';
