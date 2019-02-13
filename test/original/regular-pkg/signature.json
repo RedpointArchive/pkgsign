@@ -1,0 +1,38 @@
+{
+  "entries": [
+    {
+      "entry": "files/v1alpha1",
+      "files": [
+        {
+          "path": "README.md",
+          "sha512": "1e2ac3c4b231a28605f30994c0082830836e1cba16750b5b5ad7288bbfec96c19c119cab24d9b6838e8ce2edc2ad5934c8060e1bf9e8efdb3589f6d10cb06de6"
+        },
+        {
+          "path": "dist/index.js",
+          "sha512": "ffc42195a2ff06ab9c37fa19a03053ecbb7c6aab89d2ccba09ac1bae4d8705720bb9f10db8a319e532684dbf4d7c186b2579eef063e8ae82c836be1b6342da76"
+        }
+      ]
+    },
+    {
+      "entry": "identity/v1alpha1",
+      "identity": {
+        "pgpPublicKeyUrl": "https://pkgsign.test.invalid.url/test.pub"
+      }
+    },
+    {
+      "entry": "packageJson/v1alpha2",
+      "sha512": "5f11666c6dd32b4bcefed86c203df570aa11b5e7add70834730e5ba26126deec29fca9a035b429050c22971b7d7429f77d62a3bf5c992a8746e014ce5be96eb5",
+      "packageJsonProperties": [
+        "dependencies",
+        "devDependencies",
+        "files",
+        "main",
+        "name",
+        "private",
+        "scripts",
+        "version"
+      ]
+    }
+  ],
+  "signature": "-----BEGIN PGP SIGNATURE-----\nVersion: OpenPGP.js v2.6.1\nComment: https://openpgpjs.org\n\nwsBcBAEBCAAQBQJcZEFXCRCLBSW1RGQF9wAAyFEH/2yieV1vbKNe3ulgNNey\nyn5WbPEfUifl3bndOo3brQZUGCumgpVzAEKuYMUv9vewoDKdiaiKWBxKWZFC\nrOy7EtdRQjd3IHfb4K8AdsCu6R6J8r2gXypHlpNAYfFlelTtskC8LtE+jw3/\nai5l1QEnJevToKTAtiz1aU3UoXVY+2XkYcZnJPuMUEsuzLAfpU4jS9wf8l1g\nJmHWOZtWHZqhKerQQhvu8AZMy+FR2gvxxRemceXCMzEJYRF7Fb5PUQiqnm1H\n6dtGxSJ79FFsn2yZaToklbFR+xFeS6rmU2uyBXyggV4a2OUy28JANl6YDWZ/\nSW2dzZrDefHjvTVOheJ8A5Y=\n=uz9Z\n-----END PGP SIGNATURE-----\n"
+}

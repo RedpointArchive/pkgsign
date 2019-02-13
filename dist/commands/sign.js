@@ -32,7 +32,7 @@ const signature_1 = require("../lib/signature");
 const signatureIdentityEntry_1 = require("../lib/signature/signatureIdentityEntry");
 const telemetry_1 = require("../lib/telemetry");
 const signatureIdentity_1 = require("../lib/signature/signatureIdentity");
-const signaturePackageJsonEntry_1 = require("../lib/signature/signaturePackageJsonEntry");
+const signaturePackageJsonPropertiesEntry_1 = require("../lib/signature/signaturePackageJsonPropertiesEntry");
 class SignOptions extends clime_1.Options {
 }
 __decorate([
@@ -206,9 +206,9 @@ let default_1 = class default_1 extends clime_1.Command {
                         identity: identity,
                     }),
                     ...(packageInfo === undefined ? [] : [
-                        new signaturePackageJsonEntry_1.SignaturePackageJsonPropertiesEntry({
+                        new signaturePackageJsonPropertiesEntry_1.SignaturePackageJsonPropertiesEntry({
                             packageJsonProperties: Object.keys(packageInfo).sort(),
-                            sha512: yield signaturePackageJsonEntry_1.SignaturePackageJsonPropertiesEntry.sha512OfObject(packageInfo, Object.keys(packageInfo))
+                            sha512: yield signaturePackageJsonPropertiesEntry_1.SignaturePackageJsonPropertiesEntry.sha512OfObject(packageInfo, Object.keys(packageInfo))
                         })
                     ]),
                 ],

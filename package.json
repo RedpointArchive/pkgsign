@@ -29,15 +29,16 @@
   },
   "scripts": {
     "normalize": "node util/normalize.js",
-    "prepack": "node util/normalize.js",
-    "build": "rimraf dist && tsc",
-    "pkgsign": "rimraf dist && tsc && node util/normalize.js && node dist/index.js",
-    "sign": "rimraf dist && tsc && node util/normalize.js && node dist/index.js sign .",
-    "verify": "rimraf dist && tsc && node util/normalize.js && node dist/index.js verify . --full",
-    "signedpack": "rimraf dist && tsc && node util/normalize.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz",
-    "release": "ava-ts && rimraf dist && tsc && node util/normalize.js && node util/ensure-release.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz",
-    "prerelease": "ava-ts && rimraf dist && tsc && node util/normalize.js && node util/ensure-prerelease.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz --tag next",
-    "test": "ava-ts"
+    "prepack": "yarn normalize",
+    "clean": "rimraf dist",
+    "build": "yarn clean && tsc",
+    "pkgsign": "yarn clean && tsc && yarn normalize && node dist/index.js",
+    "sign": "yarn clean && tsc && yarn normalize && node dist/index.js sign .",
+    "verify": "yarn clean && tsc && yarn normalize && node dist/index.js verify . --full",
+    "signedpack": "yarn clean && tsc && yarn normalize && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz",
+    "release": "yarn test && yarn clean && tsc && yarn normalize && node util/ensure-release.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz",
+    "prerelease": "yarn test && yarn clean && tsc && yarn normalize && node util/ensure-prerelease.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz --tag next",
+    "test": "ava-ts test/*.ts"
   },
   "devDependencies": {
     "@types/node": "^8.5.7",

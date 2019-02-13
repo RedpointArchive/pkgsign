@@ -21,17 +21,3 @@ export declare class SignaturePackageJsonEntry implements SignatureEntry {
     verify(context: VerificationContext): Promise<ModuleVerificationResult | null>;
     getIdentity(): SignatureIdentity | null;
 }
-export interface SignaturePackageJsonPropertiesEntryData {
-    readonly packageJsonProperties: Array<string>;
-    readonly sha512: string;
-}
-export declare class SignaturePackageJsonPropertiesEntry implements SignatureEntry {
-    static sha512OfObject(value: object, properties: Array<string>): Promise<string>;
-    readonly entry: string;
-    readonly packageJsonProperties: Array<string>;
-    readonly sha512: string;
-    constructor(raw: SignaturePackageJsonPropertiesEntryData);
-    toDeterministicString(): string;
-    verify(context: VerificationContext): Promise<ModuleVerificationResult | null>;
-    getIdentity(): SignatureIdentity | null;
-}

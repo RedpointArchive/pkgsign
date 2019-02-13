@@ -4,7 +4,8 @@ import { LegacySignatureInfo } from "./signature/legacySignatureInfo";
 import { VerificationContext } from "./signature/verificationContext";
 import { ModuleVerificationResult } from "./moduleVerifier";
 import { SignatureIdentity } from "./signature/signatureIdentity";
-import { SignaturePackageJsonEntry, SignaturePackageJsonEntryData, SignaturePackageJsonPropertiesEntry, SignaturePackageJsonPropertiesEntryData } from "./signature/signaturePackageJsonEntry";
+import { SignaturePackageJsonEntry, SignaturePackageJsonEntryData } from "./signature/signaturePackageJsonEntry";
+import { SignaturePackageJsonPropertiesEntry, SignaturePackageJsonPropertiesEntryData } from "./signature/signaturePackageJsonPropertiesEntry";
 
 export interface SignatureInfo {
     entries: SignatureEntry[];

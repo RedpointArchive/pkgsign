@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const signatureFilesEntry_1 = require("./signature/signatureFilesEntry");
 const signatureIdentityEntry_1 = require("./signature/signatureIdentityEntry");
 const signaturePackageJsonEntry_1 = require("./signature/signaturePackageJsonEntry");
+const signaturePackageJsonPropertiesEntry_1 = require("./signature/signaturePackageJsonPropertiesEntry");
 class SignatureParser {
     parse(json) {
         let obj = JSON.parse(json);
@@ -47,7 +48,7 @@ class SignatureParser {
                         instance = new signaturePackageJsonEntry_1.SignaturePackageJsonEntry(rawEntries[i]);
                         break;
                     case "packageJson/v1alpha2":
-                        instance = new signaturePackageJsonEntry_1.SignaturePackageJsonPropertiesEntry(rawEntries[i]);
+                        instance = new signaturePackageJsonPropertiesEntry_1.SignaturePackageJsonPropertiesEntry(rawEntries[i]);
                         break;
                 }
                 if (instance === null) {

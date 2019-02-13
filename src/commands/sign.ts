@@ -17,7 +17,7 @@ import { SignatureInfo, createDeterministicString } from '../lib/signature';
 import { SignatureIdentityEntry } from '../lib/signature/signatureIdentityEntry';
 import { queueTelemetry } from '../lib/telemetry';
 import { identityToString } from '../lib/signature/signatureIdentity';
-import { SignaturePackageJsonPropertiesEntry } from '../lib/signature/signaturePackageJsonEntry';
+import { SignaturePackageJsonPropertiesEntry } from '../lib/signature/signaturePackageJsonPropertiesEntry';
 
 export class SignOptions extends Options {
     @option({
