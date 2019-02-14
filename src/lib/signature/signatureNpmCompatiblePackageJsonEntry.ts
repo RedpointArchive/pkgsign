@@ -7,12 +7,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { createHash } from 'crypto';
 
-export interface SignaturePackageJsonPropertiesEntryData {
+export interface SignatureNpmCompatiblePackageJsonEntryData {
     readonly packageJsonProperties: Array<string>;
     readonly sha512: string;
 }
 
-export class SignaturePackageJsonPropertiesEntry implements SignatureEntry {
+export class SignatureNpmCompatiblePackageJsonEntry implements SignatureEntry {
 
     public static async sha512OfObject(value: object, properties: Array<string>): Promise<string> {
         const orderedObject = {};
@@ -29,11 +29,11 @@ export class SignaturePackageJsonPropertiesEntry implements SignatureEntry {
         return hashStr;
     }
 
-    public readonly entry: string = "packageJson/v1alpha2";
+    public readonly entry: string = "npmCompatiblePackageJson/v1alpha1";
     public readonly packageJsonProperties: Array<string>;
     public readonly sha512: string;
 
-    constructor(raw: SignaturePackageJsonPropertiesEntryData) {
+    constructor(raw: SignatureNpmCompatiblePackageJsonEntryData) {
         this.sha512 = raw.sha512;
         this.packageJsonProperties = raw.packageJsonProperties;
         if (this.packageJsonProperties) {
@@ -90,7 +90,7 @@ export class SignaturePackageJsonPropertiesEntry implements SignatureEntry {
                 };
             }
 
-            const hash = await SignaturePackageJsonPropertiesEntry.sha512OfObject(packageJsonActual, this.packageJsonProperties);
+            const hash = await SignatureNpmCompatiblePackageJsonEntry.sha512OfObject(packageJsonActual, this.packageJsonProperties);
             if (hash != this.sha512) {
                 return {
                     status: ModuleVerificationStatus.Compromised,

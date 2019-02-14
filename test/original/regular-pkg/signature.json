@@ -20,7 +20,32 @@
       }
     },
     {
-      "entry": "packageJson/v1alpha2",
+      "entry": "packageJson/v1alpha1",
+      "packageJson": {
+        "_ignored": "test",
+        "name": "regular-pkg",
+        "version": "1.2.3",
+        "private": true,
+        "main": "dist/index.js",
+        "files": [
+          "dist/*",
+          "signature.json"
+        ],
+        "devDependencies": {
+          "mocha": "5.2.0",
+          "rimraf": "2.6.3",
+          "typescript": "latest"
+        },
+        "dependencies": {},
+        "scripts": {
+          "clean": "rimraf dist",
+          "compile": "tsc -p .",
+          "test": "mocha"
+        }
+      }
+    },
+    {
+      "entry": "npmCompatiblePackageJson/v1alpha1",
       "sha512": "5f11666c6dd32b4bcefed86c203df570aa11b5e7add70834730e5ba26126deec29fca9a035b429050c22971b7d7429f77d62a3bf5c992a8746e014ce5be96eb5",
       "packageJsonProperties": [
         "dependencies",
@@ -34,5 +59,5 @@
       ]
     }
   ],
-  "signature": "-----BEGIN PGP SIGNATURE-----\nVersion: OpenPGP.js v2.6.1\nComment: https://openpgpjs.org\n\nwsBcBAEBCAAQBQJcZEFXCRCLBSW1RGQF9wAAyFEH/2yieV1vbKNe3ulgNNey\nyn5WbPEfUifl3bndOo3brQZUGCumgpVzAEKuYMUv9vewoDKdiaiKWBxKWZFC\nrOy7EtdRQjd3IHfb4K8AdsCu6R6J8r2gXypHlpNAYfFlelTtskC8LtE+jw3/\nai5l1QEnJevToKTAtiz1aU3UoXVY+2XkYcZnJPuMUEsuzLAfpU4jS9wf8l1g\nJmHWOZtWHZqhKerQQhvu8AZMy+FR2gvxxRemceXCMzEJYRF7Fb5PUQiqnm1H\n6dtGxSJ79FFsn2yZaToklbFR+xFeS6rmU2uyBXyggV4a2OUy28JANl6YDWZ/\nSW2dzZrDefHjvTVOheJ8A5Y=\n=uz9Z\n-----END PGP SIGNATURE-----\n"
+  "signature": "-----BEGIN PGP SIGNATURE-----\nVersion: OpenPGP.js v2.6.1\nComment: https://openpgpjs.org\n\nwsBcBAEBCAAQBQJcZarVCRCLBSW1RGQF9wAAR2EIAKj9kCzx2KPPnECEzR7l\nAkWiuKY0pbFA5qUVjtZLlHdY5XWPGdNlTbuHBZ6vz32HK1zEKd7jGqAraYfn\nUJp5X+Om0Y2eByd+Hj+7dGTM0RH9784cpP5gWEOBUtiaPp9mSb1Ee8lNg9ct\nvZme0i8ehenAeAQsIRCQcTwgwKzMTgH3XiPj+alNROsJy+2566/YyIEsHW80\nb0mSj+LOg7+s9pb2/mbjDIG3aKBqurecVS4daLxGD7MLWUVjZxrxrbVGEGhg\nmBLHF0wwG7YJhfyXImO2F+TjlSO4q6XmmCHhXJUZPfg+tWNsKMGoeoJIH8J3\n/kxeKKrzRC5pYCtXGWCC7Jw=\n=BlRs\n-----END PGP SIGNATURE-----\n"
 }

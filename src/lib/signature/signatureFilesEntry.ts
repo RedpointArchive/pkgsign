@@ -28,7 +28,7 @@ export class SignatureFilesEntry implements SignatureEntry {
     public async verify(context: VerificationContext): Promise<ModuleVerificationResult | null> {
         const skipPackageJsonExactVerification = context.signatureEntries.some(x => {
             return  x.entry === "packageJson/v1alpha1" ||
-                    x.entry === "packageJson/v1alpha2";
+                    x.entry === "npmCompatiblePackageJson/v1alpha1";
         });
 
         // For each relative file on disk, make sure it appears in

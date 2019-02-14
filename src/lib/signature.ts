@@ -4,8 +4,8 @@ import { LegacySignatureInfo } from "./signature/legacySignatureInfo";
 import { VerificationContext } from "./signature/verificationContext";
 import { ModuleVerificationResult } from "./moduleVerifier";
 import { SignatureIdentity } from "./signature/signatureIdentity";
-import { SignaturePackageJsonEntry, SignaturePackageJsonEntryData } from "./signature/signaturePackageJsonEntry";
-import { SignaturePackageJsonPropertiesEntry, SignaturePackageJsonPropertiesEntryData } from "./signature/signaturePackageJsonPropertiesEntry";
+import { SignaturePackageJsonEntry, SignaturePackageJsonEntryData, generatedNpmKeys } from "./signature/signaturePackageJsonEntry";
+import { SignatureNpmCompatiblePackageJsonEntry, SignatureNpmCompatiblePackageJsonEntryData } from "./signature/signatureNpmCompatiblePackageJsonEntry";
 
 export interface SignatureInfo {
     entries: SignatureEntry[];
@@ -21,8 +21,8 @@ export interface SignatureEntry {
 }
 
 export class SignatureParser {
-    public parse(json: string): SignatureInfo {
-        let obj = JSON.parse(json);
+    public parse(packageName: string, packageJson: object | null, signatureJson: string): SignatureInfo {
+        let obj = JSON.parse(signatureJson);
 
         // Check for legacy signature we need to convert.
         if (obj.version !== undefined && obj.version === 'v1alpha') {
@@ -62,10 +62,14 @@ export class SignatureParser {
                         instance = new SignatureIdentityEntry(rawEntries[i] as any as SignatureIdentityEntryData);
                         break;
                     case "packageJson/v1alpha1":
-                        instance = new SignaturePackageJsonEntry(rawEntries[i] as any as SignaturePackageJsonEntryData);
+                        if (this.isPackageInstalledWithNpm(packageJson) || this.isPackagePublishedWithNpm(packageJson)) {
+                            console.warn(`WARNING: package '${packageName}' is either published and/or installed with npm - performing limited package.json verification`);
+                        } else {
+                            instance = new SignaturePackageJsonEntry(rawEntries[i] as any as SignaturePackageJsonEntryData);
+                        }
                         break;
-                    case "packageJson/v1alpha2":
-                        instance = new SignaturePackageJsonPropertiesEntry(rawEntries[i] as any as SignaturePackageJsonPropertiesEntryData);
+                    case "npmCompatiblePackageJson/v1alpha1":
+                        instance = new SignatureNpmCompatiblePackageJsonEntry(rawEntries[i] as any as SignatureNpmCompatiblePackageJsonEntryData);
                         break;
                 }
                 if (instance === null) {
@@ -76,6 +80,26 @@ export class SignatureParser {
         }
         
         return obj as SignatureInfo;
+    }
+
+    private isPackageInstalledWithNpm(packageJson: object | null): boolean {
+        if (packageJson) {
+            // if some of the npm generated keys are in the package.json of the installed
+            // package, we can assume npm was used for installing the package
+            return Object.keys(packageJson)
+                .some((property) => generatedNpmKeys.indexOf(property) >= 0);
+        }
+        // can't assume the package was installed with npm - verification would fail if so
+        return false;
+    }
+    
+    private isPackagePublishedWithNpm(packageJson: object | null): boolean {
+        if (packageJson) {
+            // at least gitHead is added to package.json when publishing with npm
+            return Object.keys(packageJson).sort().indexOf('gitHead') >= 0;
+        }
+        // can't assume the package was published with npm - verification would fail if so
+        return false;
     }
 }
 

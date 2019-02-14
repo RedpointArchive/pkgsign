@@ -44,8 +44,9 @@ export class ModuleVerifier {
         // is only used by telemetry when determining the amount of data to send.
         let isPrivate = true;
         let untrustedPackageVersion = '';
+        let earlyPackageInfo;
         try {
-            let earlyPackageInfo = JSON.parse(await readFilePromise(path.join(dir, 'package.json')));
+            earlyPackageInfo = JSON.parse(await readFilePromise(path.join(dir, 'package.json')));
             isPrivate = earlyPackageInfo.private || false;
             untrustedPackageVersion = earlyPackageInfo.version || '';
         } catch (e) {
@@ -56,7 +57,7 @@ export class ModuleVerifier {
         try {
             let rawJson = await readFilePromise(path.join(dir, 'signature.json'));
             let signatureParser = new SignatureParser();
-            signature = signatureParser.parse(rawJson);
+            signature = signatureParser.parse(expectedPackageName, earlyPackageInfo, rawJson);
         } catch (e) {
             return {
                 status: ModuleVerificationStatus.Unsigned,

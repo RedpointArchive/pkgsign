@@ -32,7 +32,7 @@ test('signature has packageJson entry present', async t => {
   t.true(await sign(testName));
   t.true(fs.existsSync(path.join(testName, 'signature.json')), 'signature.json is not present');
   const json = JSON.parse(await readFilePromise(path.join(testName, 'signature.json')));
-  t.true(json.entries.some(entry => entry.entry === 'packageJson/v1alpha2'));
+  t.true(json.entries.some(entry => entry.entry === 'npmCompatiblePackageJson/v1alpha1'));
 });
 
 test('signature packageJson omits NPM fields on sign', async t => {
@@ -40,9 +40,9 @@ test('signature packageJson omits NPM fields on sign', async t => {
   t.true(await sign(testName));
   t.true(fs.existsSync(path.join(testName, 'signature.json')), 'signature.json is not present');
   const json = JSON.parse(await readFilePromise(path.join(testName, 'signature.json')));
-  t.true(json.entries.some(entry => entry.entry === 'packageJson/v1alpha2'));
-  const entry = json.entries.filter(entry => entry.entry === 'packageJson/v1alpha2')[0];
-  t.is(entry.packageJsonProperties.sort().indexOf('_from'), -1, 'signature.json packageJson/v1alpha2 contains _from property');
+  t.true(json.entries.some(entry => entry.entry === 'npmCompatiblePackageJson/v1alpha1'));
+  const entry = json.entries.filter(entry => entry.entry === 'npmCompatiblePackageJson/v1alpha1')[0];
+  t.is(entry.packageJsonProperties.sort().indexOf('_from'), -1, 'signature.json npmCompatiblePackageJson/v1alpha1 contains _from property');
 });
 
 test('signature packageJson omits NPM fields on verify', async t => {
@@ -59,7 +59,7 @@ test('check signature of package', async t => {
 
   t.true(originalPackageSignature.entries.some(entry => entry.entry === 'files/v1alpha1'));
   t.true(originalPackageSignature.entries.some(entry => entry.entry === 'identity/v1alpha1'));
-  t.true(originalPackageSignature.entries.some(entry => entry.entry === 'packageJson/v1alpha2'));
+  t.true(originalPackageSignature.entries.some(entry => entry.entry === 'npmCompatiblePackageJson/v1alpha1'));
 
   // all files ignored, except the files in the resulting package
   const filesEntry = originalPackageSignature.entries.filter(entry => entry.entry === 'files/v1alpha1')[0];
@@ -68,8 +68,8 @@ test('check signature of package', async t => {
   t.true(filesEntry.files.some(entry => entry.path === 'README.md'));
 
   // all properties ignored, starting with underscore
-  const packageJsonEntry = originalPackageSignature.entries.filter(entry => entry.entry === 'packageJson/v1alpha2')[0];
-  t.is(packageJsonEntry.packageJsonProperties.sort().indexOf('_ignored'), -1, 'signature.json packageJson/v1alpha2 contains _ignored property');
+  const packageJsonEntry = originalPackageSignature.entries.filter(entry => entry.entry === 'npmCompatiblePackageJson/v1alpha1')[0];
+  t.is(packageJsonEntry.packageJsonProperties.sort().indexOf('_ignored'), -1, 'signature.json npmCompatiblePackageJson/v1alpha1 contains _ignored property');
   
   const installedPackageJson = JSON.parse(await readFilePromise(path.join('installed/regular-pkg', 'package.json')));
   // check for install metadata properties

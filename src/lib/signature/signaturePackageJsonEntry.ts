@@ -16,7 +16,7 @@ import * as path from 'path';
 // we may have to just overwrite package.json with the version stored in
 // signature.json if the NPM CLI continues to mangle the package.json file
 // as much as it does.
-const generatedNpmKeys = [
+export const generatedNpmKeys = [
     '_from',
     '_id',
     '_inBundle',

@@ -17,7 +17,8 @@ import { SignatureInfo, createDeterministicString } from '../lib/signature';
 import { SignatureIdentityEntry } from '../lib/signature/signatureIdentityEntry';
 import { queueTelemetry } from '../lib/telemetry';
 import { identityToString } from '../lib/signature/signatureIdentity';
-import { SignaturePackageJsonPropertiesEntry } from '../lib/signature/signaturePackageJsonPropertiesEntry';
+import { SignatureNpmCompatiblePackageJsonEntry } from '../lib/signature/signatureNpmCompatiblePackageJsonEntry';
+import { SignaturePackageJsonEntry, stripNpmMetadataFieldFromPackageInfo } from '../lib/signature/signaturePackageJsonEntry';
 
 export class SignOptions extends Options {
     @option({
@@ -119,6 +120,7 @@ export default class extends Command {
 
     private async signFileList(signer: Signer, basePath: string, relativeFilePaths: string[], telemetryAction: string): Promise<void> {
         let packageInfo: any | null | undefined = null;
+        let strippedPackageInfo: any | null | undefined = null;
         let entries: SignatureFileEntry[] = [];
         for (let relPath of relativeFilePaths) {
             const normalisedPath = relPath.replace(/\\/g, '/');
@@ -134,9 +136,9 @@ export default class extends Command {
                 const packageJson = await readFilePromise(path.join(basePath, relPath));
                 try {
                     packageInfo = JSON.parse(packageJson);
-                    
+                    strippedPackageInfo = { ...packageInfo };
                     // Strip NPM metadata from package.json.
-                    // REMOVAL: stripNpmMetadataFieldFromPackageInfo(packageInfo);
+                    stripNpmMetadataFieldFromPackageInfo(strippedPackageInfo);
                     
                     continue;
                 } catch (e) {
@@ -201,9 +203,12 @@ export default class extends Command {
                     identity: identity,
                 }),
                 ...(packageInfo === undefined ? [] : [
-                    new SignaturePackageJsonPropertiesEntry({
+                    new SignaturePackageJsonEntry({
+                        packageJson: strippedPackageInfo,
+                    }),
+                    new SignatureNpmCompatiblePackageJsonEntry({
                         packageJsonProperties: Object.keys(packageInfo).sort(),
-                        sha512: await SignaturePackageJsonPropertiesEntry.sha512OfObject(packageInfo, Object.keys(packageInfo))
+                        sha512: await SignatureNpmCompatiblePackageJsonEntry.sha512OfObject(packageInfo, Object.keys(packageInfo))
                     })
                 ]),
             ],

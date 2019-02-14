@@ -2,8 +2,7 @@
 
 import * as Path from 'path';
 import { CLI, Shim } from 'clime';
-import { startTelemetrySend, TelemetryData } from './lib/telemetry';
-import { readFileSync } from 'fs';
+import { startTelemetrySend } from './lib/telemetry';
 
 let cli = new CLI('pkgsign', Path.join(__dirname, 'commands'));
 
