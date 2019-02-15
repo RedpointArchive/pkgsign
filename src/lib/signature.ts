@@ -52,6 +52,8 @@ export class SignatureParser {
             // Upgrade the entries to the actual TypeScript classes.
             let rawEntries = newObj.entries;
             newObj.entries = [];
+            const npmUsed = this.isPackageInstalledWithNpm(packageJson) || this.isPackagePublishedWithNpm(packageJson);
+            const npmCompatibleCheck = rawEntries.some((entry) => entry.entry === "npmCompatiblePackageJson/v1alpha1");
             for (let i = 0; i < rawEntries.length; i++) {
                 let instance: SignatureEntry | null = null;
                 switch (rawEntries[i].entry) {
@@ -62,8 +64,9 @@ export class SignatureParser {
                         instance = new SignatureIdentityEntry(rawEntries[i] as any as SignatureIdentityEntryData);
                         break;
                     case "packageJson/v1alpha1":
-                        if (this.isPackageInstalledWithNpm(packageJson) || this.isPackagePublishedWithNpm(packageJson)) {
+                        if (npmUsed && npmCompatibleCheck) {
                             console.warn(`WARNING: package '${packageName}' is either published and/or installed with npm - performing limited package.json verification`);
+                            continue;
                         } else {
                             instance = new SignaturePackageJsonEntry(rawEntries[i] as any as SignaturePackageJsonEntryData);
                         }
