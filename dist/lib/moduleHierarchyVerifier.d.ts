@@ -11,5 +11,5 @@ export declare class ModuleHierarchyVerifier {
     verify(): Promise<{
         [path: string]: ModuleVerificationResult;
     }>;
-    private findModules(dir);
+    private findModules;
 }

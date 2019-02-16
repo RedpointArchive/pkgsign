@@ -5,9 +5,9 @@ export declare class VerifyOptions extends Options {
     packageName: string;
     enableTestTrustStore: boolean;
 }
-export default class  extends Command {
+export default class extends Command {
     execute(path: string, options: VerifyOptions): Promise<void>;
     executeInternal(path: string, options: VerifyOptions): Promise<boolean>;
-    private verifyTarball(tarballPath, options);
-    private verifyDirectory(path, options);
+    private verifyTarball;
+    private verifyDirectory;
 }

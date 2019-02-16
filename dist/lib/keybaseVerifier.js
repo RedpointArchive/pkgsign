@@ -24,14 +24,14 @@ class KeybaseVerifier {
             });
             const attemptVerify = (rawPublicKeys) => __awaiter(this, void 0, void 0, function* () {
                 try {
-                    const publicKeys = openpgp.key.readArmored(rawPublicKeys).keys;
+                    const publicKeys = (yield openpgp.key.readArmored(rawPublicKeys)).keys;
                     const verifyOptions = {
                         message: openpgp.message.fromText(deterministicString),
-                        signature: openpgp.signature.readArmored(signature),
+                        signature: yield openpgp.signature.readArmored(signature),
                         publicKeys: publicKeys
                     };
                     const verifiedMessage = yield openpgp.verify(verifyOptions);
-                    return verifiedMessage.signatures.length >= 1;
+                    return verifiedMessage.signatures.some((signature) => signature.valid);
                 }
                 catch (e) {
                     return false;

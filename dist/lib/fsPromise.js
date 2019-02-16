@@ -1,11 +1,19 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const recursive = require("recursive-readdir");
 const crypto = require("crypto");
 const targz = require("targz");
 const tmp = require("tmp");
-const isBinaryFile = require("isbinaryfile");
+const isbinaryfile_1 = require("isbinaryfile");
 const eolFix = require("eol-fix-stream");
 function readdirPromise(dir) {
     return new Promise((resolve, reject) => {
@@ -73,18 +81,11 @@ function recursivePromise(path) {
 }
 exports.recursivePromise = recursivePromise;
 function sha512OfFile(path) {
-    return new Promise((resolve, reject) => {
-        isBinaryFile(path, (err, isBinary) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            let shouldPipe = false;
-            if (!isBinary) {
-                // We have to convert all CRLF to LF because of how Git
-                // clones text files on Windows.
-                shouldPipe = true;
-            }
+    return __awaiter(this, void 0, void 0, function* () {
+        // We have to convert all CRLF to LF because of how Git
+        // clones text files on Windows.
+        let shouldPipe = !(yield isbinaryfile_1.isBinaryFile(path));
+        return new Promise((resolve) => {
             let fstream = fs.createReadStream(path);
             const hash = crypto.createHash('sha512');
             hash.setEncoding('hex');

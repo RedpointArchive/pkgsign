@@ -4,7 +4,7 @@ export declare enum ModuleVerificationStatus {
     Compromised = 0,
     Unsigned = 1,
     Untrusted = 2,
-    Trusted = 3,
+    Trusted = 3
 }
 export interface ModuleVerificationResult {
     status: ModuleVerificationStatus;

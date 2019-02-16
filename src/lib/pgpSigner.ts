@@ -19,11 +19,17 @@ export class PgpSigner implements Signer {
     public async signEntries(deterministicString: string): Promise<string> {
         console.log('signing with private pgp key...');
         const privateKeyFileContents = await readFilePromise(this.privateKeyPath);
-        const privateKeyObject = openpgp.key.readArmored(privateKeyFileContents).keys[0];
-        privateKeyObject.decrypt(this.privateKeyPassphrase);
+        const privateKeyObject = (await openpgp.key.readArmored(privateKeyFileContents)).keys[0];
+        try {
+            await privateKeyObject.decrypt(this.privateKeyPassphrase);
+        } catch(err) {
+            if (err.message !== 'Key packet is already decrypted.') {
+                throw err;
+            }
+        }
         const options = {
-            data: deterministicString,
-            privateKeys: privateKeyObject,
+            message: openpgp.cleartext.fromText(deterministicString),
+            privateKeys: [privateKeyObject],
             detached: true,
         };
         const signedResult = await openpgp.sign(options);

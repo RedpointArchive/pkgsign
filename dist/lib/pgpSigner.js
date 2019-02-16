@@ -27,11 +27,18 @@ class PgpSigner {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('signing with private pgp key...');
             const privateKeyFileContents = yield fsPromise_1.readFilePromise(this.privateKeyPath);
-            const privateKeyObject = openpgp.key.readArmored(privateKeyFileContents).keys[0];
-            privateKeyObject.decrypt(this.privateKeyPassphrase);
+            const privateKeyObject = (yield openpgp.key.readArmored(privateKeyFileContents)).keys[0];
+            try {
+                yield privateKeyObject.decrypt(this.privateKeyPassphrase);
+            }
+            catch (err) {
+                if (err.message !== 'Key packet is already decrypted.') {
+                    throw err;
+                }
+            }
             const options = {
-                data: deterministicString,
-                privateKeys: privateKeyObject,
+                message: openpgp.cleartext.fromText(deterministicString),
+                privateKeys: [privateKeyObject],
                 detached: true,
             };
             const signedResult = yield openpgp.sign(options);

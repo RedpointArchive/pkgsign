@@ -24,10 +24,10 @@ export class PgpVerifier implements Verifier {
 
         const attemptVerify = async (rawPublicKeys: string) => {
             try {
-                const publicKeys = openpgp.key.readArmored(rawPublicKeys).keys;
+                const publicKeys = (await openpgp.key.readArmored(rawPublicKeys)).keys;
                 const verifyOptions = {
                     message: openpgp.message.fromText(deterministicString),
-                    signature: openpgp.signature.readArmored(signature),
+                    signature: await openpgp.signature.readArmored(signature),
                     publicKeys: publicKeys
                 };
                 const verifiedMessage = await openpgp.verify(verifyOptions);
