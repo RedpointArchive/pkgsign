@@ -26,21 +26,9 @@
     "targz": "1.0.1",
     "tmp": "0.0.33"
   },
-  "bundledDependencies": [
-    "clime",
-    "eol-fix-stream",
-    "inquirer",
-    "isbinaryfile",
-    "node-cmd",
-    "node-fetch",
-    "node-machine-id",
-    "npm-packlist",
-    "openpgp",
-    "recursive-readdir",
-    "silent-spawn",
-    "strip-ansi",
-    "targz",
-    "tmp"
+  "files": [
+    "dist/*",
+    "signature.json"
   ],
   "scripts": {
     "normalize": "node util/normalize.js",
@@ -56,7 +44,6 @@
     "test": "ava-ts test/*.ts"
   },
   "devDependencies": {
-    "@dpwolfe/dos2unix": "1.1.3",
     "@types/node": "11.9.4",
     "@types/node-fetch": "2.1.6",
     "@types/recursive-readdir": "2.2.0",

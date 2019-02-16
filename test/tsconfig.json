@@ -10,7 +10,8 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "rootDir": ".",
-    "noEmit": true
+    "noEmit": true,
+    "newLine": "LF"
   },
   "files": [
     "index.ts",
