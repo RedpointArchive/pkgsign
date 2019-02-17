@@ -18,7 +18,7 @@ import { SignatureIdentityEntry } from '../lib/signature/signatureIdentityEntry'
 import { queueTelemetry } from '../lib/telemetry';
 import { identityToString } from '../lib/signature/signatureIdentity';
 import { SignatureNpmCompatiblePackageJsonEntry } from '../lib/signature/signatureNpmCompatiblePackageJsonEntry';
-import { SignaturePackageJsonEntry, stripNpmMetadataFieldFromPackageInfo } from '../lib/signature/signaturePackageJsonEntry';
+import { SignaturePackageJsonEntry } from '../lib/signature/signaturePackageJsonEntry';
 
 export class SignOptions extends Options {
     @option({
@@ -119,8 +119,7 @@ export default class extends Command {
     }
 
     private async signFileList(signer: Signer, basePath: string, relativeFilePaths: string[], telemetryAction: string): Promise<void> {
-        let packageInfo: any | null | undefined = null;
-        let strippedPackageInfo: any | null | undefined = null;
+        let packageJson: any | null | undefined = null;
         let entries: SignatureFileEntry[] = [];
         for (let relPath of relativeFilePaths) {
             const normalisedPath = relPath.replace(/\\/g, '/');
@@ -133,17 +132,12 @@ export default class extends Command {
             }
             if (normalisedPath == 'package.json') {
                 // This file will be included in it's own package entry.
-                const packageJson = await readFilePromise(path.join(basePath, relPath));
                 try {
-                    packageInfo = JSON.parse(packageJson);
-                    strippedPackageInfo = { ...packageInfo };
-                    // Strip NPM metadata from package.json.
-                    stripNpmMetadataFieldFromPackageInfo(strippedPackageInfo);
-                    
+                    packageJson = JSON.parse(await readFilePromise(path.join(basePath, relPath)));
                     continue;
                 } catch (e) {
                     console.warn('unable to parse package.json as JSON for signing');
-                    packageInfo = undefined; /* do not include package json signature entry, so file validation will fallback to exact match */
+                    packageJson = undefined; /* do not include package json signature entry, so file validation will fallback to exact match */
                 }
             }
             const hash = await sha512OfFile(path.join(basePath, relPath));
@@ -157,14 +151,14 @@ export default class extends Command {
         const identity = await signer.getIdentity();
 
         // Queue telemetry if needed.
-        if (packageInfo != null && packageInfo.name != undefined) {
-            if (packageInfo.private != true) {
+        if (packageJson != null && packageJson.name != undefined) {
+            if (packageJson.private != true) {
                 // This is not a private package, so record telemetry with the package
                 // name included.
                 await queueTelemetry({
                     action: telemetryAction,
-                    packageName: packageInfo.name,
-                    packageVersion: packageInfo.version || '',
+                    packageName: packageJson.name,
+                    packageVersion: packageJson.version || '',
                     packageIsSigned: true,
                     signingIdentity: identityToString(identity),
                     identityIsTrusted: true,
@@ -202,13 +196,13 @@ export default class extends Command {
                 new SignatureIdentityEntry({
                     identity: identity,
                 }),
-                ...(packageInfo === undefined ? [] : [
+                ...(packageJson === undefined ? [] : [
                     new SignaturePackageJsonEntry({
-                        packageJson: strippedPackageInfo,
+                        packageJson,
                     }),
                     new SignatureNpmCompatiblePackageJsonEntry({
-                        packageJsonProperties: Object.keys(packageInfo).sort(),
-                        sha512: await SignatureNpmCompatiblePackageJsonEntry.sha512OfObject(packageInfo, Object.keys(packageInfo))
+                        packageJsonProperties: Object.keys(packageJson).sort(),
+                        sha512: await SignatureNpmCompatiblePackageJsonEntry.sha512OfObject(packageJson, Object.keys(packageJson))
                     })
                 ]),
             ],

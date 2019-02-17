@@ -12,59 +12,10 @@ const moduleVerifier_1 = require("../moduleVerifier");
 const jsonNormalize_1 = require("./jsonNormalize");
 const fs = require("fs");
 const path = require("path");
-// This is a list of all fields in package.json that the NPM CLI either:
-//
-// - Implicitly adds based on information from the registry
-// - Adds based on CLI arguments or environment
-// - Modifies the type or value of
-//
-// In effect, the user can't really trust any of these fields. In the future,
-// we may have to just overwrite package.json with the version stored in
-// signature.json if the NPM CLI continues to mangle the package.json file
-// as much as it does.
-const generatedNpmKeys = [
-    '_from',
-    '_id',
-    '_inBundle',
-    '_integrity',
-    '_location',
-    '_phantomChildren',
-    '_requested',
-    '_requiredBy',
-    '_resolved',
-    '_shasum',
-    '_spec',
-    '_where',
-    '_optional',
-    '_development',
-    '_args',
-    'bugs',
-    'bundleDependencies',
-    'deprecated',
-    'author',
-    'homepage',
-    'repository',
-];
-/**
- * Used as the replacer for JSON stringify where it filters out any NPM injected
- * package.json keys.
- *
- * @param key The key of the JSON property.
- * @param value The value of the JSON property.
- */
-exports.stripNpmMetadataFieldFromPackageInfo = (packageInfo) => {
-    for (let key of Object.keys(packageInfo)) {
-        if (generatedNpmKeys.indexOf(key) !== -1) {
-            delete packageInfo[key];
-        }
-    }
-};
 class SignaturePackageJsonEntry {
     constructor(raw) {
         this.entry = "packageJson/v1alpha1";
         this.packageJson = raw.packageJson;
-        // Strip NPM metadata from packageJson value.
-        exports.stripNpmMetadataFieldFromPackageInfo(this.packageJson);
     }
     toDeterministicString() {
         return jsonNormalize_1.normalizeSync(this.packageJson);
@@ -112,8 +63,6 @@ class SignaturePackageJsonEntry {
                         isPrivate: context.isPrivate,
                     };
                 }
-                // Strip NPM metadata from actual package.json value.
-                exports.stripNpmMetadataFieldFromPackageInfo(packageJsonActual);
                 // Stringify both our expected and actual values.
                 const normalizedActual = jsonNormalize_1.normalizeSync(packageJsonActual);
                 const normalizedExpected = jsonNormalize_1.normalizeSync(this.packageJson);

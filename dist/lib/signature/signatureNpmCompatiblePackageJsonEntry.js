@@ -13,9 +13,9 @@ const jsonNormalize_1 = require("./jsonNormalize");
 const fs = require("fs");
 const path = require("path");
 const crypto_1 = require("crypto");
-class SignaturePackageJsonPropertiesEntry {
+class SignatureNpmCompatiblePackageJsonEntry {
     constructor(raw) {
-        this.entry = "packageJson/v1alpha2";
+        this.entry = "npmCompatiblePackageJson/v1alpha1";
         this.sha512 = raw.sha512;
         this.packageJsonProperties = raw.packageJsonProperties;
         if (this.packageJsonProperties) {
@@ -83,7 +83,7 @@ class SignaturePackageJsonPropertiesEntry {
                         isPrivate: context.isPrivate,
                     };
                 }
-                const hash = yield SignaturePackageJsonPropertiesEntry.sha512OfObject(packageJsonActual, this.packageJsonProperties);
+                const hash = yield SignatureNpmCompatiblePackageJsonEntry.sha512OfObject(packageJsonActual, this.packageJsonProperties);
                 if (hash != this.sha512) {
                     return {
                         status: moduleVerifier_1.ModuleVerificationStatus.Compromised,
@@ -103,5 +103,5 @@ class SignaturePackageJsonPropertiesEntry {
         return null;
     }
 }
-exports.SignaturePackageJsonPropertiesEntry = SignaturePackageJsonPropertiesEntry;
-//# sourceMappingURL=signaturePackageJsonPropertiesEntry.js.map
+exports.SignatureNpmCompatiblePackageJsonEntry = SignatureNpmCompatiblePackageJsonEntry;
+//# sourceMappingURL=signatureNpmCompatiblePackageJsonEntry.js.map

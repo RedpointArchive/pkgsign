@@ -2,14 +2,6 @@ import { SignatureEntry } from "../signature";
 import { VerificationContext } from "./verificationContext";
 import { ModuleVerificationResult } from "../moduleVerifier";
 import { SignatureIdentity } from "./signatureIdentity";
-/**
- * Used as the replacer for JSON stringify where it filters out any NPM injected
- * package.json keys.
- *
- * @param key The key of the JSON property.
- * @param value The value of the JSON property.
- */
-export declare const stripNpmMetadataFieldFromPackageInfo: (packageInfo: any) => void;
 export interface SignaturePackageJsonEntryData {
     packageJson: any;
 }

@@ -4,7 +4,7 @@ import { LegacySignatureInfo } from "./signature/legacySignatureInfo";
 import { VerificationContext } from "./signature/verificationContext";
 import { ModuleVerificationResult } from "./moduleVerifier";
 import { SignatureIdentity } from "./signature/signatureIdentity";
-import { SignaturePackageJsonEntry, SignaturePackageJsonEntryData, generatedNpmKeys } from "./signature/signaturePackageJsonEntry";
+import { SignaturePackageJsonEntry, SignaturePackageJsonEntryData } from "./signature/signaturePackageJsonEntry";
 import { SignatureNpmCompatiblePackageJsonEntry, SignatureNpmCompatiblePackageJsonEntryData } from "./signature/signatureNpmCompatiblePackageJsonEntry";
 
 export interface SignatureInfo {
@@ -19,6 +19,24 @@ export interface SignatureEntry {
     verify(context: VerificationContext): Promise<ModuleVerificationResult | null>;
     getIdentity(): SignatureIdentity | null;
 }
+
+const generatedNpmKeys = [
+    '_from',
+    '_id',
+    '_inBundle',
+    '_integrity',
+    '_location',
+    '_phantomChildren',
+    '_requested',
+    '_requiredBy',
+    '_resolved',
+    '_shasum',
+    '_spec',
+    '_where',
+    '_optional',
+    '_development',
+    '_args'
+];
 
 export class SignatureParser {
     public parse(packageName: string, packageJson: object | null, signatureJson: string): SignatureInfo {

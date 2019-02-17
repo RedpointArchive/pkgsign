@@ -48,7 +48,7 @@ test('signature packageJson omits NPM fields on sign', async t => {
   const packageJsonEntry = json.entries.filter(entry => entry.entry === 'packageJson/v1alpha1')[0];
   
   t.is(npmCompatibleEntry.packageJsonProperties.sort().indexOf('_from'), -1, 'signature.json npmCompatiblePackageJson/v1alpha1 contains _from property');
-  t.is(Object.keys(packageJsonEntry.packageJson).sort().indexOf('_from'), -1, 'signature.json packageJson/v1alpha1 contains _from property');
+  t.is(Object.keys(packageJsonEntry.packageJson).length, 2, 'signature.json packageJson/v1alpha1 doesn\'t contain all properties');
 });
 
 test('signature packageJson omits NPM fields on verify', async t => {

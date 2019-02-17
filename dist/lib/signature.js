@@ -3,10 +3,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const signatureFilesEntry_1 = require("./signature/signatureFilesEntry");
 const signatureIdentityEntry_1 = require("./signature/signatureIdentityEntry");
 const signaturePackageJsonEntry_1 = require("./signature/signaturePackageJsonEntry");
-const signaturePackageJsonPropertiesEntry_1 = require("./signature/signaturePackageJsonPropertiesEntry");
+const signatureNpmCompatiblePackageJsonEntry_1 = require("./signature/signatureNpmCompatiblePackageJsonEntry");
+const generatedNpmKeys = [
+    '_from',
+    '_id',
+    '_inBundle',
+    '_integrity',
+    '_location',
+    '_phantomChildren',
+    '_requested',
+    '_requiredBy',
+    '_resolved',
+    '_shasum',
+    '_spec',
+    '_where',
+    '_optional',
+    '_development',
+    '_args'
+];
 class SignatureParser {
-    parse(json) {
-        let obj = JSON.parse(json);
+    parse(packageName, packageJson, signatureJson) {
+        let obj = JSON.parse(signatureJson);
         // Check for legacy signature we need to convert.
         if (obj.version !== undefined && obj.version === 'v1alpha') {
             let legacyObj = obj;
@@ -35,6 +52,8 @@ class SignatureParser {
             // Upgrade the entries to the actual TypeScript classes.
             let rawEntries = newObj.entries;
             newObj.entries = [];
+            const npmUsed = this.isPackageInstalledWithNpm(packageJson) || this.isPackagePublishedWithNpm(packageJson);
+            const npmCompatibleCheck = rawEntries.some((entry) => entry.entry === "npmCompatiblePackageJson/v1alpha1");
             for (let i = 0; i < rawEntries.length; i++) {
                 let instance = null;
                 switch (rawEntries[i].entry) {
@@ -45,10 +64,16 @@ class SignatureParser {
                         instance = new signatureIdentityEntry_1.SignatureIdentityEntry(rawEntries[i]);
                         break;
                     case "packageJson/v1alpha1":
-                        instance = new signaturePackageJsonEntry_1.SignaturePackageJsonEntry(rawEntries[i]);
+                        if (npmUsed && npmCompatibleCheck) {
+                            console.warn(`WARNING: package '${packageName}' is either published and/or installed with npm - performing npm compatible package.json verification`);
+                            continue;
+                        }
+                        else {
+                            instance = new signaturePackageJsonEntry_1.SignaturePackageJsonEntry(rawEntries[i]);
+                        }
                         break;
-                    case "packageJson/v1alpha2":
-                        instance = new signaturePackageJsonPropertiesEntry_1.SignaturePackageJsonPropertiesEntry(rawEntries[i]);
+                    case "npmCompatiblePackageJson/v1alpha1":
+                        instance = new signatureNpmCompatiblePackageJsonEntry_1.SignatureNpmCompatiblePackageJsonEntry(rawEntries[i]);
                         break;
                 }
                 if (instance === null) {
@@ -58,6 +83,24 @@ class SignatureParser {
             }
         }
         return obj;
+    }
+    isPackageInstalledWithNpm(packageJson) {
+        if (packageJson) {
+            // if some of the npm generated keys are in the package.json of the installed
+            // package, we can assume npm was used for installing the package
+            return Object.keys(packageJson)
+                .some((property) => generatedNpmKeys.indexOf(property) >= 0);
+        }
+        // can't assume the package was installed with npm - verification would fail if so
+        return false;
+    }
+    isPackagePublishedWithNpm(packageJson) {
+        if (packageJson) {
+            // at least gitHead is added to package.json when publishing with npm
+            return Object.keys(packageJson).sort().indexOf('gitHead') >= 0;
+        }
+        // can't assume the package was published with npm - verification would fail if so
+        return false;
     }
 }
 exports.SignatureParser = SignatureParser;
