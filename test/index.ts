@@ -95,12 +95,17 @@ test('verify valid signature of installed package', async t => {
   // the verification should only take into account the properties
   // directly set by the developer / package-owner
   t.true(await verify('npm-installed/regular-pkg'));
+
+  // the verification should take every field into account
+  t.true(await verify('yarn-installed/regular-pkg'));
 });
 
 test('fail verification on manipulated package content', async t => {
   // should fail to verify modified package.json
   t.false(await verify('npm-installed/regular-pkg-packageJson-modified'));
+  t.false(await verify('yarn-installed/regular-pkg-packageJson-modified'));
   
   // should fail to verify modified code
   t.false(await verify('npm-installed/regular-pkg-code-modified'));
+  t.false(await verify('yarn-installed/regular-pkg-code-modified'));
 });

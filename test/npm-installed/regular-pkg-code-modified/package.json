@@ -33,6 +33,7 @@
   "files": [
     "dist/*"
   ],
+  "gitHead": "0123456789",
   "main": "dist/index.js",
   "name": "regular-pkg",
   "private": true,
