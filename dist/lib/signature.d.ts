@@ -14,7 +14,7 @@ export interface SignatureEntry {
 }
 export declare class SignatureParser {
     parse(packageName: string, packageJson: object | null, signatureJson: string): SignatureInfo;
-    private isPackageInstalledWithNpm(packageJson);
-    private isPackagePublishedWithNpm(packageJson);
+    private isPackageInstalledWithNpm;
+    private isPackagePublishedWithNpm;
 }
 export declare function createDeterministicString(signature: SignatureInfo): string;

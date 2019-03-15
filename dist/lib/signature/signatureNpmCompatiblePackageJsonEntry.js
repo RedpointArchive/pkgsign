@@ -20,6 +20,7 @@ class SignatureNpmCompatiblePackageJsonEntry {
         this.packageJsonProperties = raw.packageJsonProperties;
         if (this.packageJsonProperties) {
             this.packageJsonProperties = this.packageJsonProperties
+                // exclude _XXX properties
                 .filter((value) => value.indexOf('_') != 0)
                 .sort();
         }
@@ -28,6 +29,7 @@ class SignatureNpmCompatiblePackageJsonEntry {
         return __awaiter(this, void 0, void 0, function* () {
             const orderedObject = {};
             properties
+                // filter properties starting with underscore
                 .filter((key) => key.indexOf('_') != 0)
                 .sort()
                 .forEach((key) => orderedObject[key] = value[key]);
