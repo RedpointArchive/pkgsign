@@ -1,0 +1,47 @@
+{
+  "_from": "file:/what-ever/pkgsign/test/original/regular-pkg/regular-pkg.tgz",
+  "_id": "regular-pkg@1.2.3",
+  "_inBundle": false,
+  "_integrity": "sha512-EQpOa7Hs0uGkvzn5St1uNyqCDNWKK9yLqDINq5PhcVQD5SbP2fBBFZfdjM62elC43OZVEzU+HKnk5NiepkfTJQ==",
+  "_location": "/regular-pkg",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "file",
+    "where": "/what-ever/test-repo",
+    "raw": "/what-ever/pkgsign/test/original/regular-pkg/regular-pkg.tgz",
+    "rawSpec": "/what-ever/pkgsign/test/original/regular-pkg/regular-pkg.tgz",
+    "saveSpec": "file:/what-ever/pkgsign/test/original/regular-pkg/regular-pkg.tgz",
+    "fetchSpec": "/what-ever/pkgsign/test/original/regular-pkg/regular-pkg.tgz"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "/what-ever/pkgsign/test/original/regular-pkg/regular-pkg.tgz",
+  "_shasum": "6f6f4f07dd485341abe443befbb44fdf0f5de007",
+  "_spec": "/what-ever/pkgsign/test/original/regular-pkg/regular-pkg.tgz",
+  "_where": "/what-ever/test-repo",
+  "bundleDependencies": false,
+  "dependencies": {},
+  "deprecated": false,
+  "description": "original example package as seen in any git repository",
+  "devDependencies": {
+    "mocha": "5.2.0",
+    "rimraf": "2.6.3",
+    "typescript": "latest"
+  },
+  "files": [
+    "dist/*",
+    "signature.json"
+  ],
+  "gitHead": "0123456789",
+  "main": "dist/index.js",
+  "name": "regular-pkg",
+  "private": true,
+  "scripts": {
+    "clean": "rimraf dist",
+    "compile": "tsc -p .",
+    "test": "mocha"
+  },
+  "version": "1.2.3"
+}

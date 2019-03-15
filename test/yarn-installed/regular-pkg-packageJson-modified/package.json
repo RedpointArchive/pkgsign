@@ -1,0 +1,22 @@
+{
+  "_ignored": "test",
+  "name": "regular-pkg",
+  "version": "1.2.3",
+  "private": true,
+  "main": "dist/fake.js",
+  "files": [
+      "dist/*"
+  ],
+  "devDependencies": {
+    "mocha": "5.2.0",
+    "rimraf": "2.6.3",
+    "typescript": "latest"
+  },
+  "dependencies": {
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "compile": "tsc -p .",
+    "test": "mocha"
+  }
+}

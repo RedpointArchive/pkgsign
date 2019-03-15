@@ -13,9 +13,17 @@
     {
       "entry": "packageJson/v1alpha1",
       "packageJson": {
+        "_from": "some metadata field",
         "name": "signature-packageJson-omits-npm-on-verify"
       }
+    },
+    {
+      "entry": "npmCompatiblePackageJson/v1alpha1",
+      "sha512": "869f8b1a137ffe2dfaf8f5c06360ce785dbcbfdb926640c63d70ef82604bf06b74c81ac2a681497fd91cce58f7240fc8db06d5d8c609fe3f0d61d0937d4da7c7",
+      "packageJsonProperties": [
+        "name"
+      ]
     }
   ],
-  "signature": "-----BEGIN PGP SIGNATURE-----\nVersion: OpenPGP.js v2.6.1\nComment: https://openpgpjs.org\n\nwsBcBAEBCAAQBQJa4gLYCRCLBSW1RGQF9wAAAuoIAM00Vtiqxs9E0PSg8sgN\npvNV+wYWrE3gd0MPWw5l/D32t0ASNZzRr036nOBFa/DusNRxz1HFAjU9IdtA\nwfIsmGEuPQRDTdiyfEioNgv8J9dk1Wud6wMJwLLhYsItzZo9yDT1m7kBUbUx\nh0Aa0C2l4x1W3Hs12Ng8xq7FnDicqcagwNLdCmnVJOmGRXtPALB0qlAhFwaf\npG0zeFY79+s2yl8GpdueC5sd9+52F9MzZVrg48fh0gHD5IF7hLXj0D9Iz8WP\nVZHAtH5JO/cvi5yuEVo6ETtY2Nz5+OezCeYl3fgArPzudyaXnsnv8kYPUzSP\nyPhwsFc+Ea1c5bNB+CqgHUA=\n=mEe4\n-----END PGP SIGNATURE-----\n"
+  "signature": "-----BEGIN PGP SIGNATURE-----\nVersion: OpenPGP.js v2.6.1\nComment: https://openpgpjs.org\n\nwsBcBAEBCAAQBQJcaR5DCRCLBSW1RGQF9wAAS4kIAOgCNh+Aew8+XftcfwJj\nkX9bgb4VdG9Y0DmF/79PQrBkHTTSH1pzyxd2hWmto8PjnFNLZ2Z3+48GC24U\nT/X+r+Z68tWkQwpPIzThWCPZYRrBdFmskfXQV2LWU5WwEbGRseBQPoEphqPB\nYHSv8bJYYdjIzEBQhM2RpxoUK7Hxnclx2w5W7cnIaThyyawq3j0S/QpJFsVd\nk4YB3pYyfS7/1r28dguXkPnYAGbBnir79ZpymMAEF+R6/5w4iFxRMzJtDWhe\nxrr34doTMeg6lKrjiiYEsDQIDm75DIZfR0eNX/IVtTgBgH5JWM7d2gmnj5Ik\nL18FBQp2lHDUaHwmM6/kOwg=\n=tKms\n-----END PGP SIGNATURE-----\n"
 }

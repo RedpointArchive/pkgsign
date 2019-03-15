@@ -91,6 +91,49 @@ To sign a tarball with a PGP keypair, pass the tarball path instead of a package
 
 It should be noted the public key HTTPS URL is used as the identity - if the URL ever changes, it's the same thing as someone else signing your package, and pkgsign will consider the package with a different URL as compromised.
 
+#### package.json specialties
+
+When installing a package with npm, metadata fields are added to the resulting `package.json` in the `node_modules` folder:  
+```json
+{
+  "_from": "file:/what-ever/pkgsign/test/original/regular-pkg/regular-pkg.tgz",
+  "_id": "regular-pkg@1.2.3",
+  "_inBundle": false,
+  "_integrity": "sha512-EQpOa7Hs0uGkvzn5St1uNyqCDNWKK9yLqDINq5PhcVQD5SbP2fBBFZfdjM62elC43OZVEzU+HKnk5NiepkfTJQ==",
+  "_location": "/regular-pkg",
+  ...
+}
+```
+
+Even when publishing a package with npm fields can be added (E.g. `gitHead`).  
+Other fields are modified during installation:  
+
+```json
+{
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/user/pkg"
+  }
+}
+```
+
+becomes:  
+```json
+{
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/user/pkg.git"
+  }
+}
+```
+
+Also properties in `node_modules/*/package.json` are ordered alphabetically.  
+All of this modifications can fail the verification check.  
+Therefore `pkgsign` produces a npm-compatible signature entry and verify only this entry if npm is either used to publish or install a package.  
+This will result in a command line message like:  
+
+    WARNING: package '<packageName>' is either published and/or installed with npm - performing npm compatible package.json verification
+
 ## GitHub Badges
 
 If you want to display the signing status of your project on GitHub, you can use the following Markdown:

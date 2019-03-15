@@ -12,7 +12,7 @@ import * as inquirer from 'inquirer';
 import * as path from 'path';
 import { basename } from 'path';
 import { TrustStore, TestTrustStore } from '../lib/trustStore';
-import { createWorkingDirectory, decompress, recursivePromise, readFilePromise } from '../lib/fsPromise';
+import { createWorkingDirectory, decompress, recursivePromise } from '../lib/fsPromise';
 import { queueTelemetry } from '../lib/telemetry';
 import { identityToString } from '../lib/signature/signatureIdentity';
 

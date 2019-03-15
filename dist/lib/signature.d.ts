@@ -13,6 +13,8 @@ export interface SignatureEntry {
     getIdentity(): SignatureIdentity | null;
 }
 export declare class SignatureParser {
-    parse(json: string): SignatureInfo;
+    parse(packageName: string, packageJson: object | null, signatureJson: string): SignatureInfo;
+    private isPackageInstalledWithNpm(packageJson);
+    private isPackagePublishedWithNpm(packageJson);
 }
 export declare function createDeterministicString(signature: SignatureInfo): string;

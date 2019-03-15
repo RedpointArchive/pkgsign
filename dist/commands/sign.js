@@ -32,6 +32,7 @@ const signature_1 = require("../lib/signature");
 const signatureIdentityEntry_1 = require("../lib/signature/signatureIdentityEntry");
 const telemetry_1 = require("../lib/telemetry");
 const signatureIdentity_1 = require("../lib/signature/signatureIdentity");
+const signatureNpmCompatiblePackageJsonEntry_1 = require("../lib/signature/signatureNpmCompatiblePackageJsonEntry");
 const signaturePackageJsonEntry_1 = require("../lib/signature/signaturePackageJsonEntry");
 class SignOptions extends clime_1.Options {
 }
@@ -125,10 +126,9 @@ let default_1 = class default_1 extends clime_1.Command {
     }
     signFileList(signer, basePath, relativeFilePaths, telemetryAction) {
         return __awaiter(this, void 0, void 0, function* () {
-            let packageInfo = null;
+            let packageJson = null;
             let entries = [];
             for (let relPath of relativeFilePaths) {
-                const hash = yield fsPromise_1.sha512OfFile(path.join(basePath, relPath));
                 const normalisedPath = relPath.replace(/\\/g, '/');
                 if (normalisedPath == 'signature.json') {
                     // This file might be included in the Git repo to sign the contents of the
@@ -139,18 +139,16 @@ let default_1 = class default_1 extends clime_1.Command {
                 }
                 if (normalisedPath == 'package.json') {
                     // This file will be included in it's own package entry.
-                    const packageJson = yield fsPromise_1.readFilePromise(path.join(basePath, relPath));
                     try {
-                        packageInfo = JSON.parse(packageJson);
-                        // Strip NPM metadata from package.json.
-                        signaturePackageJsonEntry_1.stripNpmMetadataFieldFromPackageInfo(packageInfo);
+                        packageJson = JSON.parse(yield fsPromise_1.readFilePromise(path.join(basePath, relPath)));
                         continue;
                     }
                     catch (e) {
                         console.warn('unable to parse package.json as JSON for signing');
-                        packageInfo = undefined; /* do not include package json signature entry, so file validation will fallback to exact match */
+                        packageJson = undefined; /* do not include package json signature entry, so file validation will fallback to exact match */
                     }
                 }
+                const hash = yield fsPromise_1.sha512OfFile(path.join(basePath, relPath));
                 entries.push({
                     path: normalisedPath,
                     sha512: hash,
@@ -159,14 +157,14 @@ let default_1 = class default_1 extends clime_1.Command {
             console.log('obtaining identity...');
             const identity = yield signer.getIdentity();
             // Queue telemetry if needed.
-            if (packageInfo != null && packageInfo.name != undefined) {
-                if (packageInfo.private != true) {
+            if (packageJson != null && packageJson.name != undefined) {
+                if (packageJson.private != true) {
                     // This is not a private package, so record telemetry with the package
                     // name included.
                     yield telemetry_1.queueTelemetry({
                         action: telemetryAction,
-                        packageName: packageInfo.name,
-                        packageVersion: packageInfo.version || '',
+                        packageName: packageJson.name,
+                        packageVersion: packageJson.version || '',
                         packageIsSigned: true,
                         signingIdentity: signatureIdentity_1.identityToString(identity),
                         identityIsTrusted: true,
@@ -205,9 +203,13 @@ let default_1 = class default_1 extends clime_1.Command {
                     new signatureIdentityEntry_1.SignatureIdentityEntry({
                         identity: identity,
                     }),
-                    ...(packageInfo === undefined ? [] : [
+                    ...(packageJson === undefined ? [] : [
                         new signaturePackageJsonEntry_1.SignaturePackageJsonEntry({
-                            packageJson: packageInfo
+                            packageJson,
+                        }),
+                        new signatureNpmCompatiblePackageJsonEntry_1.SignatureNpmCompatiblePackageJsonEntry({
+                            packageJsonProperties: Object.keys(packageJson).sort(),
+                            sha512: yield signatureNpmCompatiblePackageJsonEntry_1.SignatureNpmCompatiblePackageJsonEntry.sha512OfObject(packageJson, Object.keys(packageJson))
                         })
                     ]),
                 ],
