@@ -83,7 +83,7 @@ export class SignatureParser {
                         break;
                     case "packageJson/v1alpha1":
                         if (npmUsed && npmCompatibleCheck) {
-                            console.warn(`WARNING: package '${packageName}' is either published and/or installed with npm - performing npm compatible package.json verification`);
+                            console.warn(`WARNING: package '${packageName}' is either published and/or installed with npm - falling back to limited verification of package.json`);
                             continue;
                         } else {
                             instance = new SignaturePackageJsonEntry(rawEntries[i] as any as SignaturePackageJsonEntryData);
