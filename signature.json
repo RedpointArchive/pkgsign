@@ -436,7 +436,7 @@
     {
       "entry": "identity/v1alpha1",
       "identity": {
-        "keybaseUser": "hachque"
+        "keybaseUser": "rstiller"
       }
     },
     {
@@ -454,7 +454,6 @@
           "pkgsign": "dist/index.js"
         },
         "dependencies": {
-          "@dpwolfe/dos2unix": "1.1.3",
           "clime": "0.5.10",
           "eol-fix-stream": "1.0.0",
           "inquirer": "6.2.2",
@@ -462,11 +461,11 @@
           "node-cmd": "3.0.0",
           "node-fetch": "2.3.0",
           "node-machine-id": "1.1.10",
-          "npm-packlist": "1.3.0",
-          "openpgp": "4.4.7",
+          "npm-packlist": "1.4.1",
+          "openpgp": "4.4.10",
           "recursive-readdir": "2.2.2",
           "silent-spawn": "0.4.0",
-          "strip-ansi": "5.0.0",
+          "strip-ansi": "5.1.0",
           "targz": "1.0.1",
           "tmp": "0.0.33"
         },
@@ -484,15 +483,16 @@
           "test": "ava test/*.ts && yarn build && node dist/index.js sign . && node dist/index.js verify ."
         },
         "devDependencies": {
-          "@types/node": "11.9.4",
+          "@dpwolfe/dos2unix": "1.1.3",
+          "@types/node": "11.11.3",
           "@types/node-fetch": "2.1.6",
           "@types/recursive-readdir": "2.2.0",
           "@types/strip-ansi": "3.0.0",
           "@types/tmp": "0.0.34",
-          "ava": "1.2.1",
+          "ava": "1.3.1",
           "rimraf": "2.6.3",
-          "ts-node": "8.0.2",
-          "typescript": "3.3.3"
+          "ts-node": "8.0.3",
+          "typescript": "3.3.3333"
         },
         "ava": {
           "compileEnhancements": false,
@@ -507,7 +507,7 @@
     },
     {
       "entry": "npmCompatiblePackageJson/v1alpha1",
-      "sha512": "1ae7d7d0d2cae6630c2b033b445bc7c6157c8005df059e51b8fde3f2922c14a4fa7e77a548d628d0dda884b9cf6a1b6b9c182f1a4a73f4254bba906c2bac178d",
+      "sha512": "372e22bf5657808b1383c0bbf593b70868f2c9746f42a5daeb381a5555080d0cd79fcf5f79c34b1bdbc3caf732d0f8eadac73009c63c92feab4331ea994ace12",
       "packageJsonProperties": [
         "author",
         "ava",
@@ -525,5 +525,5 @@
       ]
     }
   ],
-  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJciy52CRB89yvKKRr01wAAu7AQAGjYZk/ATlk4Z+GOJ4+G65EJ\nfnK01kkc6snXJbxlvopsUrlJ6E0VMGFjonMb9gQEyJbahmgZtGYyFTFtLDpoG7ab\n2wd/C1mbw2c3aJ1shttqoNzBp5vp6JKZ8TR4xeWFUkTfpY7vkFGAJIQrI56sogM3\nU2lBO5x3L43j/J3CyzfYXFWA0KpwRABplZOf0rQqazGYcQRumKT68GKFSLY0HK5E\nRHfKGe7wLVkbdBN4U+79xnQrhax+yaXNVfmRvk1/+hgxJHvkjih15NGqlBRWn31O\nU9MGY+4FiNRTdbIhEmFy9WNE0fooL8Mef4Gt3a+Eht0gH01mCx40xl/1p6YwJNUO\nLxsHvEutk5wfKIxSlqKgovO46KIe2ssYK0f3VIF+Dqh4Zz+gTw+cWrY+oBu8MBBr\nBZvW9qLNJTN69PIBBd8v/oOVW4fm6/QRa5OoQt03QRond5ZGMNB/H3FIRiccL77a\n8w3l6pL9jyC8z7hxrwdXBTmwZOsbcK+ALy4LnOGlliB1Mka8XwlJ7PU1SkmTQx1g\npB++tz0KBm+ZSdHxT0NVU+EK+YWjjN5L0GCHLpL5in2L41J/q0Y/7T988qIIU3oD\nmhO0qR5aA3tEPngn6h5ZshrgpHj9GmZBNR42D95CCA8tLT3d3NEHvj9Vhr4Rudon\nIO/TGT1ZZg+OQo2wAxG1\n=wlUR\n-----END PGP SIGNATURE-----\n"
+  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJci+f9CRDCMfXrQKYV5wAA3JkQADm47Vknewclq0ly+lZpoP6q\n0tpbzP70MvQ96jRYzUjcdnWehNGG8jwWXjg8h3e6F/T5D52NxIlPJimjMccEDXfJ\n5xTgIwRFNXeJAWdF9ccwSS/wiG3uUMSXEH9FpXAvk/BBtboD8fFsnCN3JIEOtxeR\nN/yl9e85GdOW3JZDa+mmboaa+9TpL98kGEEz9Yib90C4BpUogVDb2ypP+Uw1wsGn\nwr7kPkIZ8Ygt1p8WHNW0D83S04UWvw+aCPRWyP4WVvKKXHRNOW6GhiV/ZuoSxCTT\namhDASBnvajBRXUz1lKvrfxnOfeGNtbUBMr2d+GKJGt0Fy/+7knyCrKissNjlwwh\nzHaQYOYoptXeP2xdHhlEgKLEKX+qaKp2FZiSTqxQOb+SgnzDMjtssgULTqBOJYSH\nzXVVEy6TFOBTRNXQotT/2XOlUPSvc3pyxzgq56FZ7/G39haeSsFFst46uy+sWzJw\ngmRYHuwaZHztQBNrXKwdHpvV432yVEbkbfeKC/z7Pip7W5OnXs0ZE1i4/KkYatZ7\nbkNRpk7Ku8f78Xg7c3r7g3NAIAWGL4iATVS5MkcdGSHyk+o3hNFjnCgl2rRjfKqn\no7wf6jTxbtc9lc55lZ+5Yz4TvjU7hEVTWKwagIlgMjBT34tDObKPaljbn12VVnJQ\nLwnh1079LfwuEg2sf4cj\n=LAh2\n-----END PGP SIGNATURE-----\n"
 }
