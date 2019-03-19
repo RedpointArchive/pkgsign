@@ -13,7 +13,7 @@
         },
         {
           "path": "README.md",
-          "sha512": "1abfa2387d361b3599fcb283f90e4674ff844bf02cc255369c133059a2a22612fdbbda7aee76633a63c5205670f626746add9448ea971e69e488ca11844a438b"
+          "sha512": "cce5e84ff8357230f124d2c00f04c1df284283f39c1d80a5a958740779cfa578ad420dee1d12582425ab70a09e5466af3212838e5b8b0dcdaf5799a247a646b6"
         },
         {
           "path": "tsconfig.json",
@@ -45,15 +45,15 @@
         },
         {
           "path": "dist/commands/verify.d.ts",
-          "sha512": "18c2d4d0ee0cd0495516cce4f6b1a9b2bc352c907b580ba07db16e2ef34949df71da84e63604b95d3a939893147c8e3ffe014cf95f3b2163d8792e5adbc3ec0f"
+          "sha512": "36732e94c45e5790212fcb8528e9447dc6e955da22003993f7832f26714dbc8ab48d7d28cea719aa268f4ed13860a15daa8e8dfb50f6ad4ab6b1b9791c064f8e"
         },
         {
           "path": "dist/commands/verify.js",
-          "sha512": "4694cea5a2b72511516b1b7c7f2c450ed9bb2c7499889d39255fc27c50a0438918e1a63e3fbf4595720c351b1abea7d6a38a63c472eff3ebedafc0059b23c5a0"
+          "sha512": "5c0e55dc7f8a9b967cbd0bdc55cae1fc986bb07331044a6fe2e5963e9128a5b025679d52360a732780e1a9f0a3359c2131d19e06727f80fc263d5c18faa262ff"
         },
         {
           "path": "dist/commands/verify.js.map",
-          "sha512": "9fc83759ed5bd0be65d08a2e4bcca783c54d73d3a0423509aafa479709e79ac3aa6c6e6894601651321a9da77a3848179db19ec78d09ee13d5cceafeceaddddd"
+          "sha512": "c44a212dcc406e9f7702ebbe1a7ac93f245c626a215bba677d80b0aee68d6fdc495c6ac8fc11777bd37ee286e4a70e25a2d63a6eb1bab872a701d566f5522de8"
         },
         {
           "path": "dist/index.d.ts",
@@ -329,7 +329,7 @@
         },
         {
           "path": "src/commands/verify.ts",
-          "sha512": "4c1ec4fbe44d89a8f0bae35eb358e84da349de23b92c3d90619df066ff62df7ecc4e3942f6bb0b5a8d58d5de7817e498de550eb91ba4a5a63ad7e7e47bebb210"
+          "sha512": "573a7cde16642c67afaf7bc6cfb6d084d4309cd653ccb95cf5d978b3788e9abd2d73b2ea1bb2a121ca570a2d31b212e7c5e1a2b5f66baa7b62a041f1036bdf3f"
         },
         {
           "path": "src/index.ts",
@@ -476,11 +476,11 @@
           "clean": "rimraf dist",
           "pkgsign": "yarn build && node dist/index.js",
           "sign": "yarn build && node dist/index.js sign .",
-          "verify": "yarn build && node dist/index.js verify . --full",
+          "verify": "yarn build && node dist/index.js verify . --full --allow-unsigned-packages",
           "signedpack": "yarn build && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz",
           "release": "yarn test && node util/ensure-release.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz",
           "prerelease": "yarn test && node util/ensure-prerelease.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz --tag next",
-          "test": "ava test/*.ts && yarn build && node dist/index.js sign . && node dist/index.js verify ."
+          "test": "ava test/*.ts && yarn build && node dist/index.js sign . && node dist/index.js verify . --allow-unsigned-packages"
         },
         "devDependencies": {
           "@dpwolfe/dos2unix": "1.1.3",
@@ -507,7 +507,7 @@
     },
     {
       "entry": "npmCompatiblePackageJson/v1alpha1",
-      "sha512": "372e22bf5657808b1383c0bbf593b70868f2c9746f42a5daeb381a5555080d0cd79fcf5f79c34b1bdbc3caf732d0f8eadac73009c63c92feab4331ea994ace12",
+      "sha512": "c6c78dd481a005eb901868ac103b8fa28c2ed9ad526814e980bb1587189d6452dc49e972f04db694e65453e971ebf8fda9160e5caf27da2b1aa4ed34b005ba52",
       "packageJsonProperties": [
         "author",
         "ava",
@@ -525,5 +525,5 @@
       ]
     }
   ],
-  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJci+f9CRDCMfXrQKYV5wAA3JkQADm47Vknewclq0ly+lZpoP6q\n0tpbzP70MvQ96jRYzUjcdnWehNGG8jwWXjg8h3e6F/T5D52NxIlPJimjMccEDXfJ\n5xTgIwRFNXeJAWdF9ccwSS/wiG3uUMSXEH9FpXAvk/BBtboD8fFsnCN3JIEOtxeR\nN/yl9e85GdOW3JZDa+mmboaa+9TpL98kGEEz9Yib90C4BpUogVDb2ypP+Uw1wsGn\nwr7kPkIZ8Ygt1p8WHNW0D83S04UWvw+aCPRWyP4WVvKKXHRNOW6GhiV/ZuoSxCTT\namhDASBnvajBRXUz1lKvrfxnOfeGNtbUBMr2d+GKJGt0Fy/+7knyCrKissNjlwwh\nzHaQYOYoptXeP2xdHhlEgKLEKX+qaKp2FZiSTqxQOb+SgnzDMjtssgULTqBOJYSH\nzXVVEy6TFOBTRNXQotT/2XOlUPSvc3pyxzgq56FZ7/G39haeSsFFst46uy+sWzJw\ngmRYHuwaZHztQBNrXKwdHpvV432yVEbkbfeKC/z7Pip7W5OnXs0ZE1i4/KkYatZ7\nbkNRpk7Ku8f78Xg7c3r7g3NAIAWGL4iATVS5MkcdGSHyk+o3hNFjnCgl2rRjfKqn\no7wf6jTxbtc9lc55lZ+5Yz4TvjU7hEVTWKwagIlgMjBT34tDObKPaljbn12VVnJQ\nLwnh1079LfwuEg2sf4cj\n=LAh2\n-----END PGP SIGNATURE-----\n"
+  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJckVgNCRDCMfXrQKYV5wAAdDwQAAe0OlzXIxz7GNK4/Inh61Dl\nUFa94Lr2Hx8hT4zShSGjSZdVe9hNbwlsamKhbVk56FquU79qb5ltjq48u4Z/NlJC\n9qRfKjfghxj6ptE/wntI87Cr0Pz+YKJ/2hC2D0gUUX1Wm9qsI/8K6Qee7mETDH+w\nKJuAU9UDdf2WmtOsFbX0R1wK2owfq5HczgN+m4O1G0mHJzEL7D56hwV3mFmuCsf9\nZHM6BqG7u7ekOsHqNA0CLG9YMk2Wm/DjllOczLKuwXOy09OjVeQ577F0Yc5OxpPG\nvIxn/H/+KIcaDSDyKjm3c4gfA6hESijBwrSqdDuWfgJ5mPtsdcDAjR3avYale8gE\nVt11runw3KhHeEXATBykVjhYOL5KyqC1QlIXVTtHfgiTI74n1qKWXWm8XdqkKWAy\nGH2JrBsgZ8gFTvb9sMHIUWqIxOt8kDmqWxZ8P9W61QOtXAOXJ8kTyoaVbO7q+8d6\nnjgNB9ilMPGxa4oQ7xgpywye4wIDHOd/MzsSvtdcIyNxZZqEVZqHdanve9s0x6BK\ndZlpeKSxH3Dd7F27wrDbNa9fOt1ckUWu1QtmyNx9p7dOac8ZxCas0zHB1QYHiVVM\nSDIDou7jC3wPbfiOOFnaiJJ0C6s11nU716tdCeW9z73grYDBf9zft4/4it8z8HfV\n57D6WFPZsmgpK1IdW4c9\n=Vwsp\n-----END PGP SIGNATURE-----\n"
 }

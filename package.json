@@ -32,11 +32,11 @@
     "clean": "rimraf dist",
     "pkgsign": "yarn build && node dist/index.js",
     "sign": "yarn build && node dist/index.js sign .",
-    "verify": "yarn build && node dist/index.js verify . --full",
+    "verify": "yarn build && node dist/index.js verify . --full --allow-unsigned-packages",
     "signedpack": "yarn build && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz",
     "release": "yarn test && node util/ensure-release.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz",
     "prerelease": "yarn test && node util/ensure-prerelease.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz --tag next",
-    "test": "ava test/*.ts && yarn build && node dist/index.js sign . && node dist/index.js verify ."
+    "test": "ava test/*.ts && yarn build && node dist/index.js sign . && node dist/index.js verify . --allow-unsigned-packages"
   },
   "devDependencies": {
     "@dpwolfe/dos2unix": "1.1.3",

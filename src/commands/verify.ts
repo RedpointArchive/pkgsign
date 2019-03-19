@@ -40,6 +40,12 @@ export class VerifyOptions extends Options {
         description: 'enables the test trust store, for debugging purposes only',
     })
     enableTestTrustStore: boolean;
+    @option({
+        name: 'allow-unsigned-packages',
+        toggle: true,
+        description: 'verify doesn\'t fail on unsigned packages',
+    })
+    allowUnsignedPackages: boolean;
 }
 
 @command({
@@ -90,7 +96,7 @@ export default class extends Command {
         console.log('verifying package...');
         const moduleVerifier = new ModuleVerifier(options.enableTestTrustStore ? new TestTrustStore() : new TrustStore());
         let result = await moduleVerifier.verify(base, files, options.packageName || '');
-        
+
         if (result.isPrivate) {
             // Don't send identifiable telemetry about private packages.
             await queueTelemetry({
@@ -268,7 +274,7 @@ export default class extends Command {
         let unsignedCount = 0;
         let untrustedCount = 0;
         let trustedCount = 0;
-        
+
         for (let path in results) {
             let result = results[path];
             switch (result.status) {
@@ -326,13 +332,13 @@ export default class extends Command {
                         break;
                 }
                 console.log(
-                    padRight(results[path].packageName, targetLength) + ' ' + 
+                    padRight(results[path].packageName, targetLength) + ' ' +
                     padRight(status, 25) + ' ' +
                     (result.reason || ''));
             }
         }
-        
-        if (compromisedCount > 0 || unsignedCount > 0 || untrustedCount > 0) {
+
+        if (compromisedCount > 0 || (!options.allowUnsignedPackages && unsignedCount > 0) || untrustedCount > 0) {
             return false;
         } else {
             return true;

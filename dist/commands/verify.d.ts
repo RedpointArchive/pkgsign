@@ -4,6 +4,7 @@ export declare class VerifyOptions extends Options {
     nonInteractive: boolean;
     packageName: string;
     enableTestTrustStore: boolean;
+    allowUnsignedPackages: boolean;
 }
 export default class extends Command {
     execute(path: string, options: VerifyOptions): Promise<void>;

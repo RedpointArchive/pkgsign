@@ -132,7 +132,7 @@ All of this modifications can fail the verification check.
 Therefore `pkgsign` produces a npm-compatible signature entry and verify only this entry if npm is either used to publish or install a package.  
 This will result in a command line message like:  
 
-    WARNING: package '<packageName>' is either published and/or installed with npm - performing npm compatible package.json verification
+    WARNING: package '<packageName>' is either published and/or installed with npm - falling back to limited verification of package.json
 
 ## GitHub Badges
 
