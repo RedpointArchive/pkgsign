@@ -30,6 +30,7 @@
     "normalize": "node util/normalize.js",
     "prepack": "yarn normalize",
     "clean": "rimraf dist",
+    "build": "yarn clean && tsc",
     "pkgsign": "yarn build && node dist/index.js",
     "sign": "yarn build && node dist/index.js sign .",
     "verify": "yarn build && node dist/index.js verify . --full --allow-unsigned-packages",
