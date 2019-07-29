@@ -1,11 +1,19 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const recursive = require("recursive-readdir");
 const crypto = require("crypto");
 const targz = require("targz");
 const tmp = require("tmp");
-const isBinaryFile = require("isbinaryfile");
+const isbinaryfile_1 = require("isbinaryfile");
 const eolFix = require("eol-fix-stream");
 function readdirPromise(dir) {
     return new Promise((resolve, reject) => {
@@ -22,7 +30,7 @@ function readdirPromise(dir) {
 exports.readdirPromise = readdirPromise;
 function writeFilePromise(file, content) {
     return new Promise((resolve, reject) => {
-        fs.writeFile(file, content, 'utf8', (err) => {
+        fs.writeFile(file, content, "utf8", err => {
             if (err) {
                 reject(err);
             }
@@ -35,7 +43,7 @@ function writeFilePromise(file, content) {
 exports.writeFilePromise = writeFilePromise;
 function readFilePromise(file) {
     return new Promise((resolve, reject) => {
-        fs.readFile(file, 'utf8', (err, data) => {
+        fs.readFile(file, "utf8", (err, data) => {
             if (err) {
                 reject(err);
             }
@@ -48,7 +56,7 @@ function readFilePromise(file) {
 exports.readFilePromise = readFilePromise;
 function unlinkPromise(file) {
     return new Promise((resolve, reject) => {
-        fs.unlink(file, (err) => {
+        fs.unlink(file, err => {
             if (err) {
                 reject(err);
             }
@@ -73,22 +81,19 @@ function recursivePromise(path) {
 }
 exports.recursivePromise = recursivePromise;
 function sha512OfFile(path) {
-    return new Promise((resolve, reject) => {
-        isBinaryFile(path, (err, isBinary) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            let shouldPipe = false;
-            if (!isBinary) {
-                // We have to convert all CRLF to LF because of how Git
-                // clones text files on Windows.
-                shouldPipe = true;
-            }
-            let fstream = fs.createReadStream(path);
-            const hash = crypto.createHash('sha512');
-            hash.setEncoding('hex');
-            fstream.on('end', function () {
+    return __awaiter(this, void 0, void 0, function* () {
+        const isBinary = yield isbinaryfile_1.isBinaryFile(path, undefined);
+        let shouldPipe = false;
+        if (!isBinary) {
+            // We have to convert all CRLF to LF because of how Git
+            // clones text files on Windows.
+            shouldPipe = true;
+        }
+        let fstream = fs.createReadStream(path);
+        const hash = crypto.createHash("sha512");
+        hash.setEncoding("hex");
+        return yield new Promise((resolve, reject) => {
+            fstream.on("end", function () {
                 hash.end();
                 resolve(hash.read());
             });
@@ -103,7 +108,7 @@ exports.sha512OfFile = sha512OfFile;
 function createWorkingDirectory() {
     return new Promise((resolve, reject) => {
         tmp.dir({
-            unsafeCleanup: true,
+            unsafeCleanup: true
         }, (err, path) => {
             if (err) {
                 reject(err);
@@ -119,8 +124,8 @@ function decompress(tarball, out) {
     return new Promise((resolve, reject) => {
         targz.decompress({
             src: tarball,
-            dest: out,
-        }, (err) => {
+            dest: out
+        }, err => {
             if (err) {
                 reject(err);
             }
@@ -135,8 +140,8 @@ function compress(indir, tarball) {
     return new Promise((resolve, reject) => {
         targz.compress({
             src: indir,
-            dest: tarball,
-        }, (err) => {
+            dest: tarball
+        }, err => {
             if (err) {
                 reject(err);
             }

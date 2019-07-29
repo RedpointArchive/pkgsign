@@ -16,7 +16,7 @@ const tmp = require("tmp");
 const spawn = require("silent-spawn");
 const enableTelemetry = process.env.DISABLE_PKGSIGN_TELEMETRY !== "true";
 const currentMachineId = node_machine_id_1.machineIdSync();
-const pkgsignVersion = JSON.parse(fs_1.readFileSync(path.join(__dirname, '../../package.json'), 'utf8')).version;
+const pkgsignVersion = JSON.parse(fs_1.readFileSync(path.join(__dirname, "../../package.json"), "utf8")).version;
 let telemetryCache = [];
 function queueTelemetry(data) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -31,12 +31,9 @@ function startTelemetrySend() {
         if (enableTelemetry) {
             let tmpObj = tmp.fileSync({ keep: true });
             fs_1.writeFileSync(tmpObj.name, JSON.stringify(telemetryCache));
-            spawn(process.argv[0], [
-                path.join(__dirname, 'sendTelemetry.js'),
-                tmpObj.name
-            ], {
+            spawn(process.argv[0], [path.join(__dirname, "sendTelemetry.js"), tmpObj.name], {
                 detached: true,
-                stdio: ['ignore', 'ignore', 'ignore']
+                stdio: ["ignore", "ignore", "ignore"]
             }).unref();
         }
     });
@@ -45,11 +42,11 @@ exports.startTelemetrySend = startTelemetrySend;
 function sendTelemetry(telemetry) {
     return __awaiter(this, void 0, void 0, function* () {
         if (telemetry.length > 0) {
-            yield node_fetch_1.default('https://us-central1-pkgsign.cloudfunctions.net/pkgsign-telemetry', {
-                method: 'PUT',
+            yield node_fetch_1.default("https://us-central1-pkgsign.cloudfunctions.net/pkgsign-telemetry", {
+                method: "PUT",
                 body: JSON.stringify(telemetry),
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json"
                 }
             });
         }

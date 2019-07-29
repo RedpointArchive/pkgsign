@@ -17,19 +17,19 @@ class PgpVerifier {
     }
     verify(identity, signature, deterministicString) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!identity.pgpPublicKeyUrl.startsWith('https://')) {
+            if (!identity.pgpPublicKeyUrl.startsWith("https://")) {
                 // public key URLs must be HTTPS.
                 return false;
             }
             let didFetch = false;
             const fetchPub = () => __awaiter(this, void 0, void 0, function* () {
-                console.log('fetching public keys at URL ' + identity.pgpPublicKeyUrl + '...');
+                console.log("fetching public keys at URL " + identity.pgpPublicKeyUrl + "...");
                 didFetch = true;
                 return yield (yield node_fetch_1.default(identity.pgpPublicKeyUrl)).text();
             });
             const attemptVerify = (rawPublicKeys) => __awaiter(this, void 0, void 0, function* () {
                 try {
-                    const publicKeys = openpgp.key.readArmored(rawPublicKeys).keys;
+                    const publicKeys = (yield openpgp.key.readArmored(rawPublicKeys)).keys;
                     const verifyOptions = {
                         message: openpgp.message.fromText(deterministicString),
                         signature: openpgp.signature.readArmored(signature),
@@ -42,17 +42,17 @@ class PgpVerifier {
                     return false;
                 }
             });
-            let urlHashObj = crypto.createHash('sha512');
+            let urlHashObj = crypto.createHash("sha512");
             urlHashObj.update(identity.pgpPublicKeyUrl);
-            let urlHash = urlHashObj.digest('hex');
-            let rawPublicKeys = yield this.trustStore.getOrFetchCachedPublicKeys('pgp.https.' + urlHash, fetchPub);
+            let urlHash = urlHashObj.digest("hex");
+            let rawPublicKeys = yield this.trustStore.getOrFetchCachedPublicKeys("pgp.https." + urlHash, fetchPub);
             let firstTry = yield attemptVerify(rawPublicKeys);
             if (didFetch || firstTry) {
                 return firstTry;
             }
             else {
                 // user might have updated their PGP public keys with a new signature, refetch.
-                rawPublicKeys = yield this.trustStore.fetchCachedPublicKeys('pgp.https.' + urlHash, fetchPub);
+                rawPublicKeys = yield this.trustStore.fetchCachedPublicKeys("pgp.https." + urlHash, fetchPub);
                 return yield attemptVerify(rawPublicKeys);
             }
         });

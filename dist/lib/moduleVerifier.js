@@ -21,7 +21,7 @@ var ModuleVerificationStatus;
     ModuleVerificationStatus[ModuleVerificationStatus["Compromised"] = 0] = "Compromised";
     // When the package doesn't have a signature or it can't be loaded.
     ModuleVerificationStatus[ModuleVerificationStatus["Unsigned"] = 1] = "Unsigned";
-    // When the package has a valid signature, but the user or device 
+    // When the package has a valid signature, but the user or device
     // doesn't trust the associated identity.
     ModuleVerificationStatus[ModuleVerificationStatus["Untrusted"] = 2] = "Untrusted";
     // When the package has a valid signature and the user or device
@@ -38,29 +38,28 @@ class ModuleVerifier {
             // can return the information to the caller. This field is untrusted, and
             // is only used by telemetry when determining the amount of data to send.
             let isPrivate = true;
-            let untrustedPackageVersion = '';
+            let untrustedPackageVersion = "";
             let earlyPackageInfo;
             try {
-                earlyPackageInfo = JSON.parse(yield fsPromise_1.readFilePromise(path.join(dir, 'package.json')));
+                earlyPackageInfo = JSON.parse(yield fsPromise_1.readFilePromise(path.join(dir, "package.json")));
                 isPrivate = earlyPackageInfo.private || false;
-                untrustedPackageVersion = earlyPackageInfo.version || '';
+                untrustedPackageVersion = earlyPackageInfo.version || "";
             }
-            catch (e) {
-            }
+            catch (e) { }
             // Load the signature document.
             let signature = null;
             try {
-                let rawJson = yield fsPromise_1.readFilePromise(path.join(dir, 'signature.json'));
+                let rawJson = yield fsPromise_1.readFilePromise(path.join(dir, "signature.json"));
                 let signatureParser = new signature_1.SignatureParser();
                 signature = signatureParser.parse(expectedPackageName, earlyPackageInfo, rawJson);
             }
             catch (e) {
                 return {
                     status: ModuleVerificationStatus.Unsigned,
-                    reason: 'Missing or unparsable signature.json',
+                    reason: "Missing or unparsable signature.json",
                     packageName: expectedPackageName,
                     untrustedPackageVersion: untrustedPackageVersion,
-                    isPrivate: isPrivate,
+                    isPrivate: isPrivate
                 };
             }
             // Build up our deterministic string to validate the signature against.
@@ -77,10 +76,10 @@ class ModuleVerifier {
             if (identity === null) {
                 return {
                     status: ModuleVerificationStatus.Compromised,
-                    reason: 'No identity information in signature.json',
+                    reason: "No identity information in signature.json",
                     packageName: expectedPackageName,
                     untrustedPackageVersion: untrustedPackageVersion,
-                    isPrivate: isPrivate,
+                    isPrivate: isPrivate
                 };
             }
             // Now we know the package contents matches the files expected by the signature, and all
@@ -96,10 +95,10 @@ class ModuleVerifier {
             else {
                 return {
                     status: ModuleVerificationStatus.Compromised,
-                    reason: 'Unknown identity in signature.json',
+                    reason: "Unknown identity in signature.json",
                     packageName: expectedPackageName,
                     untrustedPackageVersion: untrustedPackageVersion,
-                    isPrivate: isPrivate,
+                    isPrivate: isPrivate
                 };
             }
             // Verify each of the entries.
@@ -110,7 +109,7 @@ class ModuleVerifier {
                 untrustedIdentity: identity,
                 untrustedPackageVersion: untrustedPackageVersion,
                 isPrivate: isPrivate,
-                signatureEntries: signature.entries,
+                signatureEntries: signature.entries
             };
             for (let entry of signature.entries) {
                 let entryResult = yield entry.verify(context);
@@ -122,37 +121,38 @@ class ModuleVerifier {
             if (!(yield verifier.verify(identity, signature.signature, deterministicString))) {
                 return {
                     status: ModuleVerificationStatus.Compromised,
-                    reason: 'The signature does not match',
+                    reason: "The signature does not match",
                     packageName: expectedPackageName,
                     untrustedPackageVersion: untrustedPackageVersion,
                     isPrivate: isPrivate,
-                    untrustedIdentity: identity,
+                    untrustedIdentity: identity
                 };
             }
             // Check the package name in package.json matches the expected
             // package name that was provided.
             let packageInfo = null;
             try {
-                packageInfo = JSON.parse(yield fsPromise_1.readFilePromise(path.join(dir, 'package.json')));
+                packageInfo = JSON.parse(yield fsPromise_1.readFilePromise(path.join(dir, "package.json")));
             }
             catch (e) {
                 return {
                     status: ModuleVerificationStatus.Compromised,
-                    reason: 'Missing or unparsable package.json',
+                    reason: "Missing or unparsable package.json",
                     packageName: expectedPackageName,
                     untrustedPackageVersion: untrustedPackageVersion,
                     isPrivate: isPrivate,
-                    untrustedIdentity: identity,
+                    untrustedIdentity: identity
                 };
             }
-            if (packageInfo == null || (packageInfo.name || '') != expectedPackageName) {
+            if (packageInfo == null ||
+                (packageInfo.name || "") != expectedPackageName) {
                 return {
                     status: ModuleVerificationStatus.Compromised,
-                    reason: 'Provided package name in package.json did not match expected package name',
+                    reason: "Provided package name in package.json did not match expected package name",
                     packageName: expectedPackageName,
                     untrustedPackageVersion: untrustedPackageVersion,
                     isPrivate: isPrivate,
-                    untrustedIdentity: identity,
+                    untrustedIdentity: identity
                 };
             }
             // Package signature is valid, now we need to see if the identity
@@ -163,7 +163,7 @@ class ModuleVerifier {
                     packageName: expectedPackageName,
                     untrustedPackageVersion: untrustedPackageVersion,
                     isPrivate: isPrivate,
-                    trustedIdentity: identity,
+                    trustedIdentity: identity
                 };
             }
             else {
@@ -172,7 +172,7 @@ class ModuleVerifier {
                     untrustedIdentity: identity,
                     packageName: expectedPackageName,
                     untrustedPackageVersion: untrustedPackageVersion,
-                    isPrivate: isPrivate,
+                    isPrivate: isPrivate
                 };
             }
         });

@@ -12,20 +12,20 @@
   },
   "dependencies": {
     "@dpwolfe/dos2unix": "^1.1.3",
-    "clime": "^0.5.9",
+    "clime": "^0.5.10",
     "eol-fix-stream": "^1.0.0",
-    "inquirer": "^5.0.0",
-    "isbinaryfile": "^3.0.2",
+    "inquirer": "^6.5.0",
+    "isbinaryfile": "^4.0.2",
     "node-cmd": "^3.0.0",
-    "node-fetch": "^1.7.3",
-    "node-machine-id": "^1.1.10",
-    "npm-packlist": "^1.1.10",
-    "openpgp": "^2.6.1",
-    "recursive-readdir": "^2.2.1",
+    "node-fetch": "^2.6.0",
+    "node-machine-id": "^1.1.12",
+    "npm-packlist": "^1.4.4",
+    "openpgp": "^4.5.5",
+    "recursive-readdir": "^2.2.2",
     "silent-spawn": "^0.4.0",
-    "strip-ansi": "^4.0.0",
+    "strip-ansi": "^5.2.0",
     "targz": "^1.0.1",
-    "tmp": "^0.0.33"
+    "tmp": "^0.1.0"
   },
   "scripts": {
     "normalize": "node util/normalize.js",
@@ -38,18 +38,21 @@
     "signedpack": "yarn clean && tsc && yarn normalize && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz",
     "release": "yarn test && yarn clean && tsc && yarn normalize && node util/ensure-release.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz",
     "prerelease": "yarn test && yarn clean && tsc && yarn normalize && node util/ensure-prerelease.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz --tag next",
-    "test": "ava-ts test/*.ts"
+    "test": "ava-ts test/*.ts && yarn build && node dist/index.js sign . && node dist/index.js verify .",
+    "selfverify": "yarn build && node dist/index.js sign . && node dist/index.js verify ."
   },
   "devDependencies": {
-    "@types/node": "^8.5.7",
-    "@types/node-fetch": "^1.6.7",
+    "@types/node": "^12.6.8",
+    "@types/node-fetch": "^2.5.0",
+    "@types/openpgp": "^4.4.6",
     "@types/recursive-readdir": "^2.2.0",
-    "@types/strip-ansi": "^3.0.0",
-    "@types/tmp": "^0.0.33",
-    "ava": "^0.25.0",
-    "ava-ts": "^0.24.4",
-    "rimraf": "^2.6.2",
-    "ts-node": "^6.0.1",
-    "typescript": "^2.6.1"
+    "@types/strip-ansi": "^5.2.1",
+    "@types/tmp": "^0.1.0",
+    "ava": "^2.2.0",
+    "ava-ts": "^0.25.2",
+    "prettier": "^1.18.2",
+    "rimraf": "^2.6.3",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.5.3"
   }
 }

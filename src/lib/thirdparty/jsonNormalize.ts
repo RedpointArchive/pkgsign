@@ -1,15 +1,15 @@
 /**
- * 
+ *
  * This file originates from json-normalize, which does not correctly ship files in dist/
  * suitable for distribution. It has runtime dependencies on Babel, which we don't want
  * to pull in.
- * 
- * We've copied the implementation of json-normalize here, so that we can run it through 
+ *
+ * We've copied the implementation of json-normalize here, so that we can run it through
  * TypeScript along with the rest of our code.
- * 
+ *
  * We've also removed the references to the 'crypto' module, and the associated functions
  * that depend on it, as we do not need this capability.
- * 
+ *
  */
 
 /**
@@ -26,7 +26,11 @@ function handleLiteral(recurse, value, done) {
   let results;
 
   // Attempt to JSON parse literal value
-  try { results = JSON.stringify(value); } catch (e) { error = e; }
+  try {
+    results = JSON.stringify(value);
+  } catch (e) {
+    error = e;
+  }
   return done(error, results);
 }
 
@@ -45,9 +49,16 @@ function handleObject(recurse, obj, replacer, done) {
   let complete = 0;
   const values = [];
 
-  const onComplete = () => done(null, isArray
-    ? `[${values.map(v => (v === null ? 'null' : v)).join(',')}]`
-    : `{${values.sort().filter(Boolean).join(',')}}`);
+  const onComplete = () =>
+    done(
+      null,
+      isArray
+        ? `[${values.map(v => (v === null ? "null" : v)).join(",")}]`
+        : `{${values
+            .sort()
+            .filter(Boolean)
+            .join(",")}}`
+    );
 
   // When an object key is serialized, it calls this method as its callback.
   const onSerialized = (e, value, index) => {
@@ -58,19 +69,35 @@ function handleObject(recurse, obj, replacer, done) {
       return done(e);
     }
 
-    values[index] = typeof value === 'undefined' ? null : value;
+    values[index] = typeof value === "undefined" ? null : value;
     if (++complete !== keys.length) return null;
     return onComplete();
   };
 
   // Serializes each item in an array.
   const mapArray = (key, index) =>
-    recurse(typeof obj[key] === 'undefined' ? null : obj[key], replacer, (e, val) => onSerialized(e, val, index), key);
+    recurse(
+      typeof obj[key] === "undefined" ? null : obj[key],
+      replacer,
+      (e, val) => onSerialized(e, val, index),
+      key
+    );
 
   // Serializes each item in an object.
-  const mapObject = (key, index) => (typeof obj[key] === 'undefined'
-    ? onSerialized(null, null, undefined)
-    : recurse(obj[key], replacer, (e, val) => onSerialized(e, typeof val === 'undefined' ? null : `"${key}":${val}`, index), key));
+  const mapObject = (key, index) =>
+    typeof obj[key] === "undefined"
+      ? onSerialized(null, null, undefined)
+      : recurse(
+          obj[key],
+          replacer,
+          (e, val) =>
+            onSerialized(
+              e,
+              typeof val === "undefined" ? null : `"${key}":${val}`,
+              index
+            ),
+          key
+        );
 
   // Map the object's keys to its respective object type function
   return keys.length === 0
@@ -90,10 +117,10 @@ function handleReplacer(val, key, replacer) {
   let value = val;
   let onValue = replacer;
 
-  if (typeof onValue === 'function') {
+  if (typeof onValue === "function") {
     value = onValue(key, value);
-    onValue = typeof value === 'object' ? onValue : undefined;
-  } else if (typeof value === 'function') {
+    onValue = typeof value === "object" ? onValue : undefined;
+  } else if (typeof value === "function") {
     value = undefined;
   }
 
@@ -115,20 +142,22 @@ function serialize(obj, replacer, complete, key) {
   let done = complete;
 
   // Rearrange arguements for replacer/complete parameters based on value
-  if (typeof done === 'undefined' && typeof replacerFunction === 'function') {
+  if (typeof done === "undefined" && typeof replacerFunction === "function") {
     replacerFunction = undefined;
     done = replacer;
   }
 
   // No reason to continue, no callback was provided.
-  if (typeof done !== 'function') return;
+  if (typeof done !== "function") return;
 
   // Simulates the JSON.stringify replacer function
   const { value, onValue } = handleReplacer(obj, key, replacerFunction);
 
-  process.nextTick(() => (!value || typeof value !== 'object'
-    ? handleLiteral(serialize, value, done)
-    : handleObject(serialize, value, onValue, done)));
+  process.nextTick(() =>
+    !value || typeof value !== "object"
+      ? handleLiteral(serialize, value, done)
+      : handleObject(serialize, value, onValue, done)
+  );
 }
 
 /**
@@ -144,12 +173,15 @@ function serializeSync(obj, replacer, complete, key) {
   let results;
 
   // Create a callback for when stringification is complete
-  if (typeof done !== 'function') done = (err, value) => { results = value; };
+  if (typeof done !== "function")
+    done = (err, value) => {
+      results = value;
+    };
 
   // Simulates the JSON.stringify replacer function
   const { value, onValue } = handleReplacer(obj, key, replacer);
 
-  if (!value || typeof value !== 'object') {
+  if (!value || typeof value !== "object") {
     handleLiteral(serializeSync, value, done);
   } else {
     handleObject(serializeSync, value, onValue, done);

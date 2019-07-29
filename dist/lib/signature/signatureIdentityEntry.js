@@ -15,13 +15,13 @@ class SignatureIdentityEntry {
     }
     toDeterministicString() {
         if (this.identity.keybaseUser !== undefined) {
-            return 'keybase:' + this.identity.keybaseUser;
+            return "keybase:" + this.identity.keybaseUser;
         }
         else if (this.identity.pgpPublicKeyUrl !== undefined) {
-            return 'httpspgp:' + this.identity.pgpPublicKeyUrl;
+            return "httpspgp:" + this.identity.pgpPublicKeyUrl;
         }
         else {
-            return 'none';
+            return "none";
         }
     }
     verify(context) {

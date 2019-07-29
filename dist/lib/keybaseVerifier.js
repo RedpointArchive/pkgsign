@@ -18,13 +18,13 @@ class KeybaseVerifier {
         return __awaiter(this, void 0, void 0, function* () {
             let didFetch = false;
             const fetchPub = () => __awaiter(this, void 0, void 0, function* () {
-                console.log('fetching public keys of user ' + identity.keybaseUser + '...');
+                console.log("fetching public keys of user " + identity.keybaseUser + "...");
                 didFetch = true;
-                return yield (yield node_fetch_1.default('https://keybase.io/' + identity.keybaseUser + '/pgp_keys.asc')).text();
+                return yield (yield node_fetch_1.default("https://keybase.io/" + identity.keybaseUser + "/pgp_keys.asc")).text();
             });
             const attemptVerify = (rawPublicKeys) => __awaiter(this, void 0, void 0, function* () {
                 try {
-                    const publicKeys = openpgp.key.readArmored(rawPublicKeys).keys;
+                    const publicKeys = (yield openpgp.key.readArmored(rawPublicKeys)).keys;
                     const verifyOptions = {
                         message: openpgp.message.fromText(deterministicString),
                         signature: openpgp.signature.readArmored(signature),
@@ -37,14 +37,14 @@ class KeybaseVerifier {
                     return false;
                 }
             });
-            let rawPublicKeys = yield this.trustStore.getOrFetchCachedPublicKeys('keybase.io.' + identity.keybaseUser, fetchPub);
+            let rawPublicKeys = yield this.trustStore.getOrFetchCachedPublicKeys("keybase.io." + identity.keybaseUser, fetchPub);
             let firstTry = yield attemptVerify(rawPublicKeys);
             if (didFetch || firstTry) {
                 return firstTry;
             }
             else {
                 // user might have updated their PGP public keys with a new signature, refetch.
-                rawPublicKeys = yield this.trustStore.fetchCachedPublicKeys('keybase.io.' + identity.keybaseUser, fetchPub);
+                rawPublicKeys = yield this.trustStore.fetchCachedPublicKeys("keybase.io." + identity.keybaseUser, fetchPub);
                 return yield attemptVerify(rawPublicKeys);
             }
         });

@@ -24,31 +24,31 @@ class SignaturePackageJsonEntry {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.packageJson == null) {
                 // Verify that package.json does not exist on disk.
-                if (context.relFilesOnDisk.indexOf('package.json') !== -1) {
+                if (context.relFilesOnDisk.indexOf("package.json") !== -1) {
                     return {
                         status: moduleVerifier_1.ModuleVerificationStatus.Compromised,
-                        reason: 'package.json exists in the package, but was not in the signature',
+                        reason: "package.json exists in the package, but was not in the signature",
                         packageName: context.expectedPackageName,
                         untrustedIdentity: context.untrustedIdentity,
                         untrustedPackageVersion: context.untrustedPackageVersion,
-                        isPrivate: context.isPrivate,
+                        isPrivate: context.isPrivate
                     };
                 }
             }
             else {
                 // Verify that package.json does exist on disk.
-                if (context.relFilesOnDisk.indexOf('package.json') === -1) {
+                if (context.relFilesOnDisk.indexOf("package.json") === -1) {
                     return {
                         status: moduleVerifier_1.ModuleVerificationStatus.Compromised,
-                        reason: 'package.json does not exist in the package, but was present in the signature',
+                        reason: "package.json does not exist in the package, but was present in the signature",
                         packageName: context.expectedPackageName,
                         untrustedIdentity: context.untrustedIdentity,
                         untrustedPackageVersion: context.untrustedPackageVersion,
-                        isPrivate: context.isPrivate,
+                        isPrivate: context.isPrivate
                     };
                 }
                 // Try to read the contents of package.json.
-                const packageJsonRaw = fs.readFileSync(path.join(context.dir, 'package.json'), 'utf8');
+                const packageJsonRaw = fs.readFileSync(path.join(context.dir, "package.json"), "utf8");
                 let packageJsonActual;
                 try {
                     packageJsonActual = JSON.parse(packageJsonRaw);
@@ -56,11 +56,11 @@ class SignaturePackageJsonEntry {
                 catch (e) {
                     return {
                         status: moduleVerifier_1.ModuleVerificationStatus.Compromised,
-                        reason: 'package.json does not contain valid JSON',
+                        reason: "package.json does not contain valid JSON",
                         packageName: context.expectedPackageName,
                         untrustedIdentity: context.untrustedIdentity,
                         untrustedPackageVersion: context.untrustedPackageVersion,
-                        isPrivate: context.isPrivate,
+                        isPrivate: context.isPrivate
                     };
                 }
                 // Stringify both our expected and actual values.
@@ -70,11 +70,11 @@ class SignaturePackageJsonEntry {
                 if (normalizedActual !== normalizedExpected) {
                     return {
                         status: moduleVerifier_1.ModuleVerificationStatus.Compromised,
-                        reason: 'package.json on disk does not match the signed package.json',
+                        reason: "package.json on disk does not match the signed package.json",
                         packageName: context.expectedPackageName,
                         untrustedIdentity: context.untrustedIdentity,
                         untrustedPackageVersion: context.untrustedPackageVersion,
-                        isPrivate: context.isPrivate,
+                        isPrivate: context.isPrivate
                     };
                 }
             }

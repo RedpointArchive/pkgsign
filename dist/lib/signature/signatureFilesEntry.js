@@ -17,26 +17,27 @@ class SignatureFilesEntry {
         this.files = raw.files;
     }
     toDeterministicString() {
-        let deterministicString = '';
+        let deterministicString = "";
         for (let entry of this.files) {
-            deterministicString += entry.path + '\n' + entry.sha512 + '\n';
+            deterministicString += entry.path + "\n" + entry.sha512 + "\n";
         }
         return deterministicString;
     }
     verify(context) {
         return __awaiter(this, void 0, void 0, function* () {
             const skipPackageJsonExactVerification = context.signatureEntries.some(x => {
-                return x.entry === "packageJson/v1alpha1" ||
-                    x.entry === "npmCompatiblePackageJson/v1alpha1";
+                return (x.entry === "packageJson/v1alpha1" ||
+                    x.entry === "npmCompatiblePackageJson/v1alpha1");
             });
             // For each relative file on disk, make sure it appears in
             // the list of files the signature is signing for.
             for (let relFileOnDisk of context.relFilesOnDisk) {
-                let normalisedPath = relFileOnDisk.replace(/\\/g, '/');
-                if (normalisedPath == 'signature.json') {
+                let normalisedPath = relFileOnDisk.replace(/\\/g, "/");
+                if (normalisedPath == "signature.json") {
                     continue;
                 }
-                if (normalisedPath == 'package.json' && skipPackageJsonExactVerification) {
+                if (normalisedPath == "package.json" &&
+                    skipPackageJsonExactVerification) {
                     continue;
                 }
                 let found = false;
@@ -50,22 +51,24 @@ class SignatureFilesEntry {
                 if (!found) {
                     return {
                         status: moduleVerifier_1.ModuleVerificationStatus.Compromised,
-                        reason: normalisedPath + ' exists in the package, but was not in the signature',
+                        reason: normalisedPath +
+                            " exists in the package, but was not in the signature",
                         packageName: context.expectedPackageName,
                         untrustedIdentity: context.untrustedIdentity,
                         untrustedPackageVersion: context.untrustedPackageVersion,
-                        isPrivate: context.isPrivate,
+                        isPrivate: context.isPrivate
                     };
                 }
                 const hash = yield fsPromise_1.sha512OfFile(path.join(context.dir, normalisedPath));
                 if (hash != expectedHash) {
                     return {
                         status: moduleVerifier_1.ModuleVerificationStatus.Compromised,
-                        reason: normalisedPath + ' does not have content that was signed for (mismatched hash)',
+                        reason: normalisedPath +
+                            " does not have content that was signed for (mismatched hash)",
                         packageName: context.expectedPackageName,
                         untrustedIdentity: context.untrustedIdentity,
                         untrustedPackageVersion: context.untrustedPackageVersion,
-                        isPrivate: context.isPrivate,
+                        isPrivate: context.isPrivate
                     };
                 }
             }
@@ -73,12 +76,12 @@ class SignatureFilesEntry {
             // We don't need to hash here because if there is a match we will have already
             // checked it in the for loop above.
             for (let fileEntry of this.files) {
-                if (fileEntry.path == 'signature.json') {
+                if (fileEntry.path == "signature.json") {
                     continue;
                 }
                 let found = false;
                 for (let relFileOnDisk of context.relFilesOnDisk) {
-                    let normalisedPath = relFileOnDisk.replace(/\\/g, '/');
+                    let normalisedPath = relFileOnDisk.replace(/\\/g, "/");
                     if (normalisedPath == fileEntry.path) {
                         found = true;
                     }
@@ -86,11 +89,12 @@ class SignatureFilesEntry {
                 if (!found) {
                     return {
                         status: moduleVerifier_1.ModuleVerificationStatus.Compromised,
-                        reason: fileEntry.path + ' is expected by the signature, but is missing in the package',
+                        reason: fileEntry.path +
+                            " is expected by the signature, but is missing in the package",
                         packageName: context.expectedPackageName,
                         untrustedIdentity: context.untrustedIdentity,
                         untrustedPackageVersion: context.untrustedPackageVersion,
-                        isPrivate: context.isPrivate,
+                        isPrivate: context.isPrivate
                     };
                 }
             }

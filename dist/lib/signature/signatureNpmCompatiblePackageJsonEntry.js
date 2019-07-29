@@ -20,7 +20,8 @@ class SignatureNpmCompatiblePackageJsonEntry {
         this.packageJsonProperties = raw.packageJsonProperties;
         if (this.packageJsonProperties) {
             this.packageJsonProperties = this.packageJsonProperties
-                .filter((value) => value.indexOf('_') != 0)
+                // exclude _XXX properties
+                .filter(value => value.indexOf("_") != 0)
                 .sort();
         }
     }
@@ -28,47 +29,48 @@ class SignatureNpmCompatiblePackageJsonEntry {
         return __awaiter(this, void 0, void 0, function* () {
             const orderedObject = {};
             properties
-                .filter((key) => key.indexOf('_') != 0)
+                // filter properties starting with underscore
+                .filter(key => key.indexOf("_") != 0)
                 .sort()
-                .forEach((key) => orderedObject[key] = value[key]);
-            const hash = crypto_1.createHash('sha512');
+                .forEach(key => (orderedObject[key] = value[key]));
+            const hash = crypto_1.createHash("sha512");
             hash.update(jsonNormalize_1.normalizeSync(orderedObject));
-            const hashStr = hash.digest('hex');
+            const hashStr = hash.digest("hex");
             return hashStr;
         });
     }
     toDeterministicString() {
-        return jsonNormalize_1.normalizeSync(this.packageJsonProperties) + '\n' + this.sha512;
+        return jsonNormalize_1.normalizeSync(this.packageJsonProperties) + "\n" + this.sha512;
     }
     verify(context) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.packageJsonProperties) {
                 // Verify that package.json does not exist on disk.
-                if (context.relFilesOnDisk.indexOf('package.json') !== -1) {
+                if (context.relFilesOnDisk.indexOf("package.json") !== -1) {
                     return {
                         status: moduleVerifier_1.ModuleVerificationStatus.Compromised,
-                        reason: 'package.json exists in the package, but was not in the signature',
+                        reason: "package.json exists in the package, but was not in the signature",
                         packageName: context.expectedPackageName,
                         untrustedIdentity: context.untrustedIdentity,
                         untrustedPackageVersion: context.untrustedPackageVersion,
-                        isPrivate: context.isPrivate,
+                        isPrivate: context.isPrivate
                     };
                 }
             }
             else {
                 // Verify that package.json does exist on disk.
-                if (context.relFilesOnDisk.indexOf('package.json') === -1) {
+                if (context.relFilesOnDisk.indexOf("package.json") === -1) {
                     return {
                         status: moduleVerifier_1.ModuleVerificationStatus.Compromised,
-                        reason: 'package.json does not exist in the package, but was present in the signature',
+                        reason: "package.json does not exist in the package, but was present in the signature",
                         packageName: context.expectedPackageName,
                         untrustedIdentity: context.untrustedIdentity,
                         untrustedPackageVersion: context.untrustedPackageVersion,
-                        isPrivate: context.isPrivate,
+                        isPrivate: context.isPrivate
                     };
                 }
                 // Try to read the contents of package.json.
-                const packageJsonRaw = fs.readFileSync(path.join(context.dir, 'package.json'), 'utf8');
+                const packageJsonRaw = fs.readFileSync(path.join(context.dir, "package.json"), "utf8");
                 let packageJsonActual;
                 try {
                     packageJsonActual = JSON.parse(packageJsonRaw);
@@ -76,22 +78,22 @@ class SignatureNpmCompatiblePackageJsonEntry {
                 catch (e) {
                     return {
                         status: moduleVerifier_1.ModuleVerificationStatus.Compromised,
-                        reason: 'package.json does not contain valid JSON',
+                        reason: "package.json does not contain valid JSON",
                         packageName: context.expectedPackageName,
                         untrustedIdentity: context.untrustedIdentity,
                         untrustedPackageVersion: context.untrustedPackageVersion,
-                        isPrivate: context.isPrivate,
+                        isPrivate: context.isPrivate
                     };
                 }
                 const hash = yield SignatureNpmCompatiblePackageJsonEntry.sha512OfObject(packageJsonActual, this.packageJsonProperties);
                 if (hash != this.sha512) {
                     return {
                         status: moduleVerifier_1.ModuleVerificationStatus.Compromised,
-                        reason: 'package.json on disk does not match the signed package.json',
+                        reason: "package.json on disk does not match the signed package.json",
                         packageName: context.expectedPackageName,
                         untrustedIdentity: context.untrustedIdentity,
                         untrustedPackageVersion: context.untrustedPackageVersion,
-                        isPrivate: context.isPrivate,
+                        isPrivate: context.isPrivate
                     };
                 }
             }

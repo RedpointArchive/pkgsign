@@ -11,20 +11,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const cmd = require("node-cmd");
 const path_1 = require("path");
 const fsPromise_1 = require("./fsPromise");
-const stripAnsi = Promise.resolve().then(() => require('strip-ansi'));
+const strip_ansi_1 = require("strip-ansi");
 class KeybaseSigner {
     getIdentity() {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('determining your keybase username...');
+            console.log("determining your keybase username...");
             const keybaseIdentity = yield new Promise((resolve, reject) => {
-                cmd.get('keybase id', (err, data, stderr) => {
+                cmd.get("keybase id", (err, data, stderr) => {
                     if (err) {
                         reject(err);
                     }
                     else {
                         const result = /Identifying (.+)/g.exec(data + stderr);
                         if (result[1] === undefined) {
-                            reject(new Error('keybase didn\'t return your username for \'keybase id\''));
+                            reject(new Error("keybase didn't return your username for 'keybase id'"));
                         }
                         else {
                             resolve(result[1]);
@@ -32,18 +32,18 @@ class KeybaseSigner {
                     }
                 });
             });
-            let stripAnsiFn = yield stripAnsi;
+            let stripAnsiFn = yield strip_ansi_1.default;
             return {
-                keybaseUser: stripAnsiFn(keybaseIdentity),
+                keybaseUser: stripAnsiFn(keybaseIdentity)
             };
         });
     }
     signEntries(deterministicString) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('requesting keybase pgp sign deterministic signature...');
-            console.log('(you may receive an interactive prompt from keybase)');
+            console.log("requesting keybase pgp sign deterministic signature...");
+            console.log("(you may receive an interactive prompt from keybase)");
             const wd = yield fsPromise_1.createWorkingDirectory();
-            const fileToSignPath = path_1.join(wd, 'signature.sig');
+            const fileToSignPath = path_1.join(wd, "signature.sig");
             yield fsPromise_1.writeFilePromise(fileToSignPath, deterministicString);
             const keybaseSignature = yield new Promise((resolve, reject) => {
                 cmd.get('keybase pgp sign --detached -i "' + fileToSignPath + '"', (err, data, stderr) => {

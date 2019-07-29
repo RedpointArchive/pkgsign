@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-import * as Path from 'path';
-import { CLI, Shim } from 'clime';
-import { startTelemetrySend } from './lib/telemetry';
+import * as Path from "path";
+import { CLI, Shim } from "clime";
+import { startTelemetrySend } from "./lib/telemetry";
 
-let cli = new CLI('pkgsign', Path.join(__dirname, 'commands'));
+let cli = new CLI("pkgsign", Path.join(__dirname, "commands"));
 
 let shim = new Shim(cli);
 

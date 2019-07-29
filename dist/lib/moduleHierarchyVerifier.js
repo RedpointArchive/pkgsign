@@ -24,8 +24,8 @@ class ModuleHierarchyVerifier {
             // build up a list of node modules we need to verify, based on the current directory
             const modules = yield this.findModules(this.dir);
             modules.push({
-                untrustedPackageInfo: JSON.parse(yield fsPromise_1.readFilePromise(path.join(this.dir, 'package.json'))),
-                path: this.dir,
+                untrustedPackageInfo: JSON.parse(yield fsPromise_1.readFilePromise(path.join(this.dir, "package.json"))),
+                path: this.dir
             });
             let promises = [];
             let moduleVerifier = new moduleVerifier_1.ModuleVerifier(this.trustStore);
@@ -33,35 +33,38 @@ class ModuleHierarchyVerifier {
             for (let moduleInfo of modules) {
                 promises.push(((moduleInfo) => __awaiter(this, void 0, void 0, function* () {
                     let expectedPackageName = path.basename(moduleInfo.path);
-                    if (expectedPackageName == '.') {
+                    if (expectedPackageName == ".") {
                         // This is the top-level module we want to verify. Because this module might be
                         // cloned by the user with Git into a directory name that doesn't match, we
                         // trust package.json for the expected package name instead.
-                        expectedPackageName = moduleInfo.untrustedPackageInfo.name || '';
+                        expectedPackageName = moduleInfo.untrustedPackageInfo.name || "";
                     }
                     let result = yield moduleVerifier.verify(moduleInfo.path, yield packlist({ path: moduleInfo.path }), expectedPackageName);
                     results[moduleInfo.path] = result;
                     if (result.isPrivate) {
                         // Don't send identifiable telemetry about private packages.
                         yield telemetry_1.queueTelemetry({
-                            action: 'verify-module',
-                            packageName: '',
-                            packageVersion: '',
+                            action: "verify-module",
+                            packageName: "",
+                            packageVersion: "",
                             packageIsSigned: result.status != moduleVerifier_1.ModuleVerificationStatus.Unsigned,
-                            signingIdentity: '',
-                            identityIsTrusted: result.status == moduleVerifier_1.ModuleVerificationStatus.Trusted,
+                            signingIdentity: "",
+                            identityIsTrusted: result.status == moduleVerifier_1.ModuleVerificationStatus.Trusted
                         });
                     }
                     else {
                         // Send telemetry for public packages.
                         yield telemetry_1.queueTelemetry({
-                            action: 'verify-module',
+                            action: "verify-module",
                             packageName: result.packageName,
                             packageVersion: result.untrustedPackageVersion,
                             packageIsSigned: result.status != moduleVerifier_1.ModuleVerificationStatus.Unsigned,
-                            signingIdentity: result.trustedIdentity != undefined ?
-                                signatureIdentity_1.identityToString(result.trustedIdentity) : (result.untrustedIdentity != undefined ? signatureIdentity_1.identityToString(result.untrustedIdentity) : ''),
-                            identityIsTrusted: result.status == moduleVerifier_1.ModuleVerificationStatus.Trusted,
+                            signingIdentity: result.trustedIdentity != undefined
+                                ? signatureIdentity_1.identityToString(result.trustedIdentity)
+                                : result.untrustedIdentity != undefined
+                                    ? signatureIdentity_1.identityToString(result.untrustedIdentity)
+                                    : "",
+                            identityIsTrusted: result.status == moduleVerifier_1.ModuleVerificationStatus.Trusted
                         });
                     }
                 }))(moduleInfo));
@@ -75,13 +78,13 @@ class ModuleHierarchyVerifier {
             let resultModules = [];
             let ourModules = [];
             try {
-                ourModules = yield fsPromise_1.readdirPromise(path.join(dir, 'node_modules'));
+                ourModules = yield fsPromise_1.readdirPromise(path.join(dir, "node_modules"));
             }
             catch (e) {
-                if (e && e.code == 'ENOENT') {
+                if (e && e.code == "ENOENT") {
                     // this package has no child modules.
                 }
-                else if (e && e.code == 'ENOTDIR') {
+                else if (e && e.code == "ENOTDIR") {
                     // this is not a package (e.g. .yarn-integrity file)
                 }
                 else {
@@ -89,22 +92,22 @@ class ModuleHierarchyVerifier {
                 }
             }
             for (let otherModule of ourModules) {
-                if (otherModule[0] == '@') {
+                if (otherModule[0] == "@") {
                     // this is a namespace folder, iterate through it instead.
-                    const nsModules = yield fsPromise_1.readdirPromise(path.join(dir, 'node_modules', otherModule));
+                    const nsModules = yield fsPromise_1.readdirPromise(path.join(dir, "node_modules", otherModule));
                     for (let nsModule of nsModules) {
-                        const theirModules = yield this.findModules(path.join(dir, 'node_modules', otherModule, nsModule));
+                        const theirModules = yield this.findModules(path.join(dir, "node_modules", otherModule, nsModule));
                         resultModules.push(...theirModules);
                     }
                 }
                 else {
-                    const theirModules = yield this.findModules(path.join(dir, 'node_modules', otherModule));
+                    const theirModules = yield this.findModules(path.join(dir, "node_modules", otherModule));
                     resultModules.push(...theirModules);
                 }
-                if (otherModule[0] != '.' && otherModule[0] != '@') {
+                if (otherModule[0] != "." && otherModule[0] != "@") {
                     resultModules.push({
-                        untrustedPackageInfo: JSON.parse(yield fsPromise_1.readFilePromise(path.join(dir, 'node_modules', otherModule, 'package.json'))),
-                        path: path.join(dir, 'node_modules', otherModule),
+                        untrustedPackageInfo: JSON.parse(yield fsPromise_1.readFilePromise(path.join(dir, "node_modules", otherModule, "package.json"))),
+                        path: path.join(dir, "node_modules", otherModule)
                     });
                 }
             }

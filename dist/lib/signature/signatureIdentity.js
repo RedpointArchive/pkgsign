@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 function identityToString(identity) {
     if (identity.keybaseUser !== undefined) {
-        return '@' + identity.keybaseUser;
+        return "@" + identity.keybaseUser;
     }
     else {
         return identity.pgpPublicKeyUrl;

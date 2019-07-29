@@ -1,6 +1,6 @@
 import { Verifier } from "./verifier";
 import { ITrustStore } from "./trustStore";
-import { SignatureIdentity } from './signature/signatureIdentity';
+import { SignatureIdentity } from "./signature/signatureIdentity";
 export declare class KeybaseVerifier implements Verifier {
     private trustStore;
     constructor(trustStore: ITrustStore);
