@@ -31,6 +31,24 @@ function sha512OfObject(value: any, properties: Array<string>): string {
   return hashStr;
 }
 
+function filter(
+  val: NpmCompatiblePackageJsonEntry
+): NpmCompatiblePackageJsonEntry {
+  const v = {
+    packageJsonProperties: val.packageJsonProperties,
+    sha512: val.sha512
+  };
+
+  if (v.packageJsonProperties) {
+    v.packageJsonProperties = v.packageJsonProperties
+      // exclude _XXX properties
+      .filter(value => value.indexOf("_") != 0)
+      .sort();
+  }
+
+  return v;
+}
+
 export const NpmCompatiblePackageJsonEntryHandler: IEntryHandler<
   NpmCompatiblePackageJsonEntry
 > = {
@@ -66,16 +84,18 @@ export const NpmCompatiblePackageJsonEntryHandler: IEntryHandler<
       return null;
     }
 
-    return {
+    return filter({
       packageJsonProperties: Object.keys(packageJson).sort(),
       sha512: await sha512OfObject(packageJson, Object.keys(packageJson))
-    };
+    });
   },
 
   verifyEntry: async (
     context: IVerifyEntryContext,
     value: NpmCompatiblePackageJsonEntry
   ): Promise<ModuleVerificationResult | null> => {
+    value = filter(value);
+
     if (!value.packageJsonProperties) {
       // Verify that package.json does not exist on disk.
       if (context.relFilesOnDisk.indexOf("package.json") !== -1) {
@@ -125,6 +145,8 @@ export const NpmCompatiblePackageJsonEntryHandler: IEntryHandler<
   },
 
   toDeterministicString: (value: NpmCompatiblePackageJsonEntry): string => {
+    value = filter(value);
+
     return normalizeSync(value.packageJsonProperties) + "\n" + value.sha512;
   },
 

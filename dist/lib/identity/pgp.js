@@ -23,8 +23,16 @@ exports.PgpIdentityProvider = {
         const privateKeyFileContents = yield fsPromise_1.readFilePromise(context.privateKeyPath);
         const privateKey = yield openpgp.key.readArmored(privateKeyFileContents);
         const privateKeyObject = privateKey.keys[0];
-        if (context.privateKeyPassphrase !== undefined) {
+        try {
             yield privateKeyObject.decrypt(context.privateKeyPassphrase);
+        }
+        catch (err) {
+            if (err.message === "Key packet is already decrypted.") {
+                // allow
+            }
+            else {
+                throw err;
+            }
         }
         const text = new openpgp.cleartext.CleartextMessage(deterministicString, null /* function typedef is wrong here */);
         const options = {

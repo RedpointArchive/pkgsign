@@ -26,6 +26,19 @@ function sha512OfObject(value, properties) {
     const hashStr = hash.digest("hex");
     return hashStr;
 }
+function filter(val) {
+    const v = {
+        packageJsonProperties: val.packageJsonProperties,
+        sha512: val.sha512
+    };
+    if (v.packageJsonProperties) {
+        v.packageJsonProperties = v.packageJsonProperties
+            // exclude _XXX properties
+            .filter(value => value.indexOf("_") != 0)
+            .sort();
+    }
+    return v;
+}
 exports.NpmCompatiblePackageJsonEntryHandler = {
     getEntryType: () => {
         return "npmCompatiblePackageJson/v1alpha2";
@@ -52,12 +65,13 @@ exports.NpmCompatiblePackageJsonEntryHandler = {
             // include it in the list of files to directly hash.
             return null;
         }
-        return {
+        return filter({
             packageJsonProperties: Object.keys(packageJson).sort(),
             sha512: yield sha512OfObject(packageJson, Object.keys(packageJson))
-        };
+        });
     }),
     verifyEntry: (context, value) => __awaiter(this, void 0, void 0, function* () {
+        value = filter(value);
         if (!value.packageJsonProperties) {
             // Verify that package.json does not exist on disk.
             if (context.relFilesOnDisk.indexOf("package.json") !== -1) {
@@ -87,6 +101,7 @@ exports.NpmCompatiblePackageJsonEntryHandler = {
         return null;
     }),
     toDeterministicString: (value) => {
+        value = filter(value);
         return jsonNormalize_1.normalizeSync(value.packageJsonProperties) + "\n" + value.sha512;
     },
     getIdentity: (value) => {

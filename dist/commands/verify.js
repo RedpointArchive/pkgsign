@@ -38,6 +38,7 @@ class VerifyOptions extends clime_1.Options {
         this.nonInteractive = false;
         this.packageName = "";
         this.enableTestTrustStore = false;
+        this.allowUnsignedPackages = false;
     }
 }
 __decorate([
@@ -71,6 +72,14 @@ __decorate([
     }),
     __metadata("design:type", Boolean)
 ], VerifyOptions.prototype, "enableTestTrustStore", void 0);
+__decorate([
+    clime_1.option({
+        name: "allow-unsigned-packages",
+        toggle: true,
+        description: "verify doesn't fail on unsigned packages"
+    }),
+    __metadata("design:type", Boolean)
+], VerifyOptions.prototype, "allowUnsignedPackages", void 0);
 exports.VerifyOptions = VerifyOptions;
 let default_1 = class default_1 extends clime_1.Command {
     execute(path, options) {
@@ -295,7 +304,9 @@ let default_1 = class default_1 extends clime_1.Command {
                         (result.reason || ""));
                 }
             }
-            if (compromisedCount > 0 || unsignedCount > 0 || untrustedCount > 0) {
+            if (compromisedCount > 0 ||
+                (!options.allowUnsignedPackages && unsignedCount > 0) ||
+                untrustedCount > 0) {
                 return false;
             }
             else {

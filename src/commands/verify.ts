@@ -38,6 +38,12 @@ export class VerifyOptions extends Options {
     description: "enables the test trust store, for debugging purposes only"
   })
   enableTestTrustStore: boolean = false;
+  @option({
+    name: "allow-unsigned-packages",
+    toggle: true,
+    description: "verify doesn't fail on unsigned packages"
+  })
+  allowUnsignedPackages: boolean = false;
 }
 
 @command({
@@ -326,7 +332,11 @@ export default class extends Command {
       }
     }
 
-    if (compromisedCount > 0 || unsignedCount > 0 || untrustedCount > 0) {
+    if (
+      compromisedCount > 0 ||
+      (!options.allowUnsignedPackages && unsignedCount > 0) ||
+      untrustedCount > 0
+    ) {
       return false;
     } else {
       return true;

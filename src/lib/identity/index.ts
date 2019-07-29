@@ -3,7 +3,7 @@ import { ITrustStore } from "../trustStore";
 
 export interface IIdentityProviderSigningContext {
   privateKeyPath: string;
-  privateKeyPassphrase?: string;
+  privateKeyPassphrase: string;
   publicKeyHttpsUrl: string;
 }
 

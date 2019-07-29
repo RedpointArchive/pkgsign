@@ -27,7 +27,6 @@
       "entry": "npmCompatiblePackageJson/v1alpha2",
       "value": {
         "packageJsonProperties": [
-          "_ignored",
           "dependencies",
           "devDependencies",
           "files",
@@ -68,5 +67,5 @@
       }
     }
   ],
-  "signature": "-----BEGIN PGP SIGNATURE-----\nVersion: OpenPGP.js v4.5.5\nComment: https://openpgpjs.org\n\nwsBcBAEBCAAGBQJdPnUPAAoJEIsFJbVEZAX3zmIH/200pe7NuS2MkyuNgeTV\nPfHD1TffqwszkiQW0WLBI1uVJqbJL91ytEatCRfi6D0FtajbHz+fuzbiAMcU\n7Pnpyr7buA68N4d5rjQsdKUkw4V1AXQNFBBBVpOk4EUgAAs8uOJlaqNG0O6D\ncI/NiM9JVV0/neogT7XAWf9MVq9uTKCR2upcc1cZ/aejsUnOKZT28RnZHFa4\nux7AFF8yrBo7NkEjgt6xQWNu2+hn6WILAW0lHJLSbzgakVN5z4xmLs8+lSTE\nREmI+I6q3ZhvxqkCs+5ym88aQar2OdqWmxfoIDH0sKn3dnHcZ0yC37QHTEfB\nNQF+Ar2eS6xXnC6SQeQF8Wg=\n=xO1h\n-----END PGP SIGNATURE-----\n"
+  "signature": "-----BEGIN PGP SIGNATURE-----\nVersion: OpenPGP.js v4.5.5\nComment: https://openpgpjs.org\n\nwsBcBAEBCAAGBQJdPoanAAoJEIsFJbVEZAX3q40IAJy4fh7EVVXyGqph3EKO\nRoTSItpk8h7ztWb3w3qNKJPCVKw9nhPpsob33rV7sqAE4pshdiD3Tvzc4pIm\nftcROsr0IwTl6QHj7wYNg0HlIf5msXEtNf10GgvgKXHySlB+eLszvETCVeHy\nVisJEJBiAe7XO1rZybbgpXjndVQWsxvhdqiLw+z7tXDTXg54sLF6w7uDKHjy\n2RR3VI1RMz/CqyyIU6sASD7ABbVfafSQsN610p2bkvIm3XbipmeOYSBwXD6F\nqwHzfmPjPZYbYoHmk6ntcpQsdWfivMqCvjSHohrzMAdsKXxOwSDO7ja2Oa6v\nMgP9/DJ090xnfctb9gCp3RI=\n=LLNT\n-----END PGP SIGNATURE-----\n"
 }

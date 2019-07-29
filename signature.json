@@ -66,7 +66,7 @@
           },
           {
             "path": "dist/lib/entryHandlers/npmCompatiblePackageJsonEntryHandler.js",
-            "sha512": "ae1910ee9e1b54a232a6e7dd4e6263774773858925505aae5671027166e86d8269a6c6cdcd556c89a64d6663f52c6f21e0db750631f2403c57f5cf826c4d46ba"
+            "sha512": "6f5c19bd200edd95bdbbd40a7889032a74bdad358f306596adc755ac9e8ae237dff3b8b58f49bb54af550bf6089126b0be656341c749c7bbd2c3bd1a5107c920"
           },
           {
             "path": "dist/lib/entryHandlers/packageJsonEntryHandler.js",
@@ -74,7 +74,7 @@
           },
           {
             "path": "dist/lib/identity/pgp.js",
-            "sha512": "c8cf5275af400e244bdae3de8345428a616bfcb91225125bfd9cd7cba597a425e4ea474aa99f6ed9e54cc33c8cce0d04c9c4cabbd790d6c08c0ba53eed5412aa"
+            "sha512": "e1efd72ee77d51546ef47714f1fa536aa7b7a41fe0c31d2bba3bd86790464fd0e9874385972cd262808945945e57dac70780f6e4bd4265e78f6f4267f37f2cd7"
           },
           {
             "path": "dist/lib/entryHandlers/registry.js",
@@ -106,7 +106,7 @@
           },
           {
             "path": "dist/commands/verify.js",
-            "sha512": "b16042417816ea460e4897aa335c8a97ae489e13041f7cfd225df7ec731bfbef3229c7b23e97b4d23bfac09c9da16f3c624c3263e2082b30a1d49fe77602365f"
+            "sha512": "043c5753d7f343ad3b6b3ad1e08c4e30e990d887a27fa454c2ea069c7f6b8b60bb18eb9aca13b6731a4c50f1dceb4048139cd3681158712f089f02b729e45531"
           },
           {
             "path": ".vscode/settings.json",
@@ -122,7 +122,7 @@
           },
           {
             "path": "dist/lib/entryHandlers/filesEntryHandler.js.map",
-            "sha512": "13e5b65810655b4e29cc4dc8b4c1b87973ba7349ecde393fa25f2747da116ecb9571334de17274418f16112b06a991a17f29f277a9ae6867416ab6fcd281616b"
+            "sha512": "3c3f57e58ddf3de90dfc8cb976adffd5a522ebabd82a370c287aa7ea98a16213b703d4cfbdb8434988e1351f7ba9de03a9d4c374f80e5655e735fc7d03193afb"
           },
           {
             "path": "dist/lib/util/fsPromise.js.map",
@@ -166,7 +166,7 @@
           },
           {
             "path": "dist/lib/entryHandlers/npmCompatiblePackageJsonEntryHandler.js.map",
-            "sha512": "96d459583baa50846c49e644e128d11421d8cd5ccc6bab04fb74eb2b3693f8e20c17b35b6fc2fc51771f96092cf7aa9c20ab462fdd501f840fd74f119f438d78"
+            "sha512": "fe5544bda31e3491139827de8b24ddf5742cd4648b616ae14e3a41cb8a9967b89e526ece201863c62c91d66ca155da4113f4541ff3e922a9f29b539775d4dc0d"
           },
           {
             "path": "dist/lib/entryHandlers/packageJsonEntryHandler.js.map",
@@ -174,7 +174,7 @@
           },
           {
             "path": "dist/lib/identity/pgp.js.map",
-            "sha512": "bb49c468cd76a216ae0088956e32476c58d67c191cf8cb480787cb350e6528126fadfc75ec54cbffa11cfa8002bb18d77af8d0ac9d972515047154ba48d83e7e"
+            "sha512": "e0103b3320818e1b7fa1aa562a116f006eede24cbe6efd7ec136d6521188f1b2000f94822d0a9d9da7e5901741bba65b21dc9ffe73388043b284954e3acfb79d"
           },
           {
             "path": "dist/lib/entryHandlers/registry.js.map",
@@ -206,7 +206,7 @@
           },
           {
             "path": "dist/commands/verify.js.map",
-            "sha512": "47a0fb964218e3c31423d7f57df0e6c17dd77beba601b8f5638095c40f5f12244c375265195a1d9958c0fe3adc23d45ef52b3ac5db97dbad2a9d8f731882cfdc"
+            "sha512": "68d2518e8ddaf6e33cd4070a650b1ef711123547b071962aa77eb599aaead19160075b19e83f2fafe744dc34adf3930af9a955b10302e2d9c3a691ea1958abde"
           },
           {
             "path": "LICENSE.md",
@@ -230,11 +230,11 @@
           },
           {
             "path": "dist/lib/entryHandlers/filesEntryHandler.d.ts",
-            "sha512": "54c446a0ff2ac5b312e3c4d1cdc6b372d76b3c4d82a70a1343b3bd9e66e7391fb798bb3007696db4ce6b5e284918ec1103b70c6f12dd61d88d53702ad8b3b433"
+            "sha512": "27e31a3f3e2c9327e11225eb1fd3b2633e0bb3a62d7cfc1be356b8c9bb538c62c0897b5c3e92de2b9f02a940e0b1f63c7f6895d0fc07270833df8b712b370114"
           },
           {
             "path": "src/lib/entryHandlers/filesEntryHandler.ts",
-            "sha512": "288d996fa744f9807f5e570cf9b696facb0294a1807cf4a2a7539e5712d9401176f13457bc459287f43bb01b44c257df8b660fdf90a6baa1d431b1612acfbfda"
+            "sha512": "d18ba38fd99176903d7341da1eacf9b9e1f97d42345de2b4409d031361c0f24b38d7bc6a53a5cb0ba358e70dc66425d59979a04462327b9ba5c3cae36448f19b"
           },
           {
             "path": "dist/lib/util/fsPromise.d.ts",
@@ -322,7 +322,7 @@
           },
           {
             "path": "src/lib/entryHandlers/npmCompatiblePackageJsonEntryHandler.ts",
-            "sha512": "aaf227a7ea1c8b739fe1d212d8462b23ac25cee80e2580a279284df9782ac959aaebd74a0d620d85f7be3bae13af856a86b5b8c8b73a29a9d0466445059c7179"
+            "sha512": "96136c11473dbd67ba242578160aa72782e7043f6a894594a86d82967603a9e89a48a367379ecdea3021185d6588bc30154adf5902f4a7a9753f81ae1cfe7bee"
           },
           {
             "path": "dist/lib/entryHandlers/packageJsonEntryHandler.d.ts",
@@ -338,7 +338,7 @@
           },
           {
             "path": "src/lib/identity/pgp.ts",
-            "sha512": "84860094d5fa074739faf956f5f4d8638b417bb847d4817b44ef08011cfa7bfc1c9b6ad02ac0b6254a183af60bd73216100174fdc654c55ef10cf2887f3ffb91"
+            "sha512": "2a78a5835664a89da16dfa8a9f04b9307726fb57f07f5ffb46c7a2f71fc3f36d46ea2fd40bde67d2243bb7021c7a525668c4ed9fc6c6b3d6b31dee5e7ae22027"
           },
           {
             "path": "dist/lib/entryHandlers/registry.d.ts",
@@ -398,11 +398,11 @@
           },
           {
             "path": "dist/commands/verify.d.ts",
-            "sha512": "209d7ce0df9345bbd68154fc61222e82656f66e441cbe5f5923f715dcedce23b29e2682620f1332864a54a2ab48938d6eb839dfe2f34994757517f6ca8d52f59"
+            "sha512": "536a28e7eb24d27bf20742dc17a05e942ab2e3422b10556a2151a8a556343473881f60c14f035c5d7409b9f65820deca3e887ea45619a4bf321bbb4fdedb4a62"
           },
           {
             "path": "src/commands/verify.ts",
-            "sha512": "02b8d9e67ea21419229f844ac0ce214582df893170ee788d3bb1f7cd32abbce509aa0cce4e88184d806a1cd25d055265419542a3b5600358988a0fa20df84ef4"
+            "sha512": "974dd88f375587832716b63365e1b7da108f75314d0a8d787aa94b82237f72d18d7803b53345d052ccaa3f378ff25851eb68d958e5f21ea55376adabb2169902"
           }
         ]
       }
@@ -432,7 +432,7 @@
           "scripts",
           "version"
         ],
-        "sha512": "b4c87ab680a80daa9fea824bfafe5347aedb30b1f71280dc02447d701d8c0da88855a3d63704cbe977eabaf80ad9850b0b06014265adb553f26d6315e9564cca"
+        "sha512": "abe804e48b7294b7b4f6f316b13d61b503445245848e513bb5e90d96d190787c82284b3676cb676bf90115a69081be3c737451a0c529c16d0848bc992454517e"
       }
     },
     {
@@ -440,7 +440,7 @@
       "value": {
         "packageJson": {
           "name": "pkgsign",
-          "version": "0.2.0-alpha.5",
+          "version": "0.2.0-alpha.7",
           "description": "A CLI tool for signing and verifying npm and yarn packages.",
           "main": "index.js",
           "repository": "https://github.com/RedpointGames/pkgsign",
@@ -474,12 +474,12 @@
             "build": "yarn clean && tsc && yarn normalize",
             "pkgsign": "yarn build && node dist/index.js",
             "sign": "yarn build && node dist/index.js sign .",
-            "verify": "yarn build && node dist/index.js verify . --full",
+            "verify": "yarn build && node dist/index.js verify . --full --allow-unsigned-packages",
             "signedpack": "yarn build && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz",
             "release": "yarn test && yarn build && node util/ensure-release.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz",
             "prerelease": "yarn test && yarn build && node util/ensure-prerelease.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz --tag next",
-            "test": "ava-ts test/*.ts && yarn build && node dist/index.js sign . && node dist/index.js verify .",
-            "selfverify": "yarn build && node dist/index.js sign . && node dist/index.js verify . --full"
+            "test": "ava-ts test/*.ts && yarn build && node dist/index.js sign . && node dist/index.js verify . --allow-unsigned-packages",
+            "selfverify": "yarn build && node dist/index.js sign . && node dist/index.js verify . --full --allow-unsigned-packages"
           },
           "devDependencies": {
             "@types/inquirer": "^6.0.3",
@@ -502,5 +502,5 @@
       }
     }
   ],
-  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJdPnRACRB89yvKKRr01wAAgRYQACAGWJTv2fKRHo+lzRrlqf8B\nhpbWzKSAcTmkgzShYObdCxtiegCr8B/7jrB20NBE9KN0INMexhrCDwbZ/jfh0dNi\no4Xh6IWQEr14A6Qsmub57oCVeXVCy9vwaEqRTRLuJ13zxJu6B2l1bitErZlsRVHu\nhd02KMdXTiaehksC7jJb0xID0kiDy+aVJ/I+LqCcrztL2vN8NWnaEf9L9nn/Y7be\nMRF/U8FFrNGLWXoBTkpjuekqZ0ujHd+iVF4skOLnroa6/sRxt6pdcdtZY0eAqc/F\n8fy5VBgBS8vM/J/eFiJBwPAbUj0jAxfBkWTVyriKg5+TRa6mllgC1DOt6rqVwoWB\nELNQsN+PdtFYHx/kNn5XZsdrduhJpy8R1+xEk9mecAIp23RtfRR75kHBMChN3DJ+\ngVH8+mjTies0Z9uJCyFuhr0qP2vlRac3b56tRd6/Bsyh6CC8XKCJRfMovJPGXJN2\nH1fw1mwaYZkqRkvhJ8vwVn6qN66VKT+8M5qIrRRLH+eLV8Wx9ahuqfHF6BIq8xUY\n8soD7ZhnsFI6WrDaKoeRoWENTbAoQt3jcXmssOaL+i3W5A/FcqtlZPWBli7JXUOj\nST2qrjvmCgKrvxvLtEHRPL6FNBoainq7xM1C8pFpg9Ua15EApeP13m69tR8YMNBR\nIa8d9EFftbelkgd16Imw\n=SIxC\n-----END PGP SIGNATURE-----\n"
+  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJdPoerCRB89yvKKRr01wAAzToQAJBFFSh9b4B4Ty8iaUJkjjiN\nEiuunyx6rhF81dpB3SozlMNMnfbojy5ckDQBQPMJylKEl+3BrbzKsjwv3gnyB2u8\n4LQBZLB6mX1cf36JGk/jkLFNW2DMFmIkY2fzqqkRZyh/rfcDcEp3EvvBXWVKlzf4\n5TUqGIPa1mG4ryC74TWk/auLe6Llo+Qio09sz57VDTosHA+XlOQPJJZOlEUjRBgf\ncr9mzfyB2MEqPGyDS0LXjiJv9qT3RmdBia36V6evmY0SvPxRdiFRtPGBF5dho7Mb\nQsq2uvJE8DK0Y8W7HdYczD54sfS7cejrKy/s0ouwimqy/zUeoORkuHs2qZd8IwPv\nFm4YqckODa09WZExStAXQ/R8aJmiYY66lBvxhjtSj6hM+KQQwcqfSJ3KxFfHsd2a\n8JyIJn0ATAT1OkDiqZZv9kW8wMvCUP6bxQNU/GMdl+hD+6zdpb0Fb41p8+oUYI6L\n5kDDZf8F0N6Mh428oO3QOfqQC0G24eJvi/qqfqCrGxM4Sct+XR/NegBKoB4f4qw8\nI6ii1gfXXfUY0Wn9zLgvJVysE9I7/eehtzMdLUmqAN0ClHdtwNzGE8e8OkmJSG8r\ntjQxj6G+TVRg2IJCtvnxYcEN7zpqo2cYdu9JZcwabKl6ZwbKNehB2xNVYu/FJ3jL\nSF+678koXNdr8AGsBNJ+\n=pjJ4\n-----END PGP SIGNATURE-----\n"
 }

@@ -28,8 +28,14 @@ export const PgpIdentityProvider: IIdentityProvider = {
     );
     const privateKey = await openpgp.key.readArmored(privateKeyFileContents);
     const privateKeyObject = privateKey.keys[0];
-    if (context.privateKeyPassphrase !== undefined) {
+    try {
       await privateKeyObject.decrypt(context.privateKeyPassphrase);
+    } catch (err) {
+      if (err.message === "Key packet is already decrypted.") {
+        // allow
+      } else {
+        throw err;
+      }
     }
     const text = new openpgp.cleartext.CleartextMessage(
       deterministicString,

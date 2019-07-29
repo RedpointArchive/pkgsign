@@ -29,6 +29,10 @@ async function verify(testName: string): Promise<boolean> {
   return await cmd.executeInternal(testName, opts);
 }
 
+function jsonParse(signatureJson: string): { entries: Entry<any>[] } {
+  return JSON.parse(signatureJson);
+}
+
 test("signature has packageJson entry present", async t => {
   const testName = "signature-has-packageJson-entry-present";
   t.true(await sign(testName));
@@ -36,7 +40,7 @@ test("signature has packageJson entry present", async t => {
     fs.existsSync(path.join(testName, "signature.json")),
     "signature.json is not present"
   );
-  const json = JSON.parse(
+  const json = jsonParse(
     await readFilePromise(path.join(testName, "signature.json"))
   );
   t.true(
@@ -58,7 +62,7 @@ test("signature packageJson omits NPM fields on sign", async t => {
     fs.existsSync(path.join(testName, "signature.json")),
     "signature.json is not present"
   );
-  const json = JSON.parse(
+  const json = jsonParse(
     await readFilePromise(path.join(testName, "signature.json"))
   );
   t.true(
@@ -79,13 +83,35 @@ test("signature packageJson omits NPM fields on sign", async t => {
     (entry: Entry<any>) => entry.entry === "packageJson/v1alpha2"
   )[0];
 
+  t.not(
+    npmCompatibleEntry,
+    undefined,
+    "signature.json does not contain npmCompatiblePackageJson/v1alpha2"
+  );
+  t.not(
+    packageJsonEntry,
+    undefined,
+    "signature.json does not contain packageJson/v1alpha2"
+  );
+
+  t.not(
+    npmCompatibleEntry.value.packageJsonProperties,
+    undefined,
+    "signature.json npmCompatiblePackageJson/v1alpha2 does not contain packageJsonProperties"
+  );
+  t.not(
+    packageJsonEntry.value.packageJson,
+    undefined,
+    "signature.json packageJson/v1alpha2 does not contain packageJson"
+  );
+
   t.is(
-    npmCompatibleEntry.packageJsonProperties.sort().indexOf("_from"),
+    npmCompatibleEntry.value.packageJsonProperties.sort().indexOf("_from"),
     -1,
     "signature.json npmCompatiblePackageJson/v1alpha2 contains _from property"
   );
   t.is(
-    Object.keys(packageJsonEntry.packageJson).length,
+    Object.keys(packageJsonEntry.value.packageJson).length,
     2,
     "signature.json packageJson/v1alpha2 doesn't contain all properties"
   );
@@ -101,7 +127,7 @@ test("check signature of package", async t => {
 
   // sign test package
   t.true(await sign(testName));
-  const originalPackageSignature = JSON.parse(
+  const originalPackageSignature = jsonParse(
     await readFilePromise(path.join(testName, "signature.json"))
   );
   const originalPackageJson = JSON.parse(
@@ -134,15 +160,19 @@ test("check signature of package", async t => {
     (entry: Entry<any>) => entry.entry === "files/v1alpha2"
   )[0];
   t.is(
-    filesEntry.files.length,
+    filesEntry.value.files.length,
     2,
     "signature.json files/v1alpha2 has only 2 files"
   );
   t.true(
-    filesEntry.files.some((entry: FileEntry) => entry.path === "dist/index.js")
+    filesEntry.value.files.some(
+      (entry: FileEntry) => entry.path === "dist/index.js"
+    )
   );
   t.true(
-    filesEntry.files.some((entry: FileEntry) => entry.path === "README.md")
+    filesEntry.value.files.some(
+      (entry: FileEntry) => entry.path === "README.md"
+    )
   );
 
   // all properties ignored, starting with underscore
@@ -150,7 +180,7 @@ test("check signature of package", async t => {
     (entry: Entry<any>) => entry.entry === "npmCompatiblePackageJson/v1alpha2"
   )[0];
   t.is(
-    npmCompatibleEntry.packageJsonProperties.sort().indexOf("_ignored"),
+    npmCompatibleEntry.value.packageJsonProperties.sort().indexOf("_ignored"),
     -1,
     "signature.json npmCompatiblePackageJson/v1alpha2 contains _ignored property"
   );
@@ -159,7 +189,7 @@ test("check signature of package", async t => {
     (entry: Entry<any>) => entry.entry === "packageJson/v1alpha2"
   )[0];
   t.deepEqual(
-    packageJsonEntry.packageJson,
+    packageJsonEntry.value.packageJson,
     originalPackageJson,
     "packageJson of packageJson/v1alpha2 doesn't match package.json from package"
   );
