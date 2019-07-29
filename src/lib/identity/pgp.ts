@@ -28,7 +28,7 @@ export const PgpIdentityProvider: IIdentityProvider = {
     );
     const privateKey = await openpgp.key.readArmored(privateKeyFileContents);
     const privateKeyObject = privateKey.keys[0];
-    if (context.privateKeyPassphrase !== "") {
+    if (context.privateKeyPassphrase !== undefined) {
       await privateKeyObject.decrypt(context.privateKeyPassphrase);
     }
     const text = new openpgp.cleartext.CleartextMessage(

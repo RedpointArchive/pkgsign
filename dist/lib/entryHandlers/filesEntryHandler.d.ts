@@ -1,5 +1,5 @@
 import { IEntryHandler } from ".";
-interface FileEntry {
+export interface FileEntry {
     path: string;
     sha512: string;
 }

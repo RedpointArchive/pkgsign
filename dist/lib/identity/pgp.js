@@ -23,7 +23,7 @@ exports.PgpIdentityProvider = {
         const privateKeyFileContents = yield fsPromise_1.readFilePromise(context.privateKeyPath);
         const privateKey = yield openpgp.key.readArmored(privateKeyFileContents);
         const privateKeyObject = privateKey.keys[0];
-        if (context.privateKeyPassphrase !== "") {
+        if (context.privateKeyPassphrase !== undefined) {
             yield privateKeyObject.decrypt(context.privateKeyPassphrase);
         }
         const text = new openpgp.cleartext.CleartextMessage(deterministicString, null /* function typedef is wrong here */);
@@ -55,7 +55,7 @@ exports.PgpIdentityProvider = {
                 const publicKeys = (yield openpgp.key.readArmored(rawPublicKeys)).keys;
                 const verifyOptions = {
                     message: openpgp.message.fromText(deterministicString),
-                    signature: openpgp.signature.readArmored(signature),
+                    signature: yield openpgp.signature.readArmored(signature),
                     publicKeys: publicKeys
                 };
                 const verifiedMessage = yield openpgp.verify(verifyOptions);
