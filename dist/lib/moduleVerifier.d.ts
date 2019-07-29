@@ -1,19 +1,7 @@
-import { SignatureIdentity } from "./deterministicSignature";
-import { TrustStore } from "./trustStore";
-export declare enum ModuleVerificationStatus {
-    Compromised = 0,
-    Unsigned = 1,
-    Untrusted = 2,
-    Trusted = 3,
-}
-export interface ModuleVerificationResult {
-    status: ModuleVerificationStatus;
-    packageName: string;
-    reason?: string;
-    untrustedIdentity?: SignatureIdentity;
-}
+import { ITrustStore } from "./trustStore";
+import { ModuleVerificationResult } from "./types";
 export declare class ModuleVerifier {
     private trustStore;
-    constructor(trustStore: TrustStore);
+    constructor(trustStore: ITrustStore);
     verify(dir: string, relFilesOnDisk: string[], expectedPackageName: string): Promise<ModuleVerificationResult>;
 }

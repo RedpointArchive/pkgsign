@@ -24,162 +24,213 @@ const clime_1 = require("clime");
 const fs_1 = require("fs");
 const moduleHierarchyVerifier_1 = require("../lib/moduleHierarchyVerifier");
 const moduleVerifier_1 = require("../lib/moduleVerifier");
-const prompt = require("prompt");
+const inquirer = require("inquirer");
 const path = require("path");
 const path_1 = require("path");
 const trustStore_1 = require("../lib/trustStore");
-const fsPromise_1 = require("../lib/fsPromise");
+const telemetry_1 = require("../lib/telemetry");
+const fsPromise_1 = require("../lib/util/fsPromise");
+const types_1 = require("../lib/types");
 class VerifyOptions extends clime_1.Options {
+    constructor() {
+        super(...arguments);
+        this.full = false;
+        this.nonInteractive = false;
+        this.packageName = "";
+        this.enableTestTrustStore = false;
+        this.allowUnsignedPackages = false;
+    }
 }
 __decorate([
     clime_1.option({
-        name: 'full',
+        name: "full",
         toggle: true,
-        description: 'show verification status of individual packages',
+        description: "show verification status of individual packages"
     }),
     __metadata("design:type", Boolean)
 ], VerifyOptions.prototype, "full", void 0);
 __decorate([
     clime_1.option({
-        name: 'non-interactive',
+        name: "non-interactive",
         toggle: true,
-        description: 'do not prompt to trust packages that are untrusted',
+        description: "do not prompt to trust packages that are untrusted"
     }),
     __metadata("design:type", Boolean)
 ], VerifyOptions.prototype, "nonInteractive", void 0);
 __decorate([
     clime_1.option({
-        name: 'package-name',
-        description: 'if verifying a tarball, this is the expected package name',
+        name: "package-name",
+        description: "if verifying a tarball, this is the expected package name"
     }),
     __metadata("design:type", String)
 ], VerifyOptions.prototype, "packageName", void 0);
+__decorate([
+    clime_1.option({
+        name: "enable-test-trust-store",
+        toggle: true,
+        description: "enables the test trust store, for debugging purposes only"
+    }),
+    __metadata("design:type", Boolean)
+], VerifyOptions.prototype, "enableTestTrustStore", void 0);
+__decorate([
+    clime_1.option({
+        name: "allow-unsigned-packages",
+        toggle: true,
+        description: "verify doesn't fail on unsigned packages"
+    }),
+    __metadata("design:type", Boolean)
+], VerifyOptions.prototype, "allowUnsignedPackages", void 0);
 exports.VerifyOptions = VerifyOptions;
 let default_1 = class default_1 extends clime_1.Command {
     execute(path, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (path.endsWith(".tgz") && fs_1.lstatSync(path).isFile()) {
-                yield this.verifyTarball(path, options);
+            if (yield this.executeInternal(path, options)) {
+                process.exitCode = 0;
             }
             else {
-                yield this.verifyDirectory(path, options);
+                process.exitCode = 1;
+            }
+        });
+    }
+    executeInternal(path, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (path === undefined) {
+                // Default path to the current directory if not provided.
+                path = ".";
+            }
+            if (path.endsWith(".tgz") && fs_1.lstatSync(path).isFile()) {
+                return yield this.verifyTarball(path, options);
+            }
+            else {
+                return yield this.verifyDirectory(path, options);
             }
         });
     }
     verifyTarball(tarballPath, options) {
         return __awaiter(this, void 0, void 0, function* () {
             const wd = yield fsPromise_1.createWorkingDirectory();
-            console.log('extracting unsigned tarball...');
+            console.log("extracting unsigned tarball...");
             yield fsPromise_1.decompress(tarballPath, wd);
-            console.log('building file list...');
+            console.log("building file list...");
             const base = path.join(wd, "package");
-            const files = (yield fsPromise_1.recursivePromise(base)).map((fullPath) => fullPath.substr(base.length + 1).replace(/\\/g, '/'));
-            console.log('verifying package...');
-            const moduleVerifier = new moduleVerifier_1.ModuleVerifier(new trustStore_1.TrustStore());
-            let result = yield moduleVerifier.verify(base, files, options.packageName || '');
+            const files = (yield fsPromise_1.recursivePromise(base)).map(fullPath => fullPath.substr(base.length + 1).replace(/\\/g, "/"));
+            console.log("verifying package...");
+            const moduleVerifier = new moduleVerifier_1.ModuleVerifier(options.enableTestTrustStore ? new trustStore_1.TestTrustStore() : new trustStore_1.TrustStore());
+            let result = yield moduleVerifier.verify(base, files, options.packageName || "");
+            telemetry_1.queueTelemetryFromModuleVerificationResult("verify-module", result);
             // Prompt user to trust package if untrusted.
-            if (result.status == moduleVerifier_1.ModuleVerificationStatus.Untrusted && !options.nonInteractive) {
-                prompt.start();
-                let identityString = '';
+            if (result.status == types_1.ModuleVerificationStatus.Untrusted &&
+                !options.nonInteractive) {
+                let identityString = "";
                 if (result.untrustedIdentity.keybaseUser !== undefined) {
-                    identityString = result.untrustedIdentity.keybaseUser + ' on keybase.io';
+                    identityString =
+                        result.untrustedIdentity.keybaseUser + " on keybase.io";
                 }
                 else {
-                    identityString = 'public key at ' + result.untrustedIdentity.pgpPublicKeyUrl;
+                    identityString =
+                        "public key at " + result.untrustedIdentity.pgpPublicKeyUrl;
                 }
-                const trustResults = yield new Promise((resolve, reject) => {
-                    prompt.get({
-                        name: 'pkg',
-                        type: 'boolean',
-                        description: 'Package \'' + result.packageName + '\' is not trusted, but is signed by ' + identityString + '. ' +
-                            'Do you want to trust this identity to sign \'' + result.packageName + '\' now and forever',
-                        required: true,
+                const trustResults = yield inquirer.prompt([
+                    {
+                        name: "pkg",
+                        type: "confirm",
+                        message: "Package '" +
+                            result.packageName +
+                            "' is not trusted, but is signed by " +
+                            identityString +
+                            ". " +
+                            "Do you want to trust this identity to sign '" +
+                            result.packageName +
+                            "' now and forever",
                         default: false
-                    }, (err, results) => {
-                        if (err) {
-                            reject(err);
-                        }
-                        else {
-                            resolve(results);
-                        }
-                    });
-                });
+                    }
+                ]);
                 let trustStore = new trustStore_1.TrustStore();
-                let didModify = false;
-                if (trustResults['pkg']) {
+                if (trustResults["pkg"]) {
                     yield trustStore.addTrusted(result.untrustedIdentity, result.packageName);
-                    didModify = true;
+                    if (!result.isPrivate) {
+                        telemetry_1.queueTelemetryFromModuleVerificationResult("grant-trust", result);
+                    }
                 }
-                result = yield moduleVerifier.verify(base, files, options.packageName || '');
+                else {
+                    if (!result.isPrivate) {
+                        telemetry_1.queueTelemetryFromModuleVerificationResult("not-grant-trust", result);
+                    }
+                }
+                result = yield moduleVerifier.verify(base, files, options.packageName || "");
             }
             switch (result.status) {
-                case moduleVerifier_1.ModuleVerificationStatus.Compromised:
-                    process.exitCode = 1;
-                    console.log('package is compromised: ' + result.reason);
-                    break;
-                case moduleVerifier_1.ModuleVerificationStatus.Unsigned:
-                    process.exitCode = 1;
-                    console.log('package is unsigned: ' + result.reason);
-                    break;
-                case moduleVerifier_1.ModuleVerificationStatus.Untrusted:
-                    process.exitCode = 1;
-                    console.log('package is untrusted');
-                    break;
-                case moduleVerifier_1.ModuleVerificationStatus.Trusted:
-                    process.exitCode = 0;
-                    console.log('package is trusted');
-                    break;
+                case types_1.ModuleVerificationStatus.Compromised:
+                    console.log("package is compromised: " + result.reason);
+                    return false;
+                case types_1.ModuleVerificationStatus.Unsigned:
+                    console.log("package is unsigned: " + result.reason);
+                    return false;
+                case types_1.ModuleVerificationStatus.Untrusted:
+                    console.log("package is untrusted");
+                    return false;
+                case types_1.ModuleVerificationStatus.Trusted:
+                    console.log("package is trusted");
+                    return true;
             }
         });
     }
     verifyDirectory(path, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            let moduleHierarchyVerifier = new moduleHierarchyVerifier_1.ModuleHierarchyVerifier(path);
+            // Telemetry sending is done directly inside ModuleHierarchyVerifier, per package.
+            let moduleHierarchyVerifier = new moduleHierarchyVerifier_1.ModuleHierarchyVerifier(path, options.enableTestTrustStore ? new trustStore_1.TestTrustStore() : new trustStore_1.TrustStore());
             let results = yield moduleHierarchyVerifier.verify();
-            // First find any untrusted modules and ask the user if they
-            // want to trust them.
-            let promptStarted = false;
             let prompts = [];
             for (let path in results) {
                 let result = results[path];
-                if (result.status == moduleVerifier_1.ModuleVerificationStatus.Untrusted) {
-                    let identityString = '';
+                if (result.status == types_1.ModuleVerificationStatus.Untrusted) {
+                    let identityString = "";
                     if (result.untrustedIdentity.keybaseUser !== undefined) {
-                        identityString = result.untrustedIdentity.keybaseUser + ' on keybase.io';
+                        identityString =
+                            result.untrustedIdentity.keybaseUser + " on keybase.io";
                     }
                     else {
-                        identityString = 'public key at ' + result.untrustedIdentity.pgpPublicKeyUrl;
+                        identityString =
+                            "public key at " + result.untrustedIdentity.pgpPublicKeyUrl;
                     }
-                    if (prompts.filter((value) => path_1.basename(value.name) == result.packageName).length == 0) {
+                    if (prompts.filter(value => value.name !== undefined &&
+                        path_1.basename(value.name) == result.packageName).length == 0) {
                         prompts.push({
-                            name: path,
-                            type: 'boolean',
-                            description: 'Package \'' + result.packageName + '\' is not trusted, but is signed by ' + identityString + '. ' +
-                                'Do you want to trust this identity to sign \'' + result.packageName + '\' now and forever',
-                            required: true,
+                            name: Buffer.from(path).toString("base64"),
+                            type: "confirm",
+                            message: "Package '" +
+                                result.packageName +
+                                "' is not trusted, but is signed by " +
+                                identityString +
+                                ". " +
+                                "Do you want to trust this identity to sign '" +
+                                result.packageName +
+                                "' now and forever",
                             default: false
                         });
                     }
                 }
             }
             if (prompts.length > 0 && !options.nonInteractive) {
-                prompt.start();
                 let didModify = false;
-                const trustResults = yield new Promise((resolve, reject) => {
-                    prompt.get(prompts, (err, results) => {
-                        if (err) {
-                            reject(err);
-                        }
-                        else {
-                            resolve(results);
-                        }
-                    });
-                });
+                const trustResults = yield inquirer.prompt(prompts);
                 let trustStore = new trustStore_1.TrustStore();
                 for (let path in trustResults) {
-                    if (trustResults[path]) {
-                        yield trustStore.addTrusted(results[path].untrustedIdentity, results[path].packageName);
-                        didModify = true;
+                    let realpath = Buffer.from(path, "base64").toString("ascii");
+                    const result = results[realpath];
+                    if (result.status == types_1.ModuleVerificationStatus.Untrusted) {
+                        if (trustResults[path]) {
+                            yield trustStore.addTrusted(result.untrustedIdentity, result.packageName);
+                            didModify = true;
+                            if (!result.isPrivate) {
+                                telemetry_1.queueTelemetryFromModuleVerificationResult("grant-trust", result);
+                            }
+                        }
+                        else {
+                            if (!results[realpath].isPrivate) {
+                                telemetry_1.queueTelemetryFromModuleVerificationResult("not-grant-trust", result);
+                            }
+                        }
                     }
                 }
                 if (didModify) {
@@ -195,69 +246,80 @@ let default_1 = class default_1 extends clime_1.Command {
             for (let path in results) {
                 let result = results[path];
                 switch (result.status) {
-                    case moduleVerifier_1.ModuleVerificationStatus.Compromised:
+                    case types_1.ModuleVerificationStatus.Compromised:
                         compromisedCount++;
                         break;
-                    case moduleVerifier_1.ModuleVerificationStatus.Unsigned:
+                    case types_1.ModuleVerificationStatus.Unsigned:
                         unsignedCount++;
                         break;
-                    case moduleVerifier_1.ModuleVerificationStatus.Untrusted:
+                    case types_1.ModuleVerificationStatus.Untrusted:
                         untrustedCount++;
                         break;
-                    case moduleVerifier_1.ModuleVerificationStatus.Trusted:
+                    case types_1.ModuleVerificationStatus.Trusted:
                         trustedCount++;
                         break;
                 }
             }
-            console.log('package verification summary:');
-            console.log(compromisedCount + ' compromised');
-            console.log(unsignedCount + ' unsigned');
-            console.log(untrustedCount + ' untrusted');
-            console.log(trustedCount + ' trusted');
+            console.log("package verification summary:");
+            console.log(compromisedCount + " compromised");
+            console.log(unsignedCount + " unsigned");
+            console.log(untrustedCount + " untrusted");
+            console.log(trustedCount + " trusted");
             if (options.full) {
-                const padRight = (input) => {
-                    while (input.length < 25) {
-                        input = input + ' ';
+                let targetLength = 0;
+                for (let path in results) {
+                    if (results[path].packageName.length > targetLength) {
+                        targetLength = results[path].packageName.length;
+                    }
+                }
+                targetLength += 2;
+                const padRight = (input, len) => {
+                    while (input.length < len) {
+                        input = input + " ";
                     }
                     return input;
                 };
                 console.log();
                 for (let path in results) {
                     let result = results[path];
-                    let status = 'unknown';
+                    let status = "unknown";
                     switch (result.status) {
-                        case moduleVerifier_1.ModuleVerificationStatus.Compromised:
-                            status = 'compromised!';
+                        case types_1.ModuleVerificationStatus.Compromised:
+                            status = "compromised!";
                             break;
-                        case moduleVerifier_1.ModuleVerificationStatus.Unsigned:
-                            status = 'unsigned';
+                        case types_1.ModuleVerificationStatus.Unsigned:
+                            status = "unsigned";
                             break;
-                        case moduleVerifier_1.ModuleVerificationStatus.Untrusted:
-                            status = 'untrusted';
+                        case types_1.ModuleVerificationStatus.Untrusted:
+                            status = "untrusted";
                             break;
-                        case moduleVerifier_1.ModuleVerificationStatus.Trusted:
-                            status = 'trusted';
+                        case types_1.ModuleVerificationStatus.Trusted:
+                            status = "trusted";
                             break;
                     }
-                    console.log(padRight(results[path].packageName) + ' ' +
-                        padRight(status) + ' ' +
-                        (result.reason || ''));
+                    console.log(padRight(results[path].packageName, targetLength) +
+                        " " +
+                        padRight(status, 25) +
+                        " " +
+                        (result.reason || ""));
                 }
             }
-            if (compromisedCount > 0 || unsignedCount > 0 || untrustedCount > 0) {
-                process.exitCode = 1;
+            if (compromisedCount > 0 ||
+                (!options.allowUnsignedPackages && unsignedCount > 0) ||
+                untrustedCount > 0) {
+                return false;
             }
             else {
-                process.exitCode = 0;
+                return true;
             }
         });
     }
 };
 __decorate([
     __param(0, clime_1.param({
-        name: 'pkgdir|tarball',
-        description: 'path to package directory or tarball',
-        required: true,
+        name: "pkgdir|tarball",
+        description: "path to package directory or tarball",
+        required: false
     })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, VerifyOptions]),
@@ -265,7 +327,7 @@ __decorate([
 ], default_1.prototype, "execute", null);
 default_1 = __decorate([
     clime_1.command({
-        description: 'verify an npm/yarn package directory',
+        description: "verify an npm/yarn package directory"
     })
 ], default_1);
 exports.default = default_1;

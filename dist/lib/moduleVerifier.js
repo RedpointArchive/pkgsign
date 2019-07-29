@@ -8,158 +8,182 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const deterministicSignature_1 = require("./deterministicSignature");
-const fsPromise_1 = require("./fsPromise");
 const path = require("path");
-const keybaseVerifier_1 = require("./keybaseVerifier");
-const pgpVerifier_1 = require("./pgpVerifier");
-var ModuleVerificationStatus;
-(function (ModuleVerificationStatus) {
-    // When the data on disk or in the package explicitly does not
-    // match the expected state of the signature (either extra files,
-    // missing files, mismatched hashes or signature doesn't verify).
-    ModuleVerificationStatus[ModuleVerificationStatus["Compromised"] = 0] = "Compromised";
-    // When the package doesn't have a signature or it can't be loaded.
-    ModuleVerificationStatus[ModuleVerificationStatus["Unsigned"] = 1] = "Unsigned";
-    // When the package has a valid signature, but the user or device 
-    // doesn't trust the associated identity.
-    ModuleVerificationStatus[ModuleVerificationStatus["Untrusted"] = 2] = "Untrusted";
-    // When the package has a valid signature and the user or device
-    // trusts the associated identity.
-    ModuleVerificationStatus[ModuleVerificationStatus["Trusted"] = 3] = "Trusted";
-})(ModuleVerificationStatus = exports.ModuleVerificationStatus || (exports.ModuleVerificationStatus = {}));
+const types_1 = require("./types");
+const fsPromise_1 = require("./util/fsPromise");
+const signature_1 = require("./signature");
+const registry_1 = require("./entryHandlers/registry");
+const keybase_1 = require("./identity/keybase");
+const pgp_1 = require("./identity/pgp");
 class ModuleVerifier {
     constructor(trustStore) {
         this.trustStore = trustStore;
     }
     verify(dir, relFilesOnDisk, expectedPackageName) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Load the signature document.
-            let signature = null;
+            // Try to read whether or not the module is private early so we
+            // can return the information to the caller. This field is untrusted, and
+            // is only used by telemetry when determining the amount of data to send.
+            let isPrivate = true;
+            let untrustedPackageVersion = "";
+            let earlyPackageInfo;
             try {
-                signature = JSON.parse(yield fsPromise_1.readFilePromise(path.join(dir, 'signature.json')));
+                earlyPackageInfo = JSON.parse(yield fsPromise_1.readFilePromise(path.join(dir, "package.json")));
+                isPrivate = earlyPackageInfo.private || false;
+                untrustedPackageVersion = earlyPackageInfo.version || "";
+            }
+            catch (e) { }
+            // Load the signature document.
+            let signature;
+            try {
+                const rawJson = yield fsPromise_1.readFilePromise(path.join(dir, "signature.json"));
+                signature = yield signature_1.readUnverifiedSignatureDocument(rawJson);
             }
             catch (e) {
                 return {
-                    status: ModuleVerificationStatus.Unsigned,
-                    reason: 'Missing or unparsable signature.json',
+                    status: types_1.ModuleVerificationStatus.Unsigned,
+                    reason: "Missing or unparsable signature.json",
                     packageName: expectedPackageName,
+                    untrustedPackageVersion: untrustedPackageVersion,
+                    isPrivate: isPrivate
                 };
             }
-            // Check that we have an expected signature version.
-            if (signature.version != 'v1alpha') {
+            // If the document has any entries that we don't recognise, we can't
+            // validate the document.
+            for (const entry of signature.entries) {
+                const hasHandler = registry_1.availableEntryHandlersByName.has(entry.entry);
+                if (!hasHandler) {
+                    return {
+                        status: types_1.ModuleVerificationStatus.Compromised,
+                        reason: `Unrecognised entry in signature.json: '${entry.entry}' (try upgrading pkgsign)`,
+                        packageName: expectedPackageName,
+                        untrustedPackageVersion: untrustedPackageVersion,
+                        isPrivate: isPrivate,
+                        untrustedIdentity: undefined
+                    };
+                }
+            }
+            // Find an entry that provides an identity.
+            let identity = null;
+            for (let entry of signature.entries) {
+                const handler = registry_1.availableEntryHandlersByName.get(entry.entry);
+                if (handler === undefined) {
+                    throw new Error("handler is undefined, even though it was previously checked");
+                }
+                const localIdentity = handler.getIdentity(entry.value);
+                if (localIdentity !== null) {
+                    identity = localIdentity;
+                    break;
+                }
+            }
+            if (identity === null) {
                 return {
-                    status: ModuleVerificationStatus.Unsigned,
-                    reason: 'Unrecognised signature version ' + signature.version,
+                    status: types_1.ModuleVerificationStatus.Compromised,
+                    reason: "No identity information in signature.json",
                     packageName: expectedPackageName,
+                    untrustedPackageVersion: untrustedPackageVersion,
+                    isPrivate: isPrivate,
+                    untrustedIdentity: undefined
                 };
             }
-            // For each relative file on disk, make sure it appears in
-            // the list of files the signature is signing for.
-            for (let relFileOnDisk of relFilesOnDisk) {
-                let normalisedPath = relFileOnDisk.replace(/\\/g, '/');
-                if (normalisedPath == 'signature.json') {
-                    continue;
-                }
-                let found = false;
-                let expectedHash = null;
-                for (let expectedFile of signature.files) {
-                    if (expectedFile.path == normalisedPath) {
-                        found = true;
-                        expectedHash = expectedFile.sha512;
-                    }
-                }
-                if (!found) {
-                    return {
-                        status: ModuleVerificationStatus.Compromised,
-                        reason: normalisedPath + ' exists in the package, but was not in the signature',
-                        packageName: expectedPackageName,
-                    };
-                }
-                const hash = yield fsPromise_1.sha512OfFile(path.join(dir, normalisedPath));
-                if (hash != expectedHash) {
-                    return {
-                        status: ModuleVerificationStatus.Compromised,
-                        reason: normalisedPath + ' does not have content that was signed for (mismatched hash)',
-                        packageName: expectedPackageName,
-                    };
-                }
-            }
-            // For each file in the signature, make sure it appears in expected files.
-            // We don't need to hash here because if there is a match we will have already
-            // checked it in the for loop above.
-            for (let fileEntry of signature.files) {
-                if (fileEntry.path == 'signature.json') {
-                    continue;
-                }
-                let found = false;
-                for (let relFileOnDisk of relFilesOnDisk) {
-                    let normalisedPath = relFileOnDisk.replace(/\\/g, '/');
-                    if (normalisedPath == fileEntry.path) {
-                        found = true;
-                    }
-                }
-                if (!found) {
-                    return {
-                        status: ModuleVerificationStatus.Compromised,
-                        reason: fileEntry.path + ' is expected by the signature, but is missing in the package',
-                        packageName: expectedPackageName,
-                    };
-                }
-            }
-            // Build up our deterministic string to validate the signature against.
-            const deterministicSignature = deterministicSignature_1.createSignatureFromEntries(signature.files);
             // Now we know the package contents matches the files expected by the signature, and all
             // of the hashes match, but now we need to locate the public keys for the signature so
             // we can verify it.
-            let verifier;
-            if (signature.identity.keybaseUser !== undefined) {
-                verifier = new keybaseVerifier_1.KeybaseVerifier(this.trustStore);
+            let identityProvider;
+            if (identity.keybaseUser !== undefined) {
+                identityProvider = keybase_1.KeybaseIdentityProvider;
             }
-            else if (signature.identity.pgpPublicKeyUrl !== undefined) {
-                verifier = new pgpVerifier_1.PgpVerifier(this.trustStore);
+            else if (identity.pgpPublicKeyUrl !== undefined) {
+                identityProvider = pgp_1.PgpIdentityProvider;
+            }
+            else {
+                return {
+                    status: types_1.ModuleVerificationStatus.Compromised,
+                    reason: "Unknown identity in signature.json",
+                    packageName: expectedPackageName,
+                    untrustedPackageVersion: untrustedPackageVersion,
+                    isPrivate: isPrivate,
+                    untrustedIdentity: undefined
+                };
+            }
+            // Verify each of the entries.
+            const context = {
+                dir: dir,
+                relFilesOnDisk: relFilesOnDisk,
+                expectedPackageName: expectedPackageName,
+                untrustedIdentity: identity,
+                untrustedPackageVersion: untrustedPackageVersion,
+                isPrivate: isPrivate,
+                entries: signature.entries
+            };
+            for (const entry of signature.entries) {
+                const handler = registry_1.availableEntryHandlersByName.get(entry.entry);
+                if (handler === undefined) {
+                    throw new Error("handler is undefined, even though it was previously checked");
+                }
+                const entryResult = yield handler.verifyEntry(context, entry.value);
+                if (entryResult !== null) {
+                    return entryResult;
+                }
             }
             // Request the verifier verify the signature.
-            if (!(yield verifier.verify(signature.identity, signature.signature, deterministicSignature))) {
+            if (!(yield identityProvider.verify({
+                trustStore: this.trustStore
+            }, identity, signature.signature, signature.locallyComputedDeterministicString))) {
                 return {
-                    status: ModuleVerificationStatus.Compromised,
-                    reason: 'The signature does not match',
+                    status: types_1.ModuleVerificationStatus.Compromised,
+                    reason: "The signature does not match",
                     packageName: expectedPackageName,
+                    untrustedPackageVersion: untrustedPackageVersion,
+                    isPrivate: isPrivate,
+                    untrustedIdentity: identity
                 };
             }
             // Check the package name in package.json matches the expected
             // package name that was provided.
             let packageInfo = null;
             try {
-                packageInfo = JSON.parse(yield fsPromise_1.readFilePromise(path.join(dir, 'package.json')));
+                packageInfo = JSON.parse(yield fsPromise_1.readFilePromise(path.join(dir, "package.json")));
             }
             catch (e) {
                 return {
-                    status: ModuleVerificationStatus.Compromised,
-                    reason: 'Missing or unparsable package.json',
+                    status: types_1.ModuleVerificationStatus.Compromised,
+                    reason: "Missing or unparsable package.json",
                     packageName: expectedPackageName,
+                    untrustedPackageVersion: untrustedPackageVersion,
+                    isPrivate: isPrivate,
+                    untrustedIdentity: identity
                 };
             }
-            if (packageInfo == null || packageInfo.name != expectedPackageName) {
+            if (packageInfo == null ||
+                (packageInfo.name || "") != expectedPackageName) {
                 return {
-                    status: ModuleVerificationStatus.Compromised,
-                    reason: 'Provided package name in package.json did not match expected package name',
+                    status: types_1.ModuleVerificationStatus.Compromised,
+                    reason: "Provided package name in package.json did not match expected package name",
                     packageName: expectedPackageName,
+                    untrustedPackageVersion: untrustedPackageVersion,
+                    isPrivate: isPrivate,
+                    untrustedIdentity: identity
                 };
             }
             // Package signature is valid, now we need to see if the identity
             // is trusted for the given package name.
-            if (yield this.trustStore.isTrusted(signature.identity, expectedPackageName)) {
+            if (yield this.trustStore.isTrusted(identity, expectedPackageName)) {
                 return {
-                    status: ModuleVerificationStatus.Trusted,
+                    status: types_1.ModuleVerificationStatus.Trusted,
                     packageName: expectedPackageName,
+                    untrustedPackageVersion: untrustedPackageVersion,
+                    isPrivate: isPrivate,
+                    trustedIdentity: identity
                 };
             }
             else {
                 return {
-                    status: ModuleVerificationStatus.Untrusted,
-                    untrustedIdentity: signature.identity,
+                    status: types_1.ModuleVerificationStatus.Untrusted,
+                    untrustedIdentity: identity,
                     packageName: expectedPackageName,
+                    untrustedPackageVersion: untrustedPackageVersion,
+                    isPrivate: isPrivate
                 };
             }
         });

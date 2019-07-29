@@ -1,0 +1,38 @@
+{
+  "entries": [
+    {
+      "entry": "files/v1alpha2",
+      "value": {
+        "files": []
+      }
+    },
+    {
+      "entry": "identity/v1alpha2",
+      "value": {
+        "identity": {
+          "pgpPublicKeyUrl": "https://pkgsign.test.invalid.url/test.pub"
+        }
+      }
+    },
+    {
+      "entry": "npmCompatiblePackageJson/v1alpha2",
+      "value": {
+        "packageJsonProperties": [
+          "_from",
+          "name"
+        ],
+        "sha512": "869f8b1a137ffe2dfaf8f5c06360ce785dbcbfdb926640c63d70ef82604bf06b74c81ac2a681497fd91cce58f7240fc8db06d5d8c609fe3f0d61d0937d4da7c7"
+      }
+    },
+    {
+      "entry": "packageJson/v1alpha2",
+      "value": {
+        "packageJson": {
+          "_from": "some metadata field",
+          "name": "signature-packageJson-omits-npm-on-verify"
+        }
+      }
+    }
+  ],
+  "signature": "-----BEGIN PGP SIGNATURE-----\nVersion: OpenPGP.js v4.5.5\nComment: https://openpgpjs.org\n\nwsBcBAEBCAAGBQJdPnjiAAoJEIsFJbVEZAX3XesH/3nGm3iU1GfkYtImP+XO\n7cnoCJw6lSFQBIo+3foWZxPh1EIaNfl28M4ToLT/p44Tkth0Go76JYG05jHm\nYN9qiZqr2jOVWd44CxmEgruKlCYdYjCdw1McldpCsYtfRNXPV1ODwKbWHUMK\nupKAxIVq2DaCUlfylkVuR5WGMlZJEbdMS8oppBpIlmbSA9WOPeUqpIs00ssn\ngLTrNp8hAxlawsKFzZP/TYhPDMr39kHj0DdOpVn9jwP5OpR1SO9bRBazZcCq\nHKsKTS1iPIjnyUHQ9/r0Ad2tjfMn2ZVWT5F1xIswYRogt4Kmbvsf43o/1HjV\nmq/wLw8fWYA0/0KkZWX2aCw=\n=jfOX\n-----END PGP SIGNATURE-----\n"
+}

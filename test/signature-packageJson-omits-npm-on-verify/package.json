@@ -1,0 +1,4 @@
+{
+  "_from": "some metadata field",
+  "name": "signature-packageJson-omits-npm-on-verify"
+}

@@ -1,0 +1,71 @@
+{
+  "entries": [
+    {
+      "entry": "files/v1alpha2",
+      "value": {
+        "files": [
+          {
+            "path": "dist/index.js",
+            "sha512": "ffc42195a2ff06ab9c37fa19a03053ecbb7c6aab89d2ccba09ac1bae4d8705720bb9f10db8a319e532684dbf4d7c186b2579eef063e8ae82c836be1b6342da76"
+          },
+          {
+            "path": "README.md",
+            "sha512": "1e2ac3c4b231a28605f30994c0082830836e1cba16750b5b5ad7288bbfec96c19c119cab24d9b6838e8ce2edc2ad5934c8060e1bf9e8efdb3589f6d10cb06de6"
+          }
+        ]
+      }
+    },
+    {
+      "entry": "identity/v1alpha2",
+      "value": {
+        "identity": {
+          "pgpPublicKeyUrl": "https://pkgsign.test.invalid.url/test.pub"
+        }
+      }
+    },
+    {
+      "entry": "npmCompatiblePackageJson/v1alpha2",
+      "value": {
+        "packageJsonProperties": [
+          "dependencies",
+          "devDependencies",
+          "files",
+          "main",
+          "name",
+          "private",
+          "scripts",
+          "version"
+        ],
+        "sha512": "5f11666c6dd32b4bcefed86c203df570aa11b5e7add70834730e5ba26126deec29fca9a035b429050c22971b7d7429f77d62a3bf5c992a8746e014ce5be96eb5"
+      }
+    },
+    {
+      "entry": "packageJson/v1alpha2",
+      "value": {
+        "packageJson": {
+          "_ignored": "test",
+          "name": "regular-pkg",
+          "version": "1.2.3",
+          "private": true,
+          "main": "dist/index.js",
+          "files": [
+            "dist/*",
+            "signature.json"
+          ],
+          "devDependencies": {
+            "mocha": "5.2.0",
+            "rimraf": "2.6.3",
+            "typescript": "latest"
+          },
+          "dependencies": {},
+          "scripts": {
+            "clean": "rimraf dist",
+            "compile": "tsc -p .",
+            "test": "mocha"
+          }
+        }
+      }
+    }
+  ],
+  "signature": "-----BEGIN PGP SIGNATURE-----\nVersion: OpenPGP.js v4.5.5\nComment: https://openpgpjs.org\n\nwsBcBAEBCAAGBQJdPopyAAoJEIsFJbVEZAX3HAEH/Ai+va7w03P8vkUy1epR\ntDSGdxjeVzOAbbsCPo4Fq6GXl0zk127Jz4Rg/ERgI8+bNycZhIwDFCKK1y2G\njSxhvGuBS4TCDN930aLZvyAxq6LmC5Z+2Vyg4/J9pyWekuPI0aQJ+bUYNTRe\nMQglVK1lnwRPlmciyR9bGuXflmCnX2RM3TSnmLcqGSebjpn5aKYPaAPd1QuT\nINek8Fm4wJesgNIt7G9XBv310mOgjSTyp4C79P+It5DyXVphU10vvIzFIi5T\nu2E/QNw9StjU2WaacwSiO/gD5EyiULidoQbn8NjRGNiTdJO+WEo3mMQvoBb4\nyr8IbyG+hFnkciO+sBk3eOc=\n=CBEJ\n-----END PGP SIGNATURE-----\n"
+}

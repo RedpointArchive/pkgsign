@@ -1,0 +1,112 @@
+{
+  "entries": [
+    {
+      "entry": "files/v1alpha2",
+      "value": {
+        "files": [
+          {
+            "path": "dist/index.js",
+            "sha512": "ffc42195a2ff06ab9c37fa19a03053ecbb7c6aab89d2ccba09ac1bae4d8705720bb9f10db8a319e532684dbf4d7c186b2579eef063e8ae82c836be1b6342da76"
+          },
+          {
+            "path": "README.md",
+            "sha512": "1e2ac3c4b231a28605f30994c0082830836e1cba16750b5b5ad7288bbfec96c19c119cab24d9b6838e8ce2edc2ad5934c8060e1bf9e8efdb3589f6d10cb06de6"
+          }
+        ]
+      }
+    },
+    {
+      "entry": "identity/v1alpha2",
+      "value": {
+        "identity": {
+          "pgpPublicKeyUrl": "https://pkgsign.test.invalid.url/test.pub"
+        }
+      }
+    },
+    {
+      "entry": "npmCompatiblePackageJson/v1alpha2",
+      "value": {
+        "packageJsonProperties": [
+          "_from",
+          "_id",
+          "_inBundle",
+          "_integrity",
+          "_location",
+          "_phantomChildren",
+          "_requested",
+          "_requiredBy",
+          "_resolved",
+          "_shasum",
+          "_spec",
+          "_where",
+          "bundleDependencies",
+          "dependencies",
+          "deprecated",
+          "description",
+          "devDependencies",
+          "files",
+          "gitHead",
+          "main",
+          "name",
+          "private",
+          "scripts",
+          "version"
+        ],
+        "sha512": "421fb9e9f9cbda670f3c54eefbad1b9fa13196ab942ff7636e7187fee89fadd3846a07fa0e11a0c5eefaf8089970af22f47a13708ebc1a7065497adbb68ab39b"
+      }
+    },
+    {
+      "entry": "packageJson/v1alpha2",
+      "value": {
+        "packageJson": {
+          "_from": "file:/what-ever/pkgsign/test/original/regular-pkg/regular-pkg.tgz",
+          "_id": "regular-pkg@1.2.3",
+          "_inBundle": false,
+          "_integrity": "sha512-EQpOa7Hs0uGkvzn5St1uNyqCDNWKK9yLqDINq5PhcVQD5SbP2fBBFZfdjM62elC43OZVEzU+HKnk5NiepkfTJQ==",
+          "_location": "/regular-pkg",
+          "_phantomChildren": {},
+          "_requested": {
+            "type": "file",
+            "where": "/what-ever/test-repo",
+            "raw": "/what-ever/pkgsign/test/original/regular-pkg/regular-pkg.tgz",
+            "rawSpec": "/what-ever/pkgsign/test/original/regular-pkg/regular-pkg.tgz",
+            "saveSpec": "file:/what-ever/pkgsign/test/original/regular-pkg/regular-pkg.tgz",
+            "fetchSpec": "/what-ever/pkgsign/test/original/regular-pkg/regular-pkg.tgz"
+          },
+          "_requiredBy": [
+            "#USER",
+            "/"
+          ],
+          "_resolved": "/what-ever/pkgsign/test/original/regular-pkg/regular-pkg.tgz",
+          "_shasum": "6f6f4f07dd485341abe443befbb44fdf0f5de007",
+          "_spec": "/what-ever/pkgsign/test/original/regular-pkg/regular-pkg.tgz",
+          "_where": "/what-ever/test-repo",
+          "bundleDependencies": false,
+          "dependencies": {},
+          "deprecated": false,
+          "description": "original example package as seen in any git repository",
+          "devDependencies": {
+            "mocha": "5.2.0",
+            "rimraf": "2.6.3",
+            "typescript": "latest"
+          },
+          "files": [
+            "dist/*",
+            "signature.json"
+          ],
+          "gitHead": "0123456789",
+          "main": "dist/index.js",
+          "name": "regular-pkg",
+          "private": true,
+          "scripts": {
+            "clean": "rimraf dist",
+            "compile": "tsc -p .",
+            "test": "mocha"
+          },
+          "version": "1.2.3"
+        }
+      }
+    }
+  ],
+  "signature": "-----BEGIN PGP SIGNATURE-----\nVersion: OpenPGP.js v4.5.5\nComment: https://openpgpjs.org\n\nwsBcBAEBCAAGBQJdPnW9AAoJEIsFJbVEZAX3AugH/iDdaDmSaX9VSwih3aob\nctZDKvPj8NA3dCyCKpBqQmI5JRJt5cKXcSjEo0n6NPDCFVBQ10Oc6+qjt/Lb\nedY5y1lqxEoY+HHVzVzu2+Jwjwn7rfi90mP3QB89leWzdkBX72yVeBufYAxX\nsSOHfPfJmtJ4kPztbv82kT3JobyGxMq0yiId3sQNG5go44MxZuQEMIfyhG2T\ng4BZuNnAWPRcn4R0Gcv4acwfR5ULKUMUzzt27kd9iYG8wFqqRsNvZg+3X0yk\ntySAeZcDPHF/IeW3IYz5ovd0uKlu/zMQ/HVTUNmEHWbQCYgRsNbXVksFbw5i\n333kBAa4W76uREQMTTstt7M=\n=4BSk\n-----END PGP SIGNATURE-----\n"
+}

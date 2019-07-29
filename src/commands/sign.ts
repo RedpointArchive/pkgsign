@@ -1,159 +1,197 @@
+import { Command, command, param, Options, option } from "clime";
+import * as path from "path";
+import { lstatSync } from "fs";
+import * as packlist from "npm-packlist";
+import { createSignedSignatureDocument } from "../lib/signature";
+import { queueTelemetryPackageAction } from "../lib/telemetry";
+import { availableEntryHandlers } from "../lib/entryHandlers/registry";
+import { Entry } from "../lib/types";
 import {
-    Command,
-    command,
-    param,
-    Options,
-    option,
-} from 'clime';
-import * as cmd from 'node-cmd';
-import * as path from 'path';
-import { lstatSync, unlinkSync } from 'fs';
-import { unlinkPromise, recursivePromise, sha512OfFile, writeFilePromise, createWorkingDirectory, decompress, compress } from '../lib/fsPromise';
-import { SignatureFileEntry, createSignatureFromEntries, SignatureInfo } from '../lib/deterministicSignature';
-import { Signer } from '../lib/signer';
-import { KeybaseSigner } from '../lib/keybaseSIgner';
-import { PgpSigner } from '../lib/pgpSigner';
-import * as packlist from 'npm-packlist';
-  
+  createWorkingDirectory,
+  decompress,
+  recursivePromise,
+  unlinkPromise,
+  compress,
+  writeFilePromise
+} from "../lib/util/fsPromise";
+import {
+  IIdentityProvider,
+  IIdentityProviderSigningContext
+} from "../lib/identity";
+import { PgpIdentityProvider } from "../lib/identity/pgp";
+import { KeybaseIdentityProvider } from "../lib/identity/keybase";
+
 export class SignOptions extends Options {
-    @option({
-        name: 'signer',
-        description: 'the signer to use, one of: \'keybase\' (default) or \'pgp\'',
-        default: 'keybase',
-    })
-    withSigner: string;
-    @option({
-        name: 'pgp-private-key-path',
-        description: 'when signing with \'pgp\', this is the path to the private key file',
-    })
-    privateKeyPath: string;
-    @option({
-        name: 'pgp-private-key-passphrase',
-        description: 'when signing with \'pgp\', this is the passphrase for the private key file',
-    })
-    privateKeyPassphrase: string;
-    @option({
-        name: 'pgp-public-key-https-url',
-        description: 'when signing with \'pgp\', this is the HTTPS URL to the public key that pkgsign can download to verify the package',
-    })
-    publicKeyUrl: string;
+  @option({
+    name: "signer",
+    description: "the signer to use, one of: 'keybase' (default) or 'pgp'",
+    default: "keybase"
+  })
+  withSigner: string = "";
+  @option({
+    name: "pgp-private-key-path",
+    description:
+      "when signing with 'pgp', this is the path to the private key file"
+  })
+  privateKeyPath: string = "";
+  @option({
+    name: "pgp-private-key-passphrase",
+    description:
+      "when signing with 'pgp', this is the passphrase for the private key file"
+  })
+  privateKeyPassphrase: string = "";
+  @option({
+    name: "pgp-public-key-https-url",
+    description:
+      "when signing with 'pgp', this is the HTTPS URL to the public key that pkgsign can download to verify the package"
+  })
+  publicKeyUrl: string = "";
 }
 
 @command({
-    description: 'sign an npm/yarn package directory or tarball',
+  description: "sign an npm/yarn package directory or tarball"
 })
 export default class extends Command {
-    public async execute(
-        @param({
-            name: 'pkgdir|tarball',
-            description: 'path to package directory or tarball',
-            required: true,
-        })
-        path: string,
-        options: SignOptions
-    ) {
-        let signer: Signer;
-        if (options.withSigner == 'pgp') {
-            signer = new PgpSigner(
-                options.privateKeyPath,
-                options.privateKeyPassphrase,
-                options.publicKeyUrl);
-        } else if (options.withSigner == 'keybase') {
-            signer = new KeybaseSigner();
-        } else {
-            throw new Error('Not supported signer type: ' + options.withSigner);
-        }
+  public async execute(
+    @param({
+      name: "pkgdir|tarball",
+      description: "path to package directory or tarball",
+      required: true
+    })
+    path: string,
+    options: SignOptions
+  ): Promise<void> {
+    if (await this.executeInternal(path, options)) {
+      process.exitCode = 0;
+    } else {
+      process.exitCode = 1;
+    }
+  }
 
-        if (path.endsWith(".tgz") && lstatSync(path).isFile()) {
-            await this.signTarball(signer, path);
-        } else {
-            await this.signDirectory(signer, path);
-        }
+  public async executeInternal(
+    path: string,
+    options: SignOptions
+  ): Promise<boolean> {
+    let identityProvider: IIdentityProvider;
+    if (options.withSigner == "pgp") {
+      identityProvider = PgpIdentityProvider;
+    } else if (options.withSigner == "keybase") {
+      identityProvider = KeybaseIdentityProvider;
+    } else {
+      throw new Error("Not supported signer type: " + options.withSigner);
     }
 
-    private async signTarball(signer: Signer, tarballPath: string): Promise<void> {
-        const wd = await createWorkingDirectory();
-        console.log('extracting unsigned tarball...');
-        await decompress(tarballPath, wd);
+    const identityProviderSigningContext: IIdentityProviderSigningContext = {
+      privateKeyPath: options.privateKeyPath,
+      privateKeyPassphrase: options.privateKeyPassphrase,
+      publicKeyHttpsUrl: options.publicKeyUrl
+    };
 
-        console.log('building file list...');
-        const base = path.join(wd, "package");
-        const files = await recursivePromise(base);
-        let entries: SignatureFileEntry[] = [];
-        for (let fullPath of files) {
-            const hash = await sha512OfFile(fullPath);
-            const normalisedPath = fullPath.substr(base.length + 1).replace(/\\/g, '/');
-            if (normalisedPath == 'signature.json') {
-                // This file might be included in the Git repo to sign the contents of the
-                // latest commit against Keybase or PGP, but it should never be included
-                // in the signature (because we're about to replace it in the signed package
-                // anyway).
-                continue;
-            }
-            entries.push({
-                path: normalisedPath,
-                sha512: hash,
-            });
-        }
-
-        console.log('creating deterministic signature...');
-        const signatureToSign = createSignatureFromEntries(entries);
-
-        console.log('creating signature document...');
-        const identity = await signer.getIdentity();
-        const signatureDocument: SignatureInfo = {
-            version: 'v1alpha',
-            files: entries,
-            signature: await signer.signEntries(signatureToSign),
-            identity: identity,
-        };
-
-        const signatureDocumentJson = JSON.stringify(signatureDocument, null, 2);
-        await writeFilePromise(path.join(wd, 'package', 'signature.json'), signatureDocumentJson);
-
-        await unlinkPromise(tarballPath);
-        await compress(wd, tarballPath);
-
-        console.log('package tarball has been signed');
+    if (path.endsWith(".tgz") && lstatSync(path).isFile()) {
+      return await this.signTarball(
+        identityProvider,
+        identityProviderSigningContext,
+        path
+      );
+    } else {
+      return await this.signDirectory(
+        identityProvider,
+        identityProviderSigningContext,
+        path
+      );
     }
+  }
 
-    private async signDirectory(signer: Signer, packagePath: string): Promise<void> {
-        console.log('building file list...');
-        const files = await packlist({
-            path: packagePath
+  private async signTarball(
+    identityProvider: IIdentityProvider,
+    identityProviderSigningContext: IIdentityProviderSigningContext,
+    tarballPath: string
+  ): Promise<boolean> {
+    const wd = await createWorkingDirectory();
+    console.log("extracting unsigned tarball...");
+    await decompress(tarballPath, wd);
+
+    console.log("building file list...");
+    const base = path.join(wd, "package");
+    let files = await recursivePromise(base);
+    files = files.map(fullPath => fullPath.substr(base.length + 1));
+
+    await this.signFileList(
+      identityProvider,
+      identityProviderSigningContext,
+      base,
+      files,
+      "sign-tarball"
+    );
+
+    await unlinkPromise(tarballPath);
+    await compress(wd, tarballPath);
+
+    console.log("package tarball has been signed");
+    return true;
+  }
+
+  private async signDirectory(
+    identityProvider: IIdentityProvider,
+    identityProviderSigningContext: IIdentityProviderSigningContext,
+    packagePath: string
+  ): Promise<boolean> {
+    console.log("building file list...");
+    const files = await packlist({
+      path: packagePath
+    });
+
+    await this.signFileList(
+      identityProvider,
+      identityProviderSigningContext,
+      packagePath,
+      files,
+      "sign-directory"
+    );
+
+    console.log("signature.json has been created in package directory");
+    return true;
+  }
+
+  private async signFileList(
+    identityProvider: IIdentityProvider,
+    identityProviderSigningContext: IIdentityProviderSigningContext,
+    basePath: string,
+    relativeFilePaths: string[],
+    telemetryAction: string
+  ): Promise<void> {
+    const identity = await identityProvider.getIdentity(
+      identityProviderSigningContext
+    );
+
+    const context = {
+      dir: basePath,
+      relFilesOnDisk: relativeFilePaths,
+      signingIdentity: identity
+    };
+
+    let entries: Entry<any>[] = [];
+    for (const entryHandler of availableEntryHandlers) {
+      const entryValue = await entryHandler.generateEntry(context);
+      if (entryValue !== null) {
+        entries.push({
+          entry: entryHandler.getEntryType(),
+          value: entryValue
         });
-        let entries: SignatureFileEntry[] = [];
-        for (let relPath of files) {
-            const hash = await sha512OfFile(path.join(packagePath, relPath));
-            const normalisedPath = relPath.replace(/\\/g, '/');
-            if (normalisedPath == 'signature.json') {
-                // This file might be included in the Git repo to sign the contents of the
-                // latest commit against Keybase or PGP, but it should never be included
-                // in the signature (because we're about to replace it in the signed package
-                // anyway).
-                continue;
-            }
-            entries.push({
-                path: normalisedPath,
-                sha512: hash,
-            });
-        }
-
-        console.log('creating deterministic signature...');
-        const signatureToSign = createSignatureFromEntries(entries);
-
-        console.log('creating signature document...');
-        const identity = await signer.getIdentity();
-        const signatureDocument: SignatureInfo = {
-            version: 'v1alpha',
-            files: entries,
-            signature: await signer.signEntries(signatureToSign),
-            identity: identity,
-        };
-
-        const signatureDocumentJson = JSON.stringify(signatureDocument, null, 2);
-        await writeFilePromise(path.join(packagePath, 'signature.json'), signatureDocumentJson);
-
-        console.log('signature.json has been created in package directory');
+      }
     }
+
+    await queueTelemetryPackageAction(context, identity, telemetryAction);
+
+    const signatureDocumentJson = await createSignedSignatureDocument(
+      entries,
+      identityProvider,
+      identityProviderSigningContext
+    );
+
+    await writeFilePromise(
+      path.join(basePath, "signature.json"),
+      signatureDocumentJson
+    );
+  }
 }
