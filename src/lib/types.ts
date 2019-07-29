@@ -1,13 +1,17 @@
-export interface SignatureIdentity {
+export type SignatureIdentity = {
   keybaseUser?: string;
   pgpPublicKeyUrl?: string;
-}
+};
 
-export function identityToString(identity: SignatureIdentity) {
+export function identityToString(identity: SignatureIdentity): string {
   if (identity.keybaseUser !== undefined) {
     return "@" + identity.keybaseUser;
-  } else {
+  } else if (identity.pgpPublicKeyUrl !== undefined) {
     return identity.pgpPublicKeyUrl;
+  } else {
+    throw new Error(
+      "unknown SignatureIdentity content, cannot convert to string"
+    );
   }
 }
 
@@ -29,15 +33,38 @@ export enum ModuleVerificationStatus {
   Trusted
 }
 
-export interface ModuleVerificationResult {
-  status: ModuleVerificationStatus;
-  packageName: string;
-  untrustedPackageVersion: string;
-  isPrivate: boolean;
-  reason?: string;
-  trustedIdentity?: SignatureIdentity;
-  untrustedIdentity?: SignatureIdentity;
-}
+export type ModuleVerificationResult =
+  | {
+      status: ModuleVerificationStatus.Compromised;
+      packageName: string;
+      untrustedPackageVersion: string;
+      isPrivate: boolean;
+      reason?: string;
+      untrustedIdentity: SignatureIdentity | undefined;
+    }
+  | {
+      status: ModuleVerificationStatus.Untrusted;
+      packageName: string;
+      untrustedPackageVersion: string;
+      isPrivate: boolean;
+      reason?: string;
+      untrustedIdentity: SignatureIdentity;
+    }
+  | {
+      status: ModuleVerificationStatus.Trusted;
+      packageName: string;
+      untrustedPackageVersion: string;
+      isPrivate: boolean;
+      reason?: string;
+      trustedIdentity: SignatureIdentity;
+    }
+  | {
+      status: ModuleVerificationStatus.Unsigned;
+      packageName: string;
+      untrustedPackageVersion: string;
+      isPrivate: boolean;
+      reason?: string;
+    };
 
 export interface IGenerateEntryContext {
   // The directory of the module being signed.

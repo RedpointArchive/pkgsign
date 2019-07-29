@@ -62,7 +62,8 @@ export class ModuleVerifier {
           reason: `Unrecognised entry in signature.json: '${entry.entry}' (try upgrading pkgsign)`,
           packageName: expectedPackageName,
           untrustedPackageVersion: untrustedPackageVersion,
-          isPrivate: isPrivate
+          isPrivate: isPrivate,
+          untrustedIdentity: undefined
         };
       }
     }
@@ -71,6 +72,11 @@ export class ModuleVerifier {
     let identity: SignatureIdentity | null = null;
     for (let entry of signature.entries) {
       const handler = availableEntryHandlersByName.get(entry.entry);
+      if (handler === undefined) {
+        throw new Error(
+          "handler is undefined, even though it was previously checked"
+        );
+      }
       const localIdentity = handler.getIdentity(entry.value);
       if (localIdentity !== null) {
         identity = localIdentity;
@@ -83,7 +89,8 @@ export class ModuleVerifier {
         reason: "No identity information in signature.json",
         packageName: expectedPackageName,
         untrustedPackageVersion: untrustedPackageVersion,
-        isPrivate: isPrivate
+        isPrivate: isPrivate,
+        untrustedIdentity: undefined
       };
     }
 
@@ -101,7 +108,8 @@ export class ModuleVerifier {
         reason: "Unknown identity in signature.json",
         packageName: expectedPackageName,
         untrustedPackageVersion: untrustedPackageVersion,
-        isPrivate: isPrivate
+        isPrivate: isPrivate,
+        untrustedIdentity: undefined
       };
     }
 
@@ -117,6 +125,11 @@ export class ModuleVerifier {
     };
     for (const entry of signature.entries) {
       const handler = availableEntryHandlersByName.get(entry.entry);
+      if (handler === undefined) {
+        throw new Error(
+          "handler is undefined, even though it was previously checked"
+        );
+      }
       const entryResult = await handler.verifyEntry(context, entry.value);
       if (entryResult !== null) {
         return entryResult;

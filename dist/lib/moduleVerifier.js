@@ -8,26 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const signature_1 = require("./signature");
-const fsPromise_1 = require("./fsPromise");
 const path = require("path");
-const keybaseVerifier_1 = require("./keybaseVerifier");
-const pgpVerifier_1 = require("./pgpVerifier");
-var ModuleVerificationStatus;
-(function (ModuleVerificationStatus) {
-    // When the data on disk or in the package explicitly does not
-    // match the expected state of the signature (either extra files,
-    // missing files, mismatched hashes or signature doesn't verify).
-    ModuleVerificationStatus[ModuleVerificationStatus["Compromised"] = 0] = "Compromised";
-    // When the package doesn't have a signature or it can't be loaded.
-    ModuleVerificationStatus[ModuleVerificationStatus["Unsigned"] = 1] = "Unsigned";
-    // When the package has a valid signature, but the user or device
-    // doesn't trust the associated identity.
-    ModuleVerificationStatus[ModuleVerificationStatus["Untrusted"] = 2] = "Untrusted";
-    // When the package has a valid signature and the user or device
-    // trusts the associated identity.
-    ModuleVerificationStatus[ModuleVerificationStatus["Trusted"] = 3] = "Trusted";
-})(ModuleVerificationStatus = exports.ModuleVerificationStatus || (exports.ModuleVerificationStatus = {}));
+const types_1 = require("./types");
+const fsPromise_1 = require("./util/fsPromise");
+const signature_1 = require("./signature");
+const registry_1 = require("./entryHandlers/registry");
+const keybase_1 = require("./identity/keybase");
+const pgp_1 = require("./identity/pgp");
 class ModuleVerifier {
     constructor(trustStore) {
         this.trustStore = trustStore;
@@ -47,27 +34,43 @@ class ModuleVerifier {
             }
             catch (e) { }
             // Load the signature document.
-            let signature = null;
+            let signature;
             try {
-                let rawJson = yield fsPromise_1.readFilePromise(path.join(dir, "signature.json"));
-                let signatureParser = new signature_1.SignatureParser();
-                signature = signatureParser.parse(expectedPackageName, earlyPackageInfo, rawJson);
+                const rawJson = yield fsPromise_1.readFilePromise(path.join(dir, "signature.json"));
+                signature = yield signature_1.readUnverifiedSignatureDocument(rawJson);
             }
             catch (e) {
                 return {
-                    status: ModuleVerificationStatus.Unsigned,
+                    status: types_1.ModuleVerificationStatus.Unsigned,
                     reason: "Missing or unparsable signature.json",
                     packageName: expectedPackageName,
                     untrustedPackageVersion: untrustedPackageVersion,
                     isPrivate: isPrivate
                 };
             }
-            // Build up our deterministic string to validate the signature against.
-            const deterministicString = signature_1.createDeterministicString(signature);
+            // If the document has any entries that we don't recognise, we can't
+            // validate the document.
+            for (const entry of signature.entries) {
+                const hasHandler = registry_1.availableEntryHandlersByName.has(entry.entry);
+                if (!hasHandler) {
+                    return {
+                        status: types_1.ModuleVerificationStatus.Compromised,
+                        reason: `Unrecognised entry in signature.json: '${entry.entry}' (try upgrading pkgsign)`,
+                        packageName: expectedPackageName,
+                        untrustedPackageVersion: untrustedPackageVersion,
+                        isPrivate: isPrivate,
+                        untrustedIdentity: undefined
+                    };
+                }
+            }
             // Find an entry that provides an identity.
             let identity = null;
             for (let entry of signature.entries) {
-                let localIdentity = entry.getIdentity();
+                const handler = registry_1.availableEntryHandlersByName.get(entry.entry);
+                if (handler === undefined) {
+                    throw new Error("handler is undefined, even though it was previously checked");
+                }
+                const localIdentity = handler.getIdentity(entry.value);
                 if (localIdentity !== null) {
                     identity = localIdentity;
                     break;
@@ -75,52 +78,60 @@ class ModuleVerifier {
             }
             if (identity === null) {
                 return {
-                    status: ModuleVerificationStatus.Compromised,
+                    status: types_1.ModuleVerificationStatus.Compromised,
                     reason: "No identity information in signature.json",
                     packageName: expectedPackageName,
                     untrustedPackageVersion: untrustedPackageVersion,
-                    isPrivate: isPrivate
+                    isPrivate: isPrivate,
+                    untrustedIdentity: undefined
                 };
             }
             // Now we know the package contents matches the files expected by the signature, and all
             // of the hashes match, but now we need to locate the public keys for the signature so
             // we can verify it.
-            let verifier;
+            let identityProvider;
             if (identity.keybaseUser !== undefined) {
-                verifier = new keybaseVerifier_1.KeybaseVerifier(this.trustStore);
+                identityProvider = keybase_1.KeybaseIdentityProvider;
             }
             else if (identity.pgpPublicKeyUrl !== undefined) {
-                verifier = new pgpVerifier_1.PgpVerifier(this.trustStore);
+                identityProvider = pgp_1.PgpIdentityProvider;
             }
             else {
                 return {
-                    status: ModuleVerificationStatus.Compromised,
+                    status: types_1.ModuleVerificationStatus.Compromised,
                     reason: "Unknown identity in signature.json",
                     packageName: expectedPackageName,
                     untrustedPackageVersion: untrustedPackageVersion,
-                    isPrivate: isPrivate
+                    isPrivate: isPrivate,
+                    untrustedIdentity: undefined
                 };
             }
             // Verify each of the entries.
-            let context = {
+            const context = {
                 dir: dir,
                 relFilesOnDisk: relFilesOnDisk,
                 expectedPackageName: expectedPackageName,
                 untrustedIdentity: identity,
                 untrustedPackageVersion: untrustedPackageVersion,
                 isPrivate: isPrivate,
-                signatureEntries: signature.entries
+                entries: signature.entries
             };
-            for (let entry of signature.entries) {
-                let entryResult = yield entry.verify(context);
+            for (const entry of signature.entries) {
+                const handler = registry_1.availableEntryHandlersByName.get(entry.entry);
+                if (handler === undefined) {
+                    throw new Error("handler is undefined, even though it was previously checked");
+                }
+                const entryResult = yield handler.verifyEntry(context, entry.value);
                 if (entryResult !== null) {
                     return entryResult;
                 }
             }
             // Request the verifier verify the signature.
-            if (!(yield verifier.verify(identity, signature.signature, deterministicString))) {
+            if (!(yield identityProvider.verify({
+                trustStore: this.trustStore
+            }, identity, signature.signature, signature.locallyComputedDeterministicString))) {
                 return {
-                    status: ModuleVerificationStatus.Compromised,
+                    status: types_1.ModuleVerificationStatus.Compromised,
                     reason: "The signature does not match",
                     packageName: expectedPackageName,
                     untrustedPackageVersion: untrustedPackageVersion,
@@ -136,7 +147,7 @@ class ModuleVerifier {
             }
             catch (e) {
                 return {
-                    status: ModuleVerificationStatus.Compromised,
+                    status: types_1.ModuleVerificationStatus.Compromised,
                     reason: "Missing or unparsable package.json",
                     packageName: expectedPackageName,
                     untrustedPackageVersion: untrustedPackageVersion,
@@ -147,7 +158,7 @@ class ModuleVerifier {
             if (packageInfo == null ||
                 (packageInfo.name || "") != expectedPackageName) {
                 return {
-                    status: ModuleVerificationStatus.Compromised,
+                    status: types_1.ModuleVerificationStatus.Compromised,
                     reason: "Provided package name in package.json did not match expected package name",
                     packageName: expectedPackageName,
                     untrustedPackageVersion: untrustedPackageVersion,
@@ -159,7 +170,7 @@ class ModuleVerifier {
             // is trusted for the given package name.
             if (yield this.trustStore.isTrusted(identity, expectedPackageName)) {
                 return {
-                    status: ModuleVerificationStatus.Trusted,
+                    status: types_1.ModuleVerificationStatus.Trusted,
                     packageName: expectedPackageName,
                     untrustedPackageVersion: untrustedPackageVersion,
                     isPrivate: isPrivate,
@@ -168,7 +179,7 @@ class ModuleVerifier {
             }
             else {
                 return {
-                    status: ModuleVerificationStatus.Untrusted,
+                    status: types_1.ModuleVerificationStatus.Untrusted,
                     untrustedIdentity: identity,
                     packageName: expectedPackageName,
                     untrustedPackageVersion: untrustedPackageVersion,

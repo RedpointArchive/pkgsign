@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const fs = require("fs");
-const fsPromise_1 = require("./fsPromise");
+const fsPromise_1 = require("./util/fsPromise");
 class TrustStore {
     constructor() { }
     getOrFetchCachedPublicKeys(cacheName, fetch) {
@@ -75,6 +75,9 @@ class TrustStore {
         const trustStoreBaseFolder = isWin
             ? process.env.USERPROFILE
             : process.env.HOME;
+        if (trustStoreBaseFolder === undefined) {
+            throw new Error("missing HOME / USERPROFILE environment variable; can not determine location of trust store");
+        }
         const trustStoreFolder = path.join(trustStoreBaseFolder, ".pkgsign-trust-store");
         if (!fs.existsSync(trustStoreFolder)) {
             fs.mkdirSync(trustStoreFolder);

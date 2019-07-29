@@ -3,7 +3,9 @@ import * as fs from "fs";
 import * as path from "path";
 import SignCommand, { SignOptions } from "../src/commands/sign";
 import VerifyCommand, { VerifyOptions } from "../src/commands/verify";
-import { readFilePromise } from "../src/lib/fsPromise";
+import { readFilePromise } from "../src/lib/util/fsPromise";
+import { Entry } from "../src/lib/types";
+import { FileEntry } from "../src/lib/entryHandlers/filesEntryHandler";
 
 process.chdir(__dirname);
 
@@ -37,10 +39,14 @@ test("signature has packageJson entry present", async t => {
   const json = JSON.parse(
     await readFilePromise(path.join(testName, "signature.json"))
   );
-  t.true(json.entries.some(entry => entry.entry === "packageJson/v1alpha1"));
   t.true(
     json.entries.some(
-      entry => entry.entry === "npmCompatiblePackageJson/v1alpha1"
+      (entry: Entry<any>) => entry.entry === "packageJson/v1alpha2"
+    )
+  );
+  t.true(
+    json.entries.some(
+      (entry: Entry<any>) => entry.entry === "npmCompatiblePackageJson/v1alpha2"
     )
   );
 });
@@ -57,27 +63,31 @@ test("signature packageJson omits NPM fields on sign", async t => {
   );
   t.true(
     json.entries.some(
-      entry => entry.entry === "npmCompatiblePackageJson/v1alpha1"
+      (entry: Entry<any>) => entry.entry === "npmCompatiblePackageJson/v1alpha2"
     )
   );
-  t.true(json.entries.some(entry => entry.entry === "packageJson/v1alpha1"));
+  t.true(
+    json.entries.some(
+      (entry: Entry<any>) => entry.entry === "packageJson/v1alpha2"
+    )
+  );
 
   const npmCompatibleEntry = json.entries.filter(
-    entry => entry.entry === "npmCompatiblePackageJson/v1alpha1"
+    (entry: Entry<any>) => entry.entry === "npmCompatiblePackageJson/v1alpha2"
   )[0];
   const packageJsonEntry = json.entries.filter(
-    entry => entry.entry === "packageJson/v1alpha1"
+    (entry: Entry<any>) => entry.entry === "packageJson/v1alpha2"
   )[0];
 
   t.is(
     npmCompatibleEntry.packageJsonProperties.sort().indexOf("_from"),
     -1,
-    "signature.json npmCompatiblePackageJson/v1alpha1 contains _from property"
+    "signature.json npmCompatiblePackageJson/v1alpha2 contains _from property"
   );
   t.is(
     Object.keys(packageJsonEntry.packageJson).length,
     2,
-    "signature.json packageJson/v1alpha1 doesn't contain all properties"
+    "signature.json packageJson/v1alpha2 doesn't contain all properties"
   );
 });
 
@@ -100,54 +110,58 @@ test("check signature of package", async t => {
 
   t.true(
     originalPackageSignature.entries.some(
-      entry => entry.entry === "files/v1alpha1"
+      (entry: Entry<any>) => entry.entry === "files/v1alpha2"
     )
   );
   t.true(
     originalPackageSignature.entries.some(
-      entry => entry.entry === "identity/v1alpha1"
+      (entry: Entry<any>) => entry.entry === "identity/v1alpha2"
     )
   );
   t.true(
     originalPackageSignature.entries.some(
-      entry => entry.entry === "packageJson/v1alpha1"
+      (entry: Entry<any>) => entry.entry === "packageJson/v1alpha2"
     )
   );
   t.true(
     originalPackageSignature.entries.some(
-      entry => entry.entry === "npmCompatiblePackageJson/v1alpha1"
+      (entry: Entry<any>) => entry.entry === "npmCompatiblePackageJson/v1alpha2"
     )
   );
 
   // all files ignored, except the files in the resulting package
   const filesEntry = originalPackageSignature.entries.filter(
-    entry => entry.entry === "files/v1alpha1"
+    (entry: Entry<any>) => entry.entry === "files/v1alpha2"
   )[0];
   t.is(
     filesEntry.files.length,
     2,
-    "signature.json files/v1alpha1 has only 2 files"
+    "signature.json files/v1alpha2 has only 2 files"
   );
-  t.true(filesEntry.files.some(entry => entry.path === "dist/index.js"));
-  t.true(filesEntry.files.some(entry => entry.path === "README.md"));
+  t.true(
+    filesEntry.files.some((entry: FileEntry) => entry.path === "dist/index.js")
+  );
+  t.true(
+    filesEntry.files.some((entry: FileEntry) => entry.path === "README.md")
+  );
 
   // all properties ignored, starting with underscore
   const npmCompatibleEntry = originalPackageSignature.entries.filter(
-    entry => entry.entry === "npmCompatiblePackageJson/v1alpha1"
+    (entry: Entry<any>) => entry.entry === "npmCompatiblePackageJson/v1alpha2"
   )[0];
   t.is(
     npmCompatibleEntry.packageJsonProperties.sort().indexOf("_ignored"),
     -1,
-    "signature.json npmCompatiblePackageJson/v1alpha1 contains _ignored property"
+    "signature.json npmCompatiblePackageJson/v1alpha2 contains _ignored property"
   );
 
   const packageJsonEntry = originalPackageSignature.entries.filter(
-    entry => entry.entry === "packageJson/v1alpha1"
+    (entry: Entry<any>) => entry.entry === "packageJson/v1alpha2"
   )[0];
   t.deepEqual(
     packageJsonEntry.packageJson,
     originalPackageJson,
-    "packageJson of packageJson/v1alpha1 doesn't match package.json from package"
+    "packageJson of packageJson/v1alpha2 doesn't match package.json from package"
   );
 
   const installedPackageJson = JSON.parse(
@@ -157,12 +171,14 @@ test("check signature of package", async t => {
   );
   // check for install metadata properties
   t.true(
-    Object.keys(installedPackageJson).some(entry => entry.indexOf("_") === 0)
+    Object.keys(installedPackageJson).some(
+      (entry: string) => entry.indexOf("_") === 0
+    )
   );
   // check for autogenerated description from readme.md
   t.true(
     Object.keys(installedPackageJson).some(
-      entry => entry.localeCompare("description") === 0
+      (entry: string) => entry.localeCompare("description") === 0
     )
   );
   t.is(

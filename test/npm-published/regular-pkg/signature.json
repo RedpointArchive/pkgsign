@@ -1,63 +1,72 @@
 {
   "entries": [
     {
-      "entry": "files/v1alpha1",
-      "files": [
-        {
-          "path": "dist/index.js",
-          "sha512": "ffc42195a2ff06ab9c37fa19a03053ecbb7c6aab89d2ccba09ac1bae4d8705720bb9f10db8a319e532684dbf4d7c186b2579eef063e8ae82c836be1b6342da76"
-        },
-        {
-          "path": "README.md",
-          "sha512": "1e2ac3c4b231a28605f30994c0082830836e1cba16750b5b5ad7288bbfec96c19c119cab24d9b6838e8ce2edc2ad5934c8060e1bf9e8efdb3589f6d10cb06de6"
-        }
-      ]
-    },
-    {
-      "entry": "identity/v1alpha1",
-      "identity": {
-        "pgpPublicKeyUrl": "https://pkgsign.test.invalid.url/test.pub"
-      }
-    },
-    {
-      "entry": "packageJson/v1alpha1",
-      "packageJson": {
-        "_ignored": "test",
-        "name": "regular-pkg",
-        "version": "1.2.3",
-        "private": true,
-        "main": "dist/index.js",
+      "entry": "files/v1alpha2",
+      "value": {
         "files": [
-          "dist/*",
-          "signature.json"
-        ],
-        "devDependencies": {
-          "mocha": "5.2.0",
-          "rimraf": "2.6.3",
-          "typescript": "latest"
-        },
-        "dependencies": {},
-        "scripts": {
-          "clean": "rimraf dist",
-          "compile": "tsc -p .",
-          "test": "mocha"
+          {
+            "path": "dist/index.js",
+            "sha512": "ffc42195a2ff06ab9c37fa19a03053ecbb7c6aab89d2ccba09ac1bae4d8705720bb9f10db8a319e532684dbf4d7c186b2579eef063e8ae82c836be1b6342da76"
+          },
+          {
+            "path": "README.md",
+            "sha512": "1e2ac3c4b231a28605f30994c0082830836e1cba16750b5b5ad7288bbfec96c19c119cab24d9b6838e8ce2edc2ad5934c8060e1bf9e8efdb3589f6d10cb06de6"
+          }
+        ]
+      }
+    },
+    {
+      "entry": "identity/v1alpha2",
+      "value": {
+        "identity": {
+          "pgpPublicKeyUrl": "https://pkgsign.test.invalid.url/test.pub"
         }
       }
     },
     {
-      "entry": "npmCompatiblePackageJson/v1alpha1",
-      "sha512": "5f11666c6dd32b4bcefed86c203df570aa11b5e7add70834730e5ba26126deec29fca9a035b429050c22971b7d7429f77d62a3bf5c992a8746e014ce5be96eb5",
-      "packageJsonProperties": [
-        "dependencies",
-        "devDependencies",
-        "files",
-        "main",
-        "name",
-        "private",
-        "scripts",
-        "version"
-      ]
+      "entry": "npmCompatiblePackageJson/v1alpha2",
+      "value": {
+        "packageJsonProperties": [
+          "_ignored",
+          "dependencies",
+          "devDependencies",
+          "files",
+          "main",
+          "name",
+          "private",
+          "scripts",
+          "version"
+        ],
+        "sha512": "5f11666c6dd32b4bcefed86c203df570aa11b5e7add70834730e5ba26126deec29fca9a035b429050c22971b7d7429f77d62a3bf5c992a8746e014ce5be96eb5"
+      }
+    },
+    {
+      "entry": "packageJson/v1alpha2",
+      "value": {
+        "packageJson": {
+          "_ignored": "test",
+          "name": "regular-pkg",
+          "version": "1.2.3",
+          "private": true,
+          "main": "dist/index.js",
+          "files": [
+            "dist/*",
+            "signature.json"
+          ],
+          "devDependencies": {
+            "mocha": "5.2.0",
+            "rimraf": "2.6.3",
+            "typescript": "latest"
+          },
+          "dependencies": {},
+          "scripts": {
+            "clean": "rimraf dist",
+            "compile": "tsc -p .",
+            "test": "mocha"
+          }
+        }
+      }
     }
   ],
-  "signature": "-----BEGIN PGP SIGNATURE-----\nVersion: OpenPGP.js v4.5.5\nComment: https://openpgpjs.org\n\nwsBcBAEBCAAGBQJdPhnjAAoJEIsFJbVEZAX3VUQH/3r+onqGWBLR6hGPj73q\nBCqua5mMM5Am5TMYASIpUbYCzC1+kQJUnMod0DLVflpmxWY/X/vtAGqdboCY\nV5sMwAJBu3URGMg22DZSKAesyJ+ja9mwp867nD42FdNB0QulKoJQgFG6Ww51\njGdZz93ZiRgiSIufLwWWaK080BPxiqfGchJKskEqN6Juab/cHaFhBwD0+GJC\nsentIyDWYznwoR95c/oKRvUUoceVavhIV7x1bfgnZa+4k+kxhzmpr0OGcMB4\n/x5gdTfPCohxCo+eRXfm+r1LrdhGw1fTrBt9eGAndGwOONoHNPlgrdEof7wk\nUWKCbt1BluVJymimBNbLOeM=\n=ES2l\n-----END PGP SIGNATURE-----\n"
+  "signature": "-----BEGIN PGP SIGNATURE-----\nVersion: OpenPGP.js v4.5.5\nComment: https://openpgpjs.org\n\nwsBcBAEBCAAGBQJdPnUPAAoJEIsFJbVEZAX3zmIH/200pe7NuS2MkyuNgeTV\nPfHD1TffqwszkiQW0WLBI1uVJqbJL91ytEatCRfi6D0FtajbHz+fuzbiAMcU\n7Pnpyr7buA68N4d5rjQsdKUkw4V1AXQNFBBBVpOk4EUgAAs8uOJlaqNG0O6D\ncI/NiM9JVV0/neogT7XAWf9MVq9uTKCR2upcc1cZ/aejsUnOKZT28RnZHFa4\nux7AFF8yrBo7NkEjgt6xQWNu2+hn6WILAW0lHJLSbzgakVN5z4xmLs8+lSTE\nREmI+I6q3ZhvxqkCs+5ym88aQar2OdqWmxfoIDH0sKn3dnHcZ0yC37QHTEfB\nNQF+Ar2eS6xXnC6SQeQF8Wg=\n=xO1h\n-----END PGP SIGNATURE-----\n"
 }

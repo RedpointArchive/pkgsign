@@ -1,9 +1,6 @@
 import { Command, command, param, Options, option } from "clime";
 import * as path from "path";
 import { lstatSync } from "fs";
-import { Signer } from "../lib/signer";
-import { KeybaseSigner } from "../lib/keybaseSigner";
-import { PgpSigner } from "../lib/pgpSigner";
 import * as packlist from "npm-packlist";
 import { createSignedSignatureDocument } from "../lib/signature";
 import { queueTelemetryPackageAction } from "../lib/telemetry";
@@ -17,6 +14,12 @@ import {
   compress,
   writeFilePromise
 } from "../lib/util/fsPromise";
+import {
+  IIdentityProvider,
+  IIdentityProviderSigningContext
+} from "../lib/identity";
+import { PgpIdentityProvider } from "../lib/identity/pgp";
+import { KeybaseIdentityProvider } from "../lib/identity/keybase";
 
 export class SignOptions extends Options {
   @option({
@@ -24,25 +27,25 @@ export class SignOptions extends Options {
     description: "the signer to use, one of: 'keybase' (default) or 'pgp'",
     default: "keybase"
   })
-  withSigner: string;
+  withSigner: string = "";
   @option({
     name: "pgp-private-key-path",
     description:
       "when signing with 'pgp', this is the path to the private key file"
   })
-  privateKeyPath: string;
+  privateKeyPath: string = "";
   @option({
     name: "pgp-private-key-passphrase",
     description:
       "when signing with 'pgp', this is the passphrase for the private key file"
   })
-  privateKeyPassphrase: string;
+  privateKeyPassphrase: string = "";
   @option({
     name: "pgp-public-key-https-url",
     description:
       "when signing with 'pgp', this is the HTTPS URL to the public key that pkgsign can download to verify the package"
   })
-  publicKeyUrl: string;
+  publicKeyUrl: string = "";
 }
 
 @command({
@@ -69,28 +72,39 @@ export default class extends Command {
     path: string,
     options: SignOptions
   ): Promise<boolean> {
-    let signer: Signer;
+    let identityProvider: IIdentityProvider;
     if (options.withSigner == "pgp") {
-      signer = new PgpSigner(
-        options.privateKeyPath,
-        options.privateKeyPassphrase,
-        options.publicKeyUrl
-      );
+      identityProvider = PgpIdentityProvider;
     } else if (options.withSigner == "keybase") {
-      signer = new KeybaseSigner();
+      identityProvider = KeybaseIdentityProvider;
     } else {
       throw new Error("Not supported signer type: " + options.withSigner);
     }
 
+    const identityProviderSigningContext: IIdentityProviderSigningContext = {
+      privateKeyPath: options.privateKeyPath,
+      privateKeyPassphrase: options.privateKeyPassphrase,
+      publicKeyHttpsUrl: options.publicKeyUrl
+    };
+
     if (path.endsWith(".tgz") && lstatSync(path).isFile()) {
-      return await this.signTarball(signer, path);
+      return await this.signTarball(
+        identityProvider,
+        identityProviderSigningContext,
+        path
+      );
     } else {
-      return await this.signDirectory(signer, path);
+      return await this.signDirectory(
+        identityProvider,
+        identityProviderSigningContext,
+        path
+      );
     }
   }
 
   private async signTarball(
-    signer: Signer,
+    identityProvider: IIdentityProvider,
+    identityProviderSigningContext: IIdentityProviderSigningContext,
     tarballPath: string
   ): Promise<boolean> {
     const wd = await createWorkingDirectory();
@@ -102,7 +116,13 @@ export default class extends Command {
     let files = await recursivePromise(base);
     files = files.map(fullPath => fullPath.substr(base.length + 1));
 
-    await this.signFileList(signer, base, files, "sign-tarball");
+    await this.signFileList(
+      identityProvider,
+      identityProviderSigningContext,
+      base,
+      files,
+      "sign-tarball"
+    );
 
     await unlinkPromise(tarballPath);
     await compress(wd, tarballPath);
@@ -112,7 +132,8 @@ export default class extends Command {
   }
 
   private async signDirectory(
-    signer: Signer,
+    identityProvider: IIdentityProvider,
+    identityProviderSigningContext: IIdentityProviderSigningContext,
     packagePath: string
   ): Promise<boolean> {
     console.log("building file list...");
@@ -120,19 +141,28 @@ export default class extends Command {
       path: packagePath
     });
 
-    await this.signFileList(signer, packagePath, files, "sign-directory");
+    await this.signFileList(
+      identityProvider,
+      identityProviderSigningContext,
+      packagePath,
+      files,
+      "sign-directory"
+    );
 
     console.log("signature.json has been created in package directory");
     return true;
   }
 
   private async signFileList(
-    signer: Signer,
+    identityProvider: IIdentityProvider,
+    identityProviderSigningContext: IIdentityProviderSigningContext,
     basePath: string,
     relativeFilePaths: string[],
     telemetryAction: string
   ): Promise<void> {
-    const identity = await signer.getIdentity();
+    const identity = await identityProvider.getIdentity(
+      identityProviderSigningContext
+    );
 
     const context = {
       dir: basePath,
@@ -155,7 +185,8 @@ export default class extends Command {
 
     const signatureDocumentJson = await createSignedSignatureDocument(
       entries,
-      signer
+      identityProvider,
+      identityProviderSigningContext
     );
 
     await writeFilePromise(

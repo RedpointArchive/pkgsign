@@ -2,12 +2,8 @@ import * as path from "path";
 import { ModuleVerifier } from "./moduleVerifier";
 import { ITrustStore } from "./trustStore";
 import * as packlist from "npm-packlist";
-import { queueTelemetry } from "../lib/telemetry";
-import {
-  ModuleVerificationResult,
-  ModuleVerificationStatus,
-  identityToString
-} from "./types";
+import { queueTelemetryFromModuleVerificationResult } from "../lib/telemetry";
+import { ModuleVerificationResult } from "./types";
 import { readFilePromise, readdirPromise } from "./util/fsPromise";
 
 export interface ModuleInfo {
@@ -47,36 +43,10 @@ export class ModuleHierarchyVerifier {
             expectedPackageName
           );
           results[moduleInfo.path] = result;
-          if (result.isPrivate) {
-            // Don't send identifiable telemetry about private packages.
-            await queueTelemetry({
-              action: "verify-module",
-              packageName: "",
-              packageVersion: "",
-              packageIsSigned:
-                result.status != ModuleVerificationStatus.Unsigned,
-              signingIdentity: "",
-              identityIsTrusted:
-                result.status == ModuleVerificationStatus.Trusted
-            });
-          } else {
-            // Send telemetry for public packages.
-            await queueTelemetry({
-              action: "verify-module",
-              packageName: result.packageName,
-              packageVersion: result.untrustedPackageVersion,
-              packageIsSigned:
-                result.status != ModuleVerificationStatus.Unsigned,
-              signingIdentity:
-                result.trustedIdentity != undefined
-                  ? identityToString(result.trustedIdentity)
-                  : result.untrustedIdentity != undefined
-                  ? identityToString(result.untrustedIdentity)
-                  : "",
-              identityIsTrusted:
-                result.status == ModuleVerificationStatus.Trusted
-            });
-          }
+          await queueTelemetryFromModuleVerificationResult(
+            "verify-module",
+            result
+          );
         })(moduleInfo)
       );
     }

@@ -16,8 +16,8 @@ interface NpmCompatiblePackageJsonEntry {
   sha512: string;
 }
 
-function sha512OfObject(value: object, properties: Array<string>): string {
-  const orderedObject = {};
+function sha512OfObject(value: any, properties: Array<string>): string {
+  const orderedObject: any = {};
   properties
     // filter properties starting with underscore
     .filter(key => key.indexOf("_") != 0)
@@ -75,7 +75,7 @@ export const NpmCompatiblePackageJsonEntryHandler: IEntryHandler<
   verifyEntry: async (
     context: IVerifyEntryContext,
     value: NpmCompatiblePackageJsonEntry
-  ): Promise<ModuleVerificationResult> => {
+  ): Promise<ModuleVerificationResult | null> => {
     if (!value.packageJsonProperties) {
       // Verify that package.json does not exist on disk.
       if (context.relFilesOnDisk.indexOf("package.json") !== -1) {
@@ -128,7 +128,9 @@ export const NpmCompatiblePackageJsonEntryHandler: IEntryHandler<
     return normalizeSync(value.packageJsonProperties) + "\n" + value.sha512;
   },
 
-  getIdentity: (value: NpmCompatiblePackageJsonEntry): SignatureIdentity => {
+  getIdentity: (
+    value: NpmCompatiblePackageJsonEntry
+  ): SignatureIdentity | null => {
     return null;
   }
 };

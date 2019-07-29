@@ -21,7 +21,11 @@
  * @param {function} done A callback for completion.
  * @returns {string} The JSON.stringified literal value.
  */
-function handleLiteral(recurse, value, done) {
+function handleLiteral(
+  recurse: any,
+  value: any,
+  done: (err: any, value?: any) => void
+) {
   let error = null;
   let results;
 
@@ -42,12 +46,22 @@ function handleLiteral(recurse, value, done) {
  * @param {function} done A callback for completion.
  * @returns {string} The JSON.stringified object value.
  */
-function handleObject(recurse, obj, replacer, done) {
+function handleObject(
+  recurse: (
+    obj: any,
+    replacer: undefined | ((this: any, key: string, value: any) => any),
+    complete: (err: any, value: any) => void,
+    key: undefined | string
+  ) => string | void,
+  obj: any,
+  replacer: undefined | ((this: any, key: string, value: any) => any),
+  done: (err: any, value?: any) => void
+) {
   const keys = Object.keys(obj);
   const isArray = obj instanceof Array;
-  let handledError = null;
+  let handledError: Error | null = null;
   let complete = 0;
-  const values = [];
+  const values: any[] = [];
 
   const onComplete = () =>
     done(
@@ -61,7 +75,11 @@ function handleObject(recurse, obj, replacer, done) {
     );
 
   // When an object key is serialized, it calls this method as its callback.
-  const onSerialized = (e, value, index) => {
+  const onSerialized = (
+    e: Error | null,
+    value: string | null,
+    index: number | undefined
+  ) => {
     if (handledError) {
       return null;
     } else if (e) {
@@ -69,13 +87,15 @@ function handleObject(recurse, obj, replacer, done) {
       return done(e);
     }
 
-    values[index] = typeof value === "undefined" ? null : value;
+    if (index !== undefined) {
+      values[index] = typeof value === "undefined" ? null : value;
+    }
     if (++complete !== keys.length) return null;
     return onComplete();
   };
 
   // Serializes each item in an array.
-  const mapArray = (key, index) =>
+  const mapArray = (key: string, index: number) =>
     recurse(
       typeof obj[key] === "undefined" ? null : obj[key],
       replacer,
@@ -84,7 +104,7 @@ function handleObject(recurse, obj, replacer, done) {
     );
 
   // Serializes each item in an object.
-  const mapObject = (key, index) =>
+  const mapObject = (key: string, index: number) =>
     typeof obj[key] === "undefined"
       ? onSerialized(null, null, undefined)
       : recurse(
@@ -113,11 +133,22 @@ function handleObject(recurse, obj, replacer, done) {
  * @returns {object} An object containing the new value, and "new" replacer function to pass along
  * in regard to recursion.
  */
-function handleReplacer(val, key, replacer) {
+function handleReplacer(
+  val: any,
+  key?: string,
+  replacer?: (this: any, key: string, value: any) => any
+): {
+  value: any;
+  onValue: undefined | ((this: any, key: string, value: any) => any);
+} {
   let value = val;
   let onValue = replacer;
 
   if (typeof onValue === "function") {
+    if (key === undefined) {
+      throw new Error("key is undefined in handleReplacer");
+    }
+
     value = onValue(key, value);
     onValue = typeof value === "object" ? onValue : undefined;
   } else if (typeof value === "function") {
@@ -137,16 +168,12 @@ function handleReplacer(val, key, replacer) {
  * to the replacer function.
  * @returns {undefined}
  */
-function serialize(obj, replacer, complete, key) {
-  let replacerFunction = replacer;
-  let done = complete;
-
-  // Rearrange arguements for replacer/complete parameters based on value
-  if (typeof done === "undefined" && typeof replacerFunction === "function") {
-    replacerFunction = undefined;
-    done = replacer;
-  }
-
+function serialize(
+  obj: any,
+  replacerFunction: undefined | ((this: any, key: string, value: any) => any),
+  done: (err: any, value: any) => void,
+  key: undefined | string
+): void {
   // No reason to continue, no callback was provided.
   if (typeof done !== "function") return;
 
@@ -168,9 +195,14 @@ function serialize(obj, replacer, complete, key) {
  * @returns {string} A "normalized JSON string", which always returns the same string, if passed
  * the same object, regardless of key order.
  */
-function serializeSync(obj, replacer, complete, key) {
+function serializeSync(
+  obj: any,
+  replacer: undefined | ((this: any, key: string, value: any) => any),
+  complete: undefined | ((err: any, value: any) => void),
+  key: undefined | string
+): string {
   let done = complete;
-  let results;
+  let results: string = "";
 
   // Create a callback for when stringification is complete
   if (typeof done !== "function")
@@ -198,7 +230,11 @@ function serializeSync(obj, replacer, complete, key) {
  * @param {function} complete A callback for completion.
  * @returns {undefined}
  */
-export function normalize(obj, replacer, complete) {
+export function normalize(
+  obj: any,
+  replacer: undefined | ((this: any, key: string, value: any) => any),
+  complete: (err: any, value: string) => void
+): void {
   return serialize(obj, replacer, complete, undefined);
 }
 
@@ -210,6 +246,9 @@ export function normalize(obj, replacer, complete) {
  * @returns {string} A "normalized JSON string", which always returns the same string, if passed
  * the same object, regardless of key order.
  */
-export function normalizeSync(obj, replacer?: any) {
+export function normalizeSync(
+  obj: any,
+  replacer?: (this: any, key: string, value: any) => any
+): string {
   return serializeSync(obj, replacer, undefined, undefined);
 }

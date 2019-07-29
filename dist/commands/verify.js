@@ -28,10 +28,17 @@ const inquirer = require("inquirer");
 const path = require("path");
 const path_1 = require("path");
 const trustStore_1 = require("../lib/trustStore");
-const fsPromise_1 = require("../lib/fsPromise");
 const telemetry_1 = require("../lib/telemetry");
-const signatureIdentity_1 = require("../lib/signature/signatureIdentity");
+const fsPromise_1 = require("../lib/util/fsPromise");
+const types_1 = require("../lib/types");
 class VerifyOptions extends clime_1.Options {
+    constructor() {
+        super(...arguments);
+        this.full = false;
+        this.nonInteractive = false;
+        this.packageName = "";
+        this.enableTestTrustStore = false;
+    }
 }
 __decorate([
     clime_1.option({
@@ -101,34 +108,9 @@ let default_1 = class default_1 extends clime_1.Command {
             console.log("verifying package...");
             const moduleVerifier = new moduleVerifier_1.ModuleVerifier(options.enableTestTrustStore ? new trustStore_1.TestTrustStore() : new trustStore_1.TrustStore());
             let result = yield moduleVerifier.verify(base, files, options.packageName || "");
-            if (result.isPrivate) {
-                // Don't send identifiable telemetry about private packages.
-                yield telemetry_1.queueTelemetry({
-                    action: "verify-module",
-                    packageName: "",
-                    packageVersion: "",
-                    packageIsSigned: result.status != moduleVerifier_1.ModuleVerificationStatus.Unsigned,
-                    signingIdentity: "",
-                    identityIsTrusted: result.status == moduleVerifier_1.ModuleVerificationStatus.Trusted
-                });
-            }
-            else {
-                // Send telemetry for public packages.
-                yield telemetry_1.queueTelemetry({
-                    action: "verify-module",
-                    packageName: result.packageName,
-                    packageVersion: result.untrustedPackageVersion,
-                    packageIsSigned: result.status != moduleVerifier_1.ModuleVerificationStatus.Unsigned,
-                    signingIdentity: result.trustedIdentity != undefined
-                        ? signatureIdentity_1.identityToString(result.trustedIdentity)
-                        : result.untrustedIdentity != undefined
-                            ? signatureIdentity_1.identityToString(result.untrustedIdentity)
-                            : "",
-                    identityIsTrusted: result.status == moduleVerifier_1.ModuleVerificationStatus.Trusted
-                });
-            }
+            telemetry_1.queueTelemetryFromModuleVerificationResult("verify-module", result);
             // Prompt user to trust package if untrusted.
-            if (result.status == moduleVerifier_1.ModuleVerificationStatus.Untrusted &&
+            if (result.status == types_1.ModuleVerificationStatus.Untrusted &&
                 !options.nonInteractive) {
                 let identityString = "";
                 if (result.untrustedIdentity.keybaseUser !== undefined) {
@@ -155,54 +137,30 @@ let default_1 = class default_1 extends clime_1.Command {
                     }
                 ]);
                 let trustStore = new trustStore_1.TrustStore();
-                let didModify = false;
                 if (trustResults["pkg"]) {
                     yield trustStore.addTrusted(result.untrustedIdentity, result.packageName);
-                    didModify = true;
                     if (!result.isPrivate) {
-                        yield telemetry_1.queueTelemetry({
-                            action: "grant-trust",
-                            packageName: result.packageName,
-                            packageVersion: result.untrustedPackageVersion,
-                            packageIsSigned: true,
-                            signingIdentity: result.trustedIdentity != undefined
-                                ? signatureIdentity_1.identityToString(result.trustedIdentity)
-                                : result.untrustedIdentity != undefined
-                                    ? signatureIdentity_1.identityToString(result.untrustedIdentity)
-                                    : "",
-                            identityIsTrusted: true
-                        });
+                        telemetry_1.queueTelemetryFromModuleVerificationResult("grant-trust", result);
                     }
                 }
                 else {
                     if (!result.isPrivate) {
-                        yield telemetry_1.queueTelemetry({
-                            action: "not-grant-trust",
-                            packageName: result.packageName,
-                            packageVersion: result.untrustedPackageVersion,
-                            packageIsSigned: true,
-                            signingIdentity: result.trustedIdentity != undefined
-                                ? signatureIdentity_1.identityToString(result.trustedIdentity)
-                                : result.untrustedIdentity != undefined
-                                    ? signatureIdentity_1.identityToString(result.untrustedIdentity)
-                                    : "",
-                            identityIsTrusted: false
-                        });
+                        telemetry_1.queueTelemetryFromModuleVerificationResult("not-grant-trust", result);
                     }
                 }
                 result = yield moduleVerifier.verify(base, files, options.packageName || "");
             }
             switch (result.status) {
-                case moduleVerifier_1.ModuleVerificationStatus.Compromised:
+                case types_1.ModuleVerificationStatus.Compromised:
                     console.log("package is compromised: " + result.reason);
                     return false;
-                case moduleVerifier_1.ModuleVerificationStatus.Unsigned:
+                case types_1.ModuleVerificationStatus.Unsigned:
                     console.log("package is unsigned: " + result.reason);
                     return false;
-                case moduleVerifier_1.ModuleVerificationStatus.Untrusted:
+                case types_1.ModuleVerificationStatus.Untrusted:
                     console.log("package is untrusted");
                     return false;
-                case moduleVerifier_1.ModuleVerificationStatus.Trusted:
+                case types_1.ModuleVerificationStatus.Trusted:
                     console.log("package is trusted");
                     return true;
             }
@@ -213,13 +171,10 @@ let default_1 = class default_1 extends clime_1.Command {
             // Telemetry sending is done directly inside ModuleHierarchyVerifier, per package.
             let moduleHierarchyVerifier = new moduleHierarchyVerifier_1.ModuleHierarchyVerifier(path, options.enableTestTrustStore ? new trustStore_1.TestTrustStore() : new trustStore_1.TrustStore());
             let results = yield moduleHierarchyVerifier.verify();
-            // First find any untrusted modules and ask the user if they
-            // want to trust them.
-            let promptStarted = false;
             let prompts = [];
             for (let path in results) {
                 let result = results[path];
-                if (result.status == moduleVerifier_1.ModuleVerificationStatus.Untrusted) {
+                if (result.status == types_1.ModuleVerificationStatus.Untrusted) {
                     let identityString = "";
                     if (result.untrustedIdentity.keybaseUser !== undefined) {
                         identityString =
@@ -229,8 +184,8 @@ let default_1 = class default_1 extends clime_1.Command {
                         identityString =
                             "public key at " + result.untrustedIdentity.pgpPublicKeyUrl;
                     }
-                    if (prompts.filter(value => path_1.basename(value.name) == result.packageName)
-                        .length == 0) {
+                    if (prompts.filter(value => value.name !== undefined &&
+                        path_1.basename(value.name) == result.packageName).length == 0) {
                         prompts.push({
                             name: Buffer.from(path).toString("base64"),
                             type: "confirm",
@@ -253,38 +208,19 @@ let default_1 = class default_1 extends clime_1.Command {
                 let trustStore = new trustStore_1.TrustStore();
                 for (let path in trustResults) {
                     let realpath = Buffer.from(path, "base64").toString("ascii");
-                    if (trustResults[path]) {
-                        yield trustStore.addTrusted(results[realpath].untrustedIdentity, results[realpath].packageName);
-                        didModify = true;
-                        if (!results[realpath].isPrivate) {
-                            yield telemetry_1.queueTelemetry({
-                                action: "grant-trust",
-                                packageName: results[realpath].packageName,
-                                packageVersion: results[realpath].untrustedPackageVersion,
-                                packageIsSigned: true,
-                                signingIdentity: results[realpath].trustedIdentity != undefined
-                                    ? signatureIdentity_1.identityToString(results[realpath].trustedIdentity)
-                                    : results[realpath].untrustedIdentity != undefined
-                                        ? signatureIdentity_1.identityToString(results[realpath].untrustedIdentity)
-                                        : "",
-                                identityIsTrusted: true
-                            });
+                    const result = results[realpath];
+                    if (result.status == types_1.ModuleVerificationStatus.Untrusted) {
+                        if (trustResults[path]) {
+                            yield trustStore.addTrusted(result.untrustedIdentity, result.packageName);
+                            didModify = true;
+                            if (!result.isPrivate) {
+                                telemetry_1.queueTelemetryFromModuleVerificationResult("grant-trust", result);
+                            }
                         }
-                    }
-                    else {
-                        if (!results[realpath].isPrivate) {
-                            yield telemetry_1.queueTelemetry({
-                                action: "not-grant-trust",
-                                packageName: results[realpath].packageName,
-                                packageVersion: results[realpath].untrustedPackageVersion,
-                                packageIsSigned: true,
-                                signingIdentity: results[realpath].trustedIdentity != undefined
-                                    ? signatureIdentity_1.identityToString(results[realpath].trustedIdentity)
-                                    : results[realpath].untrustedIdentity != undefined
-                                        ? signatureIdentity_1.identityToString(results[realpath].untrustedIdentity)
-                                        : "",
-                                identityIsTrusted: false
-                            });
+                        else {
+                            if (!results[realpath].isPrivate) {
+                                telemetry_1.queueTelemetryFromModuleVerificationResult("not-grant-trust", result);
+                            }
                         }
                     }
                 }
@@ -301,16 +237,16 @@ let default_1 = class default_1 extends clime_1.Command {
             for (let path in results) {
                 let result = results[path];
                 switch (result.status) {
-                    case moduleVerifier_1.ModuleVerificationStatus.Compromised:
+                    case types_1.ModuleVerificationStatus.Compromised:
                         compromisedCount++;
                         break;
-                    case moduleVerifier_1.ModuleVerificationStatus.Unsigned:
+                    case types_1.ModuleVerificationStatus.Unsigned:
                         unsignedCount++;
                         break;
-                    case moduleVerifier_1.ModuleVerificationStatus.Untrusted:
+                    case types_1.ModuleVerificationStatus.Untrusted:
                         untrustedCount++;
                         break;
-                    case moduleVerifier_1.ModuleVerificationStatus.Trusted:
+                    case types_1.ModuleVerificationStatus.Trusted:
                         trustedCount++;
                         break;
                 }
@@ -339,16 +275,16 @@ let default_1 = class default_1 extends clime_1.Command {
                     let result = results[path];
                     let status = "unknown";
                     switch (result.status) {
-                        case moduleVerifier_1.ModuleVerificationStatus.Compromised:
+                        case types_1.ModuleVerificationStatus.Compromised:
                             status = "compromised!";
                             break;
-                        case moduleVerifier_1.ModuleVerificationStatus.Unsigned:
+                        case types_1.ModuleVerificationStatus.Unsigned:
                             status = "unsigned";
                             break;
-                        case moduleVerifier_1.ModuleVerificationStatus.Untrusted:
+                        case types_1.ModuleVerificationStatus.Untrusted:
                             status = "untrusted";
                             break;
-                        case moduleVerifier_1.ModuleVerificationStatus.Trusted:
+                        case types_1.ModuleVerificationStatus.Trusted:
                             status = "trusted";
                             break;
                     }

@@ -6,7 +6,12 @@ import * as tmp from "tmp";
 import * as spawn from "silent-spawn";
 import { readFilePromise } from "./util/fsPromise";
 import { join as pathJoin } from "path";
-import { SignatureIdentity, identityToString } from "./types";
+import {
+  SignatureIdentity,
+  identityToString,
+  ModuleVerificationResult,
+  ModuleVerificationStatus
+} from "./types";
 
 const enableTelemetry = process.env.DISABLE_PKGSIGN_TELEMETRY !== "true";
 const currentMachineId = machineIdSync();
@@ -23,7 +28,7 @@ export interface TelemetryData {
   identityIsTrusted: boolean;
 }
 
-let telemetryCache = [];
+let telemetryCache: any[] = [];
 
 export async function queueTelemetry(data: TelemetryData) {
   if (enableTelemetry) {
@@ -62,6 +67,38 @@ export async function sendTelemetry(telemetry: TelemetryData[]) {
         }
       }
     );
+  }
+}
+
+export async function queueTelemetryFromModuleVerificationResult(
+  action: string,
+  result: ModuleVerificationResult
+) {
+  if (result.isPrivate) {
+    await queueTelemetry({
+      action: action,
+      packageName: "",
+      packageVersion: "",
+      packageIsSigned: result.status != ModuleVerificationStatus.Unsigned,
+      signingIdentity: "",
+      identityIsTrusted: result.status == ModuleVerificationStatus.Trusted
+    });
+  } else {
+    await queueTelemetry({
+      action: action,
+      packageName: result.packageName,
+      packageVersion: result.untrustedPackageVersion,
+      packageIsSigned: result.status != ModuleVerificationStatus.Unsigned,
+      signingIdentity:
+        result.status === ModuleVerificationStatus.Trusted
+          ? identityToString(result.trustedIdentity)
+          : (result.status === ModuleVerificationStatus.Untrusted ||
+              result.status === ModuleVerificationStatus.Compromised) &&
+            result.untrustedIdentity !== undefined
+          ? identityToString(result.untrustedIdentity)
+          : "",
+      identityIsTrusted: result.status == ModuleVerificationStatus.Trusted
+    });
   }
 }
 

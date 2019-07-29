@@ -1,5 +1,5 @@
-import { ModuleVerificationResult } from "./moduleVerifier";
 import { ITrustStore } from "./trustStore";
+import { ModuleVerificationResult } from "./types";
 export interface ModuleInfo {
     untrustedPackageInfo: any;
     path: string;

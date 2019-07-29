@@ -2,7 +2,6 @@ import { SignatureIdentity } from "../types";
 import { ITrustStore } from "../trustStore";
 
 export interface IIdentityProviderSigningContext {
-  trustStore: ITrustStore;
   privateKeyPath: string;
   privateKeyPassphrase: string;
   publicKeyHttpsUrl: string;

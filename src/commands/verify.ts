@@ -6,13 +6,13 @@ import * as inquirer from "inquirer";
 import * as path from "path";
 import { basename } from "path";
 import { TrustStore, TestTrustStore } from "../lib/trustStore";
-import { queueTelemetry } from "../lib/telemetry";
+import { queueTelemetryFromModuleVerificationResult } from "../lib/telemetry";
 import {
   createWorkingDirectory,
   decompress,
   recursivePromise
 } from "../lib/util/fsPromise";
-import { ModuleVerificationStatus, identityToString } from "../lib/types";
+import { ModuleVerificationStatus } from "../lib/types";
 
 export class VerifyOptions extends Options {
   @option({
@@ -20,24 +20,24 @@ export class VerifyOptions extends Options {
     toggle: true,
     description: "show verification status of individual packages"
   })
-  full: boolean;
+  full: boolean = false;
   @option({
     name: "non-interactive",
     toggle: true,
     description: "do not prompt to trust packages that are untrusted"
   })
-  nonInteractive: boolean;
+  nonInteractive: boolean = false;
   @option({
     name: "package-name",
     description: "if verifying a tarball, this is the expected package name"
   })
-  packageName: string;
+  packageName: string = "";
   @option({
     name: "enable-test-trust-store",
     toggle: true,
     description: "enables the test trust store, for debugging purposes only"
   })
-  enableTestTrustStore: boolean;
+  enableTestTrustStore: boolean = false;
 }
 
 @command({
@@ -100,32 +100,7 @@ export default class extends Command {
       options.packageName || ""
     );
 
-    if (result.isPrivate) {
-      // Don't send identifiable telemetry about private packages.
-      await queueTelemetry({
-        action: "verify-module",
-        packageName: "",
-        packageVersion: "",
-        packageIsSigned: result.status != ModuleVerificationStatus.Unsigned,
-        signingIdentity: "",
-        identityIsTrusted: result.status == ModuleVerificationStatus.Trusted
-      });
-    } else {
-      // Send telemetry for public packages.
-      await queueTelemetry({
-        action: "verify-module",
-        packageName: result.packageName,
-        packageVersion: result.untrustedPackageVersion,
-        packageIsSigned: result.status != ModuleVerificationStatus.Unsigned,
-        signingIdentity:
-          result.trustedIdentity != undefined
-            ? identityToString(result.trustedIdentity)
-            : result.untrustedIdentity != undefined
-            ? identityToString(result.untrustedIdentity)
-            : "",
-        identityIsTrusted: result.status == ModuleVerificationStatus.Trusted
-      });
-    }
+    queueTelemetryFromModuleVerificationResult("verify-module", result);
 
     // Prompt user to trust package if untrusted.
     if (
@@ -155,46 +130,20 @@ export default class extends Command {
             "' now and forever",
           default: false
         }
-      ]);
+      ] as inquirer.ConfirmQuestion<{ pkg: boolean }>[]);
       let trustStore = new TrustStore();
-      let didModify = false;
       if (trustResults["pkg"]) {
         await trustStore.addTrusted(
           result.untrustedIdentity,
           result.packageName
         );
-        didModify = true;
 
         if (!result.isPrivate) {
-          await queueTelemetry({
-            action: "grant-trust",
-            packageName: result.packageName,
-            packageVersion: result.untrustedPackageVersion,
-            packageIsSigned: true,
-            signingIdentity:
-              result.trustedIdentity != undefined
-                ? identityToString(result.trustedIdentity)
-                : result.untrustedIdentity != undefined
-                ? identityToString(result.untrustedIdentity)
-                : "",
-            identityIsTrusted: true
-          });
+          queueTelemetryFromModuleVerificationResult("grant-trust", result);
         }
       } else {
         if (!result.isPrivate) {
-          await queueTelemetry({
-            action: "not-grant-trust",
-            packageName: result.packageName,
-            packageVersion: result.untrustedPackageVersion,
-            packageIsSigned: true,
-            signingIdentity:
-              result.trustedIdentity != undefined
-                ? identityToString(result.trustedIdentity)
-                : result.untrustedIdentity != undefined
-                ? identityToString(result.untrustedIdentity)
-                : "",
-            identityIsTrusted: false
-          });
+          queueTelemetryFromModuleVerificationResult("not-grant-trust", result);
         }
       }
 
@@ -233,10 +182,7 @@ export default class extends Command {
     );
     let results = await moduleHierarchyVerifier.verify();
 
-    // First find any untrusted modules and ask the user if they
-    // want to trust them.
-    let promptStarted = false;
-    let prompts = [];
+    let prompts: inquirer.ConfirmQuestion<{ [id: string]: boolean }>[] = [];
     for (let path in results) {
       let result = results[path];
       if (result.status == ModuleVerificationStatus.Untrusted) {
@@ -249,8 +195,11 @@ export default class extends Command {
             "public key at " + result.untrustedIdentity.pgpPublicKeyUrl;
         }
         if (
-          prompts.filter(value => basename(value.name) == result.packageName)
-            .length == 0
+          prompts.filter(
+            value =>
+              value.name !== undefined &&
+              basename(value.name) == result.packageName
+          ).length == 0
         ) {
           prompts.push({
             name: Buffer.from(path).toString("base64"),
@@ -265,7 +214,7 @@ export default class extends Command {
               result.packageName +
               "' now and forever",
             default: false
-          });
+          } as inquirer.ConfirmQuestion<{ [id: string]: boolean }>);
         }
       }
     }
@@ -276,43 +225,25 @@ export default class extends Command {
       let trustStore = new TrustStore();
       for (let path in trustResults) {
         let realpath = Buffer.from(path, "base64").toString("ascii");
-        if (trustResults[path]) {
-          await trustStore.addTrusted(
-            results[realpath].untrustedIdentity,
-            results[realpath].packageName
-          );
-          didModify = true;
+        const result = results[realpath];
+        if (result.status == ModuleVerificationStatus.Untrusted) {
+          if (trustResults[path]) {
+            await trustStore.addTrusted(
+              result.untrustedIdentity,
+              result.packageName
+            );
+            didModify = true;
 
-          if (!results[realpath].isPrivate) {
-            await queueTelemetry({
-              action: "grant-trust",
-              packageName: results[realpath].packageName,
-              packageVersion: results[realpath].untrustedPackageVersion,
-              packageIsSigned: true,
-              signingIdentity:
-                results[realpath].trustedIdentity != undefined
-                  ? identityToString(results[realpath].trustedIdentity)
-                  : results[realpath].untrustedIdentity != undefined
-                  ? identityToString(results[realpath].untrustedIdentity)
-                  : "",
-              identityIsTrusted: true
-            });
-          }
-        } else {
-          if (!results[realpath].isPrivate) {
-            await queueTelemetry({
-              action: "not-grant-trust",
-              packageName: results[realpath].packageName,
-              packageVersion: results[realpath].untrustedPackageVersion,
-              packageIsSigned: true,
-              signingIdentity:
-                results[realpath].trustedIdentity != undefined
-                  ? identityToString(results[realpath].trustedIdentity)
-                  : results[realpath].untrustedIdentity != undefined
-                  ? identityToString(results[realpath].untrustedIdentity)
-                  : "",
-              identityIsTrusted: false
-            });
+            if (!result.isPrivate) {
+              queueTelemetryFromModuleVerificationResult("grant-trust", result);
+            }
+          } else {
+            if (!results[realpath].isPrivate) {
+              queueTelemetryFromModuleVerificationResult(
+                "not-grant-trust",
+                result
+              );
+            }
           }
         }
       }

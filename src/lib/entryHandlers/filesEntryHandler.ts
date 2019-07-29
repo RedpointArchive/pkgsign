@@ -9,7 +9,8 @@ import {
   IGenerateEntryContext
 } from "../types";
 
-interface FileEntry {
+// exported only for tests
+export interface FileEntry {
   path: string;
   sha512: string;
 }
@@ -62,11 +63,11 @@ export const FilesEntryHandler: IEntryHandler<FilesEntry> = {
   verifyEntry: async (
     context: IVerifyEntryContext,
     value: FilesEntry
-  ): Promise<ModuleVerificationResult> => {
+  ): Promise<ModuleVerificationResult | null> => {
     const skipPackageJsonExactVerification = context.entries.some(x => {
       return (
-        x.entry === "packageJson/v1alpha1" ||
-        x.entry === "npmCompatiblePackageJson/v1alpha1"
+        x.entry === "packageJson/v1alpha2" ||
+        x.entry === "npmCompatiblePackageJson/v1alpha2"
       );
     });
 
@@ -148,7 +149,7 @@ export const FilesEntryHandler: IEntryHandler<FilesEntry> = {
     return deterministicString;
   },
 
-  getIdentity: (value: FilesEntry): SignatureIdentity => {
+  getIdentity: (value: FilesEntry): SignatureIdentity | null => {
     // Does not provide identity information.
     return null;
   }

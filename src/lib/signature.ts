@@ -1,6 +1,7 @@
 import { Entry } from "./types";
 import { availableEntryHandlersByName } from "./entryHandlers/registry";
 import { IIdentityProvider, IIdentityProviderSigningContext } from "./identity";
+import { writeFileSync } from "fs";
 
 export async function createSignedSignatureDocument(
   entries: Entry<any>[],
@@ -15,11 +16,14 @@ export async function createSignedSignatureDocument(
   let deterministicString = "";
   for (const entry of entries) {
     deterministicString += entry.entry + "\n";
+    const handler = availableEntryHandlersByName.get(entry.entry);
+    if (handler === undefined) {
+      throw new Error(
+        "can not build deterministic string with unknown handler"
+      );
+    }
     deterministicString +=
-      availableEntryHandlersByName
-        .get(entry.entry)
-        .toDeterministicString(entry.value)
-        .trim() + "\n";
+      handler.toDeterministicString(entry.value).trim() + "\n";
   }
 
   signatureDocument.signature = await identityProvider.signEntries(
@@ -47,11 +51,14 @@ export async function readUnverifiedSignatureDocument(
   let deterministicString = "";
   for (const entry of signatureDocument.entries) {
     deterministicString += entry.entry + "\n";
+    const handler = availableEntryHandlersByName.get(entry.entry);
+    if (handler === undefined) {
+      throw new Error(
+        "can not build deterministic string with unknown handler"
+      );
+    }
     deterministicString +=
-      availableEntryHandlersByName
-        .get(entry.entry)
-        .toDeterministicString(entry.value)
-        .trim() + "\n";
+      handler.toDeterministicString(entry.value).trim() + "\n";
   }
 
   return {

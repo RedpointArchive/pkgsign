@@ -55,8 +55,8 @@ export const PackageJsonEntryHandler: IEntryHandler<PackageJsonEntry> = {
   verifyEntry: async (
     context: IVerifyEntryContext,
     value: PackageJsonEntry
-  ): Promise<ModuleVerificationResult> => {
-    if (this.packageJson == null) {
+  ): Promise<ModuleVerificationResult | null> => {
+    if (value.packageJson == null) {
       // Verify that package.json does not exist on disk.
       if (context.relFilesOnDisk.indexOf("package.json") !== -1) {
         return generateCompromisedVerificationResult(
@@ -90,7 +90,7 @@ export const PackageJsonEntryHandler: IEntryHandler<PackageJsonEntry> = {
 
       // Stringify both our expected and actual values.
       const normalizedActual = normalizeSync(packageJsonActual);
-      const normalizedExpected = normalizeSync(this.packageJson);
+      const normalizedExpected = normalizeSync(value.packageJson);
 
       // If they don't match, then package.json doesn't match the expected value.
       if (normalizedActual !== normalizedExpected) {
@@ -106,10 +106,10 @@ export const PackageJsonEntryHandler: IEntryHandler<PackageJsonEntry> = {
   },
 
   toDeterministicString: (value: PackageJsonEntry): string => {
-    return normalizeSync(this.packageJson);
+    return normalizeSync(value.packageJson);
   },
 
-  getIdentity: (value: PackageJsonEntry): SignatureIdentity => {
+  getIdentity: (value: PackageJsonEntry): SignatureIdentity | null => {
     return null;
   }
 };

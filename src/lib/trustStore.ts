@@ -107,6 +107,11 @@ export class TrustStore implements ITrustStore {
     const trustStoreBaseFolder = isWin
       ? process.env.USERPROFILE
       : process.env.HOME;
+    if (trustStoreBaseFolder === undefined) {
+      throw new Error(
+        "missing HOME / USERPROFILE environment variable; can not determine location of trust store"
+      );
+    }
     const trustStoreFolder = path.join(
       trustStoreBaseFolder,
       ".pkgsign-trust-store"

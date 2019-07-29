@@ -69,7 +69,7 @@ export interface IEntryHandler<T> {
 export function generateCompromisedVerificationResult(
   context: IVerifyEntryContext,
   msg: string
-) {
+): ModuleVerificationResult {
   return {
     status: ModuleVerificationStatus.Compromised,
     reason: msg,

@@ -20,20 +20,25 @@ export const KeybaseIdentityProvider: IIdentityProvider = {
     context: IIdentityProviderSigningContext
   ): Promise<SignatureIdentity> => {
     const keybaseIdentity = await new Promise<string>((resolve, reject) => {
-      cmd.get("keybase id", (err, data, stderr) => {
-        if (err) {
-          reject(err);
-        } else {
-          const result = /Identifying (.+)/g.exec(data + stderr);
-          if (result[1] === undefined) {
-            reject(
-              new Error("keybase didn't return your username for 'keybase id'")
-            );
+      cmd.get(
+        "keybase id",
+        (err: Error | null, data: string, stderr: string) => {
+          if (err) {
+            reject(err);
           } else {
-            resolve(result[1]);
+            const result = /Identifying (.+)/g.exec(data + stderr);
+            if (result === null || result[1] === undefined) {
+              reject(
+                new Error(
+                  "keybase didn't return your username for 'keybase id'"
+                )
+              );
+            } else {
+              resolve(result[1]);
+            }
           }
         }
-      });
+      );
     });
     let stripAnsiFn = await stripAnsi;
     return {
@@ -53,7 +58,7 @@ export const KeybaseIdentityProvider: IIdentityProvider = {
     const keybaseSignature = await new Promise<string>((resolve, reject) => {
       cmd.get(
         'keybase pgp sign --detached -i "' + fileToSignPath + '"',
-        (err, data, stderr) => {
+        (err: Error | null, data: string, stderr: string) => {
           if (err) {
             reject(err);
           } else {
@@ -72,6 +77,10 @@ export const KeybaseIdentityProvider: IIdentityProvider = {
     signature: string,
     deterministicString: string
   ): Promise<boolean> => {
+    if (identity.keybaseUser === undefined) {
+      return false;
+    }
+
     let didFetch = false;
     const fetchPub = async () => {
       console.log(
@@ -88,7 +97,7 @@ export const KeybaseIdentityProvider: IIdentityProvider = {
         const publicKeys = (await openpgp.key.readArmored(rawPublicKeys)).keys;
         const verifyOptions = {
           message: openpgp.message.fromText(deterministicString),
-          signature: openpgp.signature.readArmored(signature),
+          signature: await openpgp.signature.readArmored(signature),
           publicKeys: publicKeys
         };
         const verifiedMessage = await openpgp.verify(verifyOptions);

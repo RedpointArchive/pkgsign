@@ -26,7 +26,7 @@ export const IdentityEntryHandler: IEntryHandler<IdentityEntry> = {
   verifyEntry: async (
     context: IVerifyEntryContext,
     value: IdentityEntry
-  ): Promise<ModuleVerificationResult> => {
+  ): Promise<ModuleVerificationResult | null> => {
     // Nothing to verify on disk or in context. However, the data contained within
     // this entry is still validated by the signature as part of the deterministic
     // string.
@@ -34,10 +34,10 @@ export const IdentityEntryHandler: IEntryHandler<IdentityEntry> = {
   },
 
   toDeterministicString: (value: IdentityEntry): string => {
-    if (this.identity.keybaseUser !== undefined) {
-      return "keybase:" + this.identity.keybaseUser;
-    } else if (this.identity.pgpPublicKeyUrl !== undefined) {
-      return "httpspgp:" + this.identity.pgpPublicKeyUrl;
+    if (value.identity.keybaseUser !== undefined) {
+      return "keybase:" + value.identity.keybaseUser;
+    } else if (value.identity.pgpPublicKeyUrl !== undefined) {
+      return "httpspgp:" + value.identity.pgpPublicKeyUrl;
     } else {
       return "none";
     }

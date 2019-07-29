@@ -8,7 +8,7 @@ let cli = new CLI("pkgsign", Path.join(__dirname, "commands"));
 
 let shim = new Shim(cli);
 
-export async function execute(argv) {
+export async function execute(argv: string[]) {
   try {
     await shim.execute(argv);
   } catch (e) {

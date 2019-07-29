@@ -33,7 +33,7 @@ export const PgpIdentityProvider: IIdentityProvider = {
     }
     const text = new openpgp.cleartext.CleartextMessage(
       deterministicString,
-      null
+      null as any /* function typedef is wrong here */
     );
     const options = {
       message: text,
@@ -50,18 +50,22 @@ export const PgpIdentityProvider: IIdentityProvider = {
     signature: string,
     deterministicString: string
   ): Promise<boolean> => {
-    if (!identity.pgpPublicKeyUrl.startsWith("https://")) {
+    if (identity.pgpPublicKeyUrl === undefined) {
+      return false;
+    }
+
+    const pgpPublicKeyUrl = identity.pgpPublicKeyUrl;
+
+    if (!pgpPublicKeyUrl.startsWith("https://")) {
       // public key URLs must be HTTPS.
       return false;
     }
 
     let didFetch = false;
     const fetchPub = async () => {
-      console.log(
-        "fetching public keys at URL " + identity.pgpPublicKeyUrl + "..."
-      );
+      console.log("fetching public keys at URL " + pgpPublicKeyUrl + "...");
       didFetch = true;
-      return await (await fetch(identity.pgpPublicKeyUrl)).text();
+      return await (await fetch(pgpPublicKeyUrl)).text();
     };
 
     const attemptVerify = async (rawPublicKeys: string) => {
@@ -69,7 +73,7 @@ export const PgpIdentityProvider: IIdentityProvider = {
         const publicKeys = (await openpgp.key.readArmored(rawPublicKeys)).keys;
         const verifyOptions = {
           message: openpgp.message.fromText(deterministicString),
-          signature: openpgp.signature.readArmored(signature),
+          signature: await openpgp.signature.readArmored(signature),
           publicKeys: publicKeys
         };
         const verifiedMessage = await openpgp.verify(verifyOptions);
@@ -80,7 +84,7 @@ export const PgpIdentityProvider: IIdentityProvider = {
     };
 
     let urlHashObj = crypto.createHash("sha512");
-    urlHashObj.update(identity.pgpPublicKeyUrl);
+    urlHashObj.update(pgpPublicKeyUrl);
     let urlHash = urlHashObj.digest("hex");
 
     let rawPublicKeys = await context.trustStore.getOrFetchCachedPublicKeys(

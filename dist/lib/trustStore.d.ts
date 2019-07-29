@@ -1,4 +1,4 @@
-import { SignatureIdentity } from "./signature/signatureIdentity";
+import { SignatureIdentity } from "./types";
 export interface ITrustStore {
     getOrFetchCachedPublicKeys(cacheName: string, fetch: () => Promise<string>): Promise<string>;
     fetchCachedPublicKeys(cacheName: string, fetch: () => Promise<string>): Promise<string>;
