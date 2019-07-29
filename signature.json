@@ -432,7 +432,7 @@
           "scripts",
           "version"
         ],
-        "sha512": "abe804e48b7294b7b4f6f316b13d61b503445245848e513bb5e90d96d190787c82284b3676cb676bf90115a69081be3c737451a0c529c16d0848bc992454517e"
+        "sha512": "6852aca2f12c6ee80d2a378b5970f9e422b04393bc120978b7c5fa94ff8b814db02a3a728a713e148a0a7778c9223f122cd88a39f0f29c24ffbec43182b80148"
       }
     },
     {
@@ -440,7 +440,7 @@
       "value": {
         "packageJson": {
           "name": "pkgsign",
-          "version": "0.2.0-alpha.7",
+          "version": "0.2.0",
           "description": "A CLI tool for signing and verifying npm and yarn packages.",
           "main": "index.js",
           "repository": "https://github.com/RedpointGames/pkgsign",
@@ -475,9 +475,8 @@
             "pkgsign": "yarn build && node dist/index.js",
             "sign": "yarn build && node dist/index.js sign .",
             "verify": "yarn build && node dist/index.js verify . --full --allow-unsigned-packages",
-            "signedpack": "yarn build && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz",
-            "release": "yarn test && yarn build && node util/ensure-release.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz",
-            "prerelease": "yarn test && yarn build && node util/ensure-prerelease.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz --tag next",
+            "signedpack": "yarn clean && tsc && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz",
+            "release": "yarn test && node util/ensure-release.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz",
             "test": "ava-ts test/*.ts && yarn build && node dist/index.js sign . && node dist/index.js verify . --allow-unsigned-packages",
             "selfverify": "yarn build && node dist/index.js sign . && node dist/index.js verify . --full --allow-unsigned-packages"
           },
@@ -502,5 +501,5 @@
       }
     }
   ],
-  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJdPoerCRB89yvKKRr01wAAzToQAJBFFSh9b4B4Ty8iaUJkjjiN\nEiuunyx6rhF81dpB3SozlMNMnfbojy5ckDQBQPMJylKEl+3BrbzKsjwv3gnyB2u8\n4LQBZLB6mX1cf36JGk/jkLFNW2DMFmIkY2fzqqkRZyh/rfcDcEp3EvvBXWVKlzf4\n5TUqGIPa1mG4ryC74TWk/auLe6Llo+Qio09sz57VDTosHA+XlOQPJJZOlEUjRBgf\ncr9mzfyB2MEqPGyDS0LXjiJv9qT3RmdBia36V6evmY0SvPxRdiFRtPGBF5dho7Mb\nQsq2uvJE8DK0Y8W7HdYczD54sfS7cejrKy/s0ouwimqy/zUeoORkuHs2qZd8IwPv\nFm4YqckODa09WZExStAXQ/R8aJmiYY66lBvxhjtSj6hM+KQQwcqfSJ3KxFfHsd2a\n8JyIJn0ATAT1OkDiqZZv9kW8wMvCUP6bxQNU/GMdl+hD+6zdpb0Fb41p8+oUYI6L\n5kDDZf8F0N6Mh428oO3QOfqQC0G24eJvi/qqfqCrGxM4Sct+XR/NegBKoB4f4qw8\nI6ii1gfXXfUY0Wn9zLgvJVysE9I7/eehtzMdLUmqAN0ClHdtwNzGE8e8OkmJSG8r\ntjQxj6G+TVRg2IJCtvnxYcEN7zpqo2cYdu9JZcwabKl6ZwbKNehB2xNVYu/FJ3jL\nSF+678koXNdr8AGsBNJ+\n=pjJ4\n-----END PGP SIGNATURE-----\n"
+  "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJdPop7CRD55JqRZeg9EAAA4HoIAFe39JmqMWWql7kD0EjLdBjZ\nBiMU3aW7n8sQH8IeaDW9X3rNXKZ6cHOJYrx0lPIW49dyhKiN5JKDv90qO/WD3Ujo\nv2fLh4xyyM21LC1vp8o9Zc/f8s+yu5hCeY3w/3pwt3lEh/VwqspXTL1bZMCrxo6g\nYdtUwEf9hpS+YpNduCI/vAlHFxzE50sQkyYnTCliVyV4rXetppoBZ440LvzU8V37\ndTxO9bXfKtMH9aTF+vFvCvkQcVnMM5aBqh96jBkzxoNAx+ogYTJYaANoMPfNqWWY\n8bS8lwDBNlNj1rEXDoG9ZAf1Pm/F1yOeXILmyhvj3TK9YEPOur4OW8hZaIwQ6D8=\n=Gdoi\n-----END PGP SIGNATURE-----\n"
 }

@@ -1,6 +1,6 @@
 {
   "name": "pkgsign",
-  "version": "0.2.0-alpha.7",
+  "version": "0.2.0",
   "description": "A CLI tool for signing and verifying npm and yarn packages.",
   "main": "index.js",
   "repository": "https://github.com/RedpointGames/pkgsign",
@@ -35,9 +35,8 @@
     "pkgsign": "yarn build && node dist/index.js",
     "sign": "yarn build && node dist/index.js sign .",
     "verify": "yarn build && node dist/index.js verify . --full --allow-unsigned-packages",
-    "signedpack": "yarn build && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz",
-    "release": "yarn test && yarn build && node util/ensure-release.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz",
-    "prerelease": "yarn test && yarn build && node util/ensure-prerelease.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz --tag next",
+    "signedpack": "yarn clean && tsc && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz",
+    "release": "yarn test && node util/ensure-release.js && yarn pack --filename pkgsign.tgz && node dist/index.js sign pkgsign.tgz && yarn publish pkgsign.tgz",
     "test": "ava-ts test/*.ts && yarn build && node dist/index.js sign . && node dist/index.js verify . --allow-unsigned-packages",
     "selfverify": "yarn build && node dist/index.js sign . && node dist/index.js verify . --full --allow-unsigned-packages"
   },
