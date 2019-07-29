@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Path = require("path");
 const clime_1 = require("clime");
 const telemetry_1 = require("./lib/telemetry");
-let cli = new clime_1.CLI('pkgsign', Path.join(__dirname, 'commands'));
+let cli = new clime_1.CLI("pkgsign", Path.join(__dirname, "commands"));
 let shim = new clime_1.Shim(cli);
 function execute(argv) {
     return __awaiter(this, void 0, void 0, function* () {

@@ -1,1 +1,0 @@
-{"version":3,"file":"signatureIdentity.js","sourceRoot":"","sources":["../../../src/lib/signature/signatureIdentity.ts"],"names":[],"mappings":";;AAKA,0BAAiC,QAA2B;IACxD,EAAE,CAAC,CAAC,QAAQ,CAAC,WAAW,KAAK,SAAS,CAAC,CAAC,CAAC;QACrC,MAAM,CAAC,GAAG,GAAG,QAAQ,CAAC,WAAW,CAAC;IACtC,CAAC;IAAC,IAAI,CAAC,CAAC;QACJ,MAAM,CAAC,QAAQ,CAAC,eAAe,CAAC;IACpC,CAAC;AACL,CAAC;AAND,4CAMC"}

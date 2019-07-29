@@ -1,20 +1,9 @@
-import { VerificationContext } from "./signature/verificationContext";
-import { ModuleVerificationResult } from "./moduleVerifier";
-import { SignatureIdentity } from "./signature/signatureIdentity";
-export interface SignatureInfo {
-    entries: SignatureEntry[];
+import { Entry } from "./types";
+import { IIdentityProvider, IIdentityProviderSigningContext } from "./identity";
+export declare function createSignedSignatureDocument(entries: Entry<any>[], identityProvider: IIdentityProvider, identityProviderContext: IIdentityProviderSigningContext): Promise<string>;
+export interface UnverifiedSignatureDocument {
+    entries: Entry<any>[];
     signature: string;
-    isLegacySignature?: boolean;
+    locallyComputedDeterministicString: string;
 }
-export interface SignatureEntry {
-    entry: string;
-    toDeterministicString(): string;
-    verify(context: VerificationContext): Promise<ModuleVerificationResult | null>;
-    getIdentity(): SignatureIdentity | null;
-}
-export declare class SignatureParser {
-    parse(packageName: string, packageJson: object | null, signatureJson: string): SignatureInfo;
-    private isPackageInstalledWithNpm(packageJson);
-    private isPackagePublishedWithNpm(packageJson);
-}
-export declare function createDeterministicString(signature: SignatureInfo): string;
+export declare function readUnverifiedSignatureDocument(documentContent: string): Promise<UnverifiedSignatureDocument>;
